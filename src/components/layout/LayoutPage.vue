@@ -1,0 +1,323 @@
+<template>
+    <a-layout style="min-height: 100vh;">
+      <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible :theme="theme">
+        <!-- 侧边栏菜单 -->
+        <div class="logo" :style="{color:logoFontColor}">
+          <img src="@/assets/logo/logo.png" />
+          <span class="name">{{ titleText }}</span>
+        </div>
+        <el-scrollbar style="height: calc(95vh - 40px);">
+          <a-menu 
+          :theme="theme" 
+          v-model:openKeys="openKeys"
+          v-model:selectedKeys="selectedKeys" 
+          mode="inline" 
+          style="text-align: left;"
+          >
+          <!-- 侧边导航 -->
+          <a-sub-menu key="dashboard">
+            <template #title>
+              <span>
+                <AppstoreOutlined />
+                <span>{{  $t('menu.dashboard.val') }}</span>
+              </span>
+            </template>
+            <a-menu-item key="dashboard.data">{{ $t('menu.dashboard.data.val')}}</a-menu-item>
+            <a-menu-item key="dashboard.workbench">{{ $t('menu.dashboard.workbench.val')}}</a-menu-item>
+            <a-sub-menu key="dashboard.form_design">
+              <template #title>
+                <span>{{ $t('menu.dashboard.form_design.val') }}</span>
+              </template>
+              <a-menu-item key="dashboard.form_design.basic_forms">{{ $t('menu.dashboard.form_design.basic_forms.val')}}</a-menu-item>
+              <a-menu-item key="dashboard.form_design.step_forms">{{ $t('menu.dashboard.form_design.step_forms.val')}}</a-menu-item>
+            </a-sub-menu>
+            <a-sub-menu key="dashboard.echarts">
+              <template #title>
+                <span>{{ $t('menu.dashboard.echarts.val') }}</span>
+              </template>
+              <a-menu-item key="dashboard.echarts.line_chart">{{ $t('menu.dashboard.echarts.line_chart.val')}}</a-menu-item>
+              <a-menu-item key="dashboard.echarts.bar_chart">{{ $t('menu.dashboard.echarts.bar_chart.val')}}</a-menu-item>
+              <a-menu-item key="dashboard.echarts.pie_chart">{{ $t('menu.dashboard.echarts.pie_chart.val')}}</a-menu-item>
+            </a-sub-menu>
+          </a-sub-menu>
+          <a-sub-menu key="general_tool">
+            <template #title>
+              <span>
+                <ToolOutlined />
+                <span>{{  $t('menu.general_tool.val') }}</span>
+              </span>
+            </template>
+            <a-sub-menu key="general_tool.editor">
+              <template #title>
+                <span>{{ $t('menu.general_tool.editor.val') }}</span>
+              </template>
+              <a-menu-item key="general_tool.editor.markdown">{{ $t('menu.general_tool.editor.markdown.val')}}</a-menu-item>
+              <a-menu-item key="general_tool.editor.rich_text_editor">{{ $t('menu.general_tool.editor.rich_text_editor.val')}}</a-menu-item>
+            </a-sub-menu>
+            <a-sub-menu key="general_tool.image_tool">
+              <template #title>
+                <span>{{ $t('menu.general_tool.image_tool.val') }}</span>
+              </template>
+              <a-menu-item key="general_tool.image_tool.format_converter">{{ $t('menu.general_tool.image_tool.format_converter.val')}}</a-menu-item>
+              <a-menu-item key="general_tool.image_tool.image_resize">{{ $t('menu.general_tool.image_tool.image_resize.val')}}</a-menu-item>
+            </a-sub-menu>
+            <a-menu-item key="general_tool.json_tool">{{ $t('menu.general_tool.json_tool.val')}}</a-menu-item>
+          </a-sub-menu>
+          <a-sub-menu key="ai_tool">
+            <template #title>
+              <span>
+                <RobotOutlined />
+                <span>{{  $t('menu.ai_tool.val') }}</span>
+              </span>
+            </template>
+            <a-menu-item key="ai_tool.chatgpt">{{ $t('menu.ai_tool.chatgpt.val')}}</a-menu-item>
+            <a-menu-item key="ai_tool.face_recognition">{{ $t('menu.ai_tool.face_recognition.val')}}</a-menu-item>
+          </a-sub-menu>
+          <a-sub-menu key="api_open_platform">
+            <template #title>
+              <span>
+                <BranchesOutlined />
+                <span>{{  $t('menu.api_open_platform.val') }}</span>
+              </span>
+            </template>
+            <a-menu-item key="api_open_platform.weather">{{ $t('menu.api_open_platform.weather.val')}}</a-menu-item>
+            <a-menu-item key="api_open_platform.map">{{ $t('menu.api_open_platform.map.val')}}</a-menu-item>
+          </a-sub-menu>
+          <a-sub-menu key="low_code_design_platform">
+            <template #title>
+              <span>
+                <CodeOutlined />
+                <span>{{  $t('menu.low_code_design_platform.val') }}</span>
+              </span>
+            </template>
+            <a-menu-item key="low_code_design_platform.low_code_generator">{{ $t('menu.low_code_design_platform.low_code_generator.val')}}</a-menu-item>
+          </a-sub-menu>
+          <a-sub-menu key="authority">
+            <template #title>
+              <span>
+                <team-outlined />
+                <span>{{  $t('menu.authority.val') }}</span>
+              </span>
+            </template>
+            <a-menu-item key="authority.administrator">{{ $t('menu.authority.administrator.val')}}</a-menu-item>
+            <a-menu-item key="authority.common">{{ $t('menu.authority.common.val')}}</a-menu-item>
+          </a-sub-menu>
+          <a-sub-menu key="about">
+            <template #title>
+              <span>
+                <GitlabOutlined />
+                <span>{{  $t('menu.about.val') }}</span>
+              </span>
+            </template>
+            <a-menu-item key="about.information">{{ $t('menu.about.information.val')}}</a-menu-item>
+            <a-menu-item key="about.document">{{ $t('menu.about.document.val')}}</a-menu-item>
+            <a-menu-item key="about.contribution">{{ $t('menu.about.contribution.val')}}</a-menu-item>
+          </a-sub-menu>
+        </a-menu>
+      </el-scrollbar>
+      </a-layout-sider>
+
+      <a-layout>
+      <div>
+        <a-layout-header style="background: white; padding: 0;display: flex;align-items: center;">
+          <!-- 控制侧边栏展开组件 -->
+          <menu-unfold-outlined
+            v-if="collapsed"
+            class="trigger"
+            @click="toggleCollapsed"
+          />
+          <menu-fold-outlined v-else class="trigger" @click="toggleCollapsed" />
+          <!-- 显示当前路径 -->
+          <a-breadcrumb>
+            <a-breadcrumb-item v-for="path in pathNames" :key="path">{{ path }}</a-breadcrumb-item>
+          </a-breadcrumb>
+          <div style="margin-left: auto;margin-right: 15px;">
+            <!-- <a-avatar :src="avatarUrl"></a-avatar><span id="userName" style="margin-left: 10px;">{{ userName }}</span> -->
+            <a-row type="flex" :gutter="[8,8]">
+              <!-- 头像 -->
+              <a-col class="header-col">
+                  <a-avatar :src="avatarUrl"></a-avatar>
+                  <span id="userName">{{ userName }}</span>
+              </a-col>
+              <!-- 选择主题 -->
+              <a-col>
+                <a-switch
+                  :checked="theme === 'dark'"
+                  checked-children="Dark"
+                  un-checked-children="Light"
+                  @change="changeTheme"
+                />
+              </a-col>
+              <!-- 选择语言 -->
+              <a-col>
+                <a-radio-group v-model:value="locale" size="small">
+                  <a-radio-button value="zh_CN">中文</a-radio-button>
+                  <a-radio-button value="en_US">English</a-radio-button>
+                </a-radio-group>
+              </a-col>
+            </a-row>
+          </div>
+        </a-layout-header>
+        <div style="background-color: white;border-top: 0.5px solid red;">
+          11
+        </div>
+
+
+      </div>
+
+      <a-layout-content style="margin: 15px;background: #fff;padding: 14px;">
+        <el-scrollbar style="height:calc(90vh - 64px)">
+          <!-- 中心主体内容：通过router切换组件 -->
+          <router-view></router-view>
+        </el-scrollbar>
+      </a-layout-content>
+
+      </a-layout>
+    </a-layout>
+  </template>
+
+  <script>
+    import { defineComponent, ref, reactive, toRefs, watch, getCurrentInstance} from 'vue';
+    import { useRouter} from 'vue-router';
+    import avatarUrl from '@/assets/head-photo/touxiang.png';
+    
+
+    export default defineComponent({
+      name: "LayoutPage",
+      component: {
+      },
+      setup() {
+        const state = reactive({
+          titleText: 'Open Tool',
+          collapsed: false,
+          theme: 'dark',
+          openKeys: ['dashboard'],
+          preOpenKeys: ['dashboard'],
+          selectedSubMenuKey: 'dashboard',
+          selectedKeys: ['dashboard.data'],
+          pathArr: [],
+          pathNames: [],
+          avatarUrl: avatarUrl,
+          userName: 'Admin',
+          locale: 'zh_CN',
+        })
+
+        const logoFontColor = ref('White')
+
+        const router = useRouter()
+        const { ctx } = getCurrentInstance();
+
+        const toggleCollapsed = () => {
+          state.collapsed = !state.collapsed;
+          state.titleText = state.titleText=='Open Tool'?'':'Open Tool';
+        };
+
+        const changeTheme = (checked)=> {
+          state.theme = checked ? 'dark' : 'light'
+          logoFontColor.value = checked ? 'White' : 'rgb(9,96,189)'
+        }
+
+        // 更新路径显示
+        const updatePath = () => {
+          state.pathNames = []
+          var curPath = ''
+          for(var i = 0; i < state.pathArr.length; i++){
+            curPath += state.pathArr[i] + '.'
+             state.pathNames.push(ctx.$t('menu.'+ curPath + 'val'))
+          }
+        }
+
+        // 国际化语言切换监听
+        watch(()=> state.locale,(value) => {
+          ctx.$i18n.locale = value
+          updatePath()
+        })
+
+        // sub-menu监听
+        watch(()=> state.openKeys,(val,oldVal)=>{
+          state.preOpenKeys = oldVal
+        })
+
+        // 路由事件监听
+        watch(()=> state.selectedKeys, (obj)=>{
+          // 更新路由
+          // obj: 例'dashboard.echarts.line_chart'
+          var routerStr = obj[0].toString().replaceAll('_', '-')
+          var router_path = routerStr.split('.')
+          // 路由拼接
+          var pageRoute = ''
+          for(let path of router_path){
+            pageRoute += '/' + path
+          }
+          router.push({ path:pageRoute })
+
+          // 更新路径显示
+          // obj: 'dashboard.echarts.line_chart'
+          state.pathArr = obj[0].toString().split('.')
+          updatePath()
+        })
+        return {
+            ...toRefs(state),
+            logoFontColor,
+            toggleCollapsed,
+            changeTheme
+          }
+      }
+      
+    });
+  </script>
+
+  <style scoped>
+  .logo{
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    height: 40px;
+    margin-top: 4px;
+    margin-left: 20px;
+  }
+
+  img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .name{
+    font-weight: bold; /* 加粗 */
+    font-size: 1.2em; /* 变大，这里设置为当前字体大小的1.2倍 */
+    margin-left: 10px;
+    line-height: 40px;
+    white-space: nowrap; /* 不可换行 */
+    overflow: hidden;  /* 超出部分隐藏 */
+  }
+
+  .header-col:hover{
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  #userName{
+    margin-left:10px
+  }
+
+  .trigger{
+    font-size: 18px;
+    line-height: 64px;
+    padding: 0 24px;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  .trigger:hover{
+    color: #1890ff;
+  }
+
+  .site-layout .site-layout-background {
+    background: #fff;
+  }
+  [data-theme='dark'] .site-layout .site-layout-background {
+    background: #141414;
+  }
+
+
+  </style>
+  
