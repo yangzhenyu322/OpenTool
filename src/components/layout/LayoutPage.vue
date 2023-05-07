@@ -3,7 +3,7 @@
       <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible :theme="theme">
         <!-- 侧边栏菜单 -->
         <div class="logo" :style="{color:logoFontColor}">
-          <img src="@/assets/logo/logo.png" />
+          <img src="@/assets/images/logo/logo.png" />
           <span class="name">{{ titleText }}</span>
         </div>
         <el-scrollbar style="height: calc(95vh - 40px);">
@@ -158,11 +158,23 @@
             </a-row>
           </div>
         </a-layout-header>
-        <div style="background-color: white;border-top: 0.5px solid red;">
-          11
+        <div style="background-color: white;border-top: 0.5px solid gray;">
+          <el-tabs
+            v-model="editableTabsValue"
+            type="card"
+            class="tabs"
+            closable
+            @tab-remove="removeTab"
+          >
+            <el-tab-pane
+              v-for="item in editableTabs"
+              :key="item.name"
+              :label="item.title"
+              :name="item.name"
+            >
+            </el-tab-pane>
+          </el-tabs>
         </div>
-
-
       </div>
 
       <a-layout-content style="margin: 15px;background: #fff;padding: 14px;">
@@ -179,8 +191,7 @@
   <script>
     import { defineComponent, ref, reactive, toRefs, watch, getCurrentInstance} from 'vue';
     import { useRouter} from 'vue-router';
-    import avatarUrl from '@/assets/head-photo/touxiang.png';
-    
+    import avatarUrl from '@/assets/images/head-photo/touxiang.png';
 
     export default defineComponent({
       name: "LayoutPage",
@@ -195,13 +206,26 @@
           preOpenKeys: ['dashboard'],
           selectedSubMenuKey: 'dashboard',
           selectedKeys: ['dashboard.data'],
-          pathArr: [],
           pathNames: [],
           avatarUrl: avatarUrl,
           userName: 'Admin',
           locale: 'zh_CN',
         })
 
+        // tabs标签页控制
+        const tabsState = reactive({
+          tabIndex: 2, // 递增ID，为new tab提供非重复的ID
+          editableTabsValue: '2', // 当前选中tab的name
+          editableTabs: [
+            {
+              title: '数据分析', // curTab对应的名字
+              name: '1', // curTab对应的id
+              router: 'dashboard.data',  // curTab对应的内容
+            },
+          ]
+        })
+
+        // logo标题字体颜色样式
         const logoFontColor = ref('White')
 
         const router = useRouter()
@@ -218,13 +242,28 @@
         }
 
         // 更新路径显示
-        const updatePath = () => {
+        const updatePath = (key) => {
+          const pathArr = key.toString().split('.')
           state.pathNames = []
           var curPath = ''
-          for(var i = 0; i < state.pathArr.length; i++){
-            curPath += state.pathArr[i] + '.'
+          for(var i = 0; i < pathArr.length; i++){
+            curPath += pathArr[i] + '.'
              state.pathNames.push(ctx.$t('menu.'+ curPath + 'val'))
           }
+        }
+
+        // 更新路由
+        const updateRouter = (key) => {
+          // key: 例'dashboard.echarts.line_chart'
+          var routerStr = key.toString().replaceAll('_', '-')
+          var router_path = routerStr.split('.')
+          // 路由拼接
+          var pageRoute = ''
+          for(let path of router_path){
+            pageRoute += '/' + path
+          }
+          // 路由切换
+          router.push({ path:pageRoute })
         }
 
         // 国际化语言切换监听
@@ -238,29 +277,87 @@
           state.preOpenKeys = oldVal
         })
 
-        // 路由事件监听
-        watch(()=> state.selectedKeys, (obj)=>{
-          // 更新路由
-          // obj: 例'dashboard.echarts.line_chart'
-          var routerStr = obj[0].toString().replaceAll('_', '-')
-          var router_path = routerStr.split('.')
-          // 路由拼接
-          var pageRoute = ''
-          for(let path of router_path){
-            pageRoute += '/' + path
+        // 菜单项切换事件监听
+        watch(()=> state.selectedKeys, (key)=>{
+          // key: 'dashboard.echarts.line_chart'
+          // 更新tabs
+          const tabs = tabsState.editableTabs
+          var isExisted = false
+          var curTab = ''
+          tabs.forEach((tab) => {
+              if(tab.router == key){
+                isExisted = true
+                curTab = tab.name
+              }
+            })
+          // 判断当前菜单项是否存在tabs中，若存在则选中，否则新增
+          if(isExisted){
+            tabsState.editableTabsValue = curTab
+          }else{
+            addTab(ctx.$t('menu.'+ key[0] + '.val'), key[0])
           }
-          router.push({ path:pageRoute })
-
+          
+          // 更新路由
+          // updateRouter(key[0])
           // 更新路径显示
-          // obj: 'dashboard.echarts.line_chart'
-          state.pathArr = obj[0].toString().split('.')
-          updatePath()
+          // updatePath(key[0])
         })
+
+        // tab切换事件监听
+        watch(()=> tabsState.editableTabsValue, (name)=>{
+          // 更新路由
+          var router = ''
+          tabsState.editableTabs.forEach((tab)=>{
+            if(tab.name == name){
+              router = tab.router
+            }
+          })
+          // 更新路由
+          updateRouter(router)
+          // 更新路径显示
+          updatePath(router)
+        })
+
+        // 新增tab
+        const addTab = (title, router) => {
+          tabsState.tabIndex++;
+          const newTabName = tabsState.tabIndex
+          tabsState.editableTabs.push({
+            title: title,
+            name: newTabName,
+            router: router,
+          })
+
+          tabsState.editableTabsValue = newTabName
+        }
+
+        const removeTab = (targetName) => {
+          // 选中被删除tab的邻居tab,转移curTab
+          const tabs = tabsState.editableTabs
+          let activeName = tabsState.editableTabsValue
+          if (activeName === targetName) {
+            tabs.forEach((tab, index) => {
+              if (tab.name === targetName) {
+                const nextTab = tabs[index + 1] || tabs[index - 1]
+                if (nextTab) {
+                  activeName = nextTab.name
+                }
+              }
+            })
+          }
+          tabsState.editableTabsValue = activeName
+          // 去除已被删除的tab
+          tabsState.editableTabs = tabs.filter((tab) => tab.name !== targetName)
+        }
+
         return {
             ...toRefs(state),
+            ...toRefs(tabsState),
             logoFontColor,
             toggleCollapsed,
-            changeTheme
+            changeTheme,
+            addTab,
+            removeTab
           }
       }
       
