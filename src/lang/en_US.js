@@ -73,7 +73,7 @@ export default {
             }
         },
         low_code_design_platform: {
-            val: 'Low Code Design Platform',
+            val: 'Low Code Design',
             low_code_generator: {
                 val: 'LowCodeGenerator',
             }

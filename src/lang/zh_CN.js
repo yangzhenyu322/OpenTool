@@ -73,7 +73,7 @@ export default {
             }
         },
         low_code_design_platform: {
-            val: '低代码设计平台',
+            val: '低代码设计',
             low_code_generator: {
                 val: '低代码生成器'
             }

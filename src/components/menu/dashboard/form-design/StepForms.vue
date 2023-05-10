@@ -1,7 +1,8 @@
 <template>
-    <a-page-header title="仿真数据关联分析" style="padding:0;text-align: left;font-size: 14px;">
+    <a-page-header title="仿真数据关联分析" style="margin-top: 2px;text-align: left;font-size: 14px;">
         <span>基于贝叶斯网络的作战仿真数据关联性分析</span>
     </a-page-header>
+
     <div class="step-bar">
         <a-steps :current="current">
         <a-step v-for="item in steps" :key="item.title" :title="item.title" />
@@ -12,7 +13,7 @@
             <StepThree v-if="current == 2" :efficiencies="data.efficiencies" />
             <StepFour  v-if="current == 3" :efficiencies="data.efficiencies" />
         </div>
-        <a-spin v-if="isLoad" delay="1000" size="large" tip="正在分析中..."  style="position: absolute;z-index: 999;margin-top:-4%"></a-spin>
+        <a-spin v-if="isLoad"  delay="1000" size="large" tip="正在分析中..."  style="position: absolute;z-index: 999;bottom:90px;"></a-spin>
         <div class="steps-action">
             <a-button v-if="current == 1 || current == 3" @click="prev" :disabled="disabled">上一步</a-button>
             <a-button v-if="current == 1" type="primary" @click="loading" style="margin-left: 10px" :disabled="disabled">开始分析</a-button>
@@ -30,7 +31,7 @@
 </template>
 
 <script>
-import { defineComponent, reactive, toRaw, toRefs} from 'vue'
+import { defineComponent, reactive,toRefs} from 'vue'
 import StepOne from './step-form-parts/StepOne.vue'
 import StepTwo from './step-form-parts/StepTwo.vue'
 import StepThree from './step-form-parts/StepThree.vue'
@@ -122,6 +123,9 @@ export default defineComponent({
 
 <style scoped>
     .step-bar{
-        margin-top:24px;
+        background-color: white;
+        margin: 15px 15px auto 15px;
+        padding: 15px;
+        padding-bottom: auto;
     }
 </style>

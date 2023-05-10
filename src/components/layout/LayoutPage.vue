@@ -118,8 +118,8 @@
       </a-layout-sider>
 
       <a-layout>
-      <div>
-        <a-layout-header style="background: white; padding: 0;display: flex;align-items: center;">
+      <a-affix :offset-Top="0" style="background-color: white;">
+        <a-layout-header style="background-color: white;padding: 0;display: flex;align-items: center;">
           <!-- 控制侧边栏展开组件 -->
           <menu-unfold-outlined
             v-if="collapsed"
@@ -131,34 +131,33 @@
           <a-breadcrumb>
             <a-breadcrumb-item v-for="path in pathNames" :key="path">{{ path }}</a-breadcrumb-item>
           </a-breadcrumb>
-          <div style="margin-left: auto;margin-right: 15px;">
-            <!-- <a-avatar :src="avatarUrl"></a-avatar><span id="userName" style="margin-left: 10px;">{{ userName }}</span> -->
-            <a-row type="flex" :gutter="[8,8]">
-              <!-- 头像 -->
-              <a-col class="header-col">
-                  <a-avatar :src="avatarUrl"></a-avatar>
-                  <span id="userName">{{ userName }}</span>
-              </a-col>
-              <!-- 选择主题 -->
-              <a-col>
-                <a-switch
-                  :checked="theme === 'dark'"
-                  checked-children="Dark"
-                  un-checked-children="Light"
-                  @change="changeTheme"
-                />
-              </a-col>
-              <!-- 选择语言 -->
-              <a-col>
-                <a-radio-group v-model:value="locale" size="small">
-                  <a-radio-button value="zh_CN">中文</a-radio-button>
-                  <a-radio-button value="en_US">English</a-radio-button>
-                </a-radio-group>
-              </a-col>
-            </a-row>
-          </div>
+
+          <a-row type="flex" :gutter="[8,8]" style="margin-left: auto;margin-right: 15px;">
+            <!-- 头像 -->
+            <a-col class="header-col">
+                <a-avatar :src="avatarUrl"></a-avatar>
+                <span id="userName">{{ userName }}</span>
+            </a-col>
+            <!-- 选择主题 -->
+            <a-col>
+              <a-switch
+                :checked="theme === 'dark'"
+                checked-children="Dark"
+                un-checked-children="Light"
+                @change="changeTheme"
+              />
+            </a-col>
+            <!-- 选择语言 -->
+            <a-col>
+              <a-radio-group v-model:value="locale" size="small">
+                <a-radio-button value="zh_CN">中文</a-radio-button>
+                <a-radio-button value="en_US">English</a-radio-button>
+              </a-radio-group>
+            </a-col>
+          </a-row>
         </a-layout-header>
-        <div style="background-color: white;border-top: 0.5px solid gray;">
+        <!-- 标签页 -->
+        <div style="height: 40px;border-top: 0.1px solid grey;overflow: hidden;">
           <el-tabs
             v-model="editableTabsValue"
             type="card"
@@ -175,21 +174,23 @@
             </el-tab-pane>
           </el-tabs>
         </div>
-      </div>
+    </a-affix>
 
-      <a-layout-content style="margin: 15px;background: #fff;padding: 14px;">
-        <el-scrollbar style="height:calc(90vh - 64px)">
-          <!-- 中心主体内容：通过router切换组件 -->
-          <router-view></router-view>
-        </el-scrollbar>
-      </a-layout-content>
+    <!-- style="margin: 15px 15px 0px 15px;background-color: white;padding:14px 5px 0px 14px;" -->
 
+      <el-scrollbar style="height:calc(100vh - 104px)">
+        <a-layout-content>
+            <!-- 中心主体内容：通过router切换组件 -->
+            <router-view></router-view>
+        </a-layout-content>
+      </el-scrollbar>
       </a-layout>
     </a-layout>
   </template>
 
+
   <script>
-    import { defineComponent, ref, reactive, toRefs, watch, getCurrentInstance} from 'vue';
+    import { defineComponent, ref, reactive, toRefs, watch, getCurrentInstance, onMounted} from 'vue';
     import { useRouter} from 'vue-router';
     import avatarUrl from '@/assets/images/head-photo/touxiang.png';
 
@@ -231,6 +232,13 @@
         const router = useRouter()
         const { ctx } = getCurrentInstance();
 
+        // 在组件挂载时尝试加载数据
+        onMounted(()=>{
+          updatePath(localStorage.getItem('curPath'))
+          updateRouter(localStorage.getItem('curRouter'))
+          state.selectedKeys = [localStorage.getItem('curSelectedKey')]
+        })
+
         const toggleCollapsed = () => {
           state.collapsed = !state.collapsed;
           state.titleText = state.titleText=='Open Tool'?'':'Open Tool';
@@ -241,8 +249,11 @@
           logoFontColor.value = checked ? 'White' : 'rgb(9,96,189)'
         }
 
-        // 更新路径显示
+        // 更新路径
         const updatePath = (key) => {
+          // 将路径保存到localStorage中
+          localStorage.setItem('curPath', key)
+
           const pathArr = key.toString().split('.')
           state.pathNames = []
           var curPath = ''
@@ -255,6 +266,9 @@
         // 更新路由
         const updateRouter = (key) => {
           // key: 例'dashboard.echarts.line_chart'
+          // 将路由保存到localStorage中
+          localStorage.setItem('curRouter', key)
+
           var routerStr = key.toString().replaceAll('_', '-')
           var router_path = routerStr.split('.')
           // 路由拼接
@@ -269,7 +283,7 @@
         // 国际化语言切换监听
         watch(()=> state.locale,(value) => {
           ctx.$i18n.locale = value
-          updatePath()
+          updatePath(state.selectedKeys)
         })
 
         // sub-menu监听
@@ -279,13 +293,16 @@
 
         // 菜单项切换事件监听
         watch(()=> state.selectedKeys, (key)=>{
-          // key: 'dashboard.echarts.line_chart'
+          // key[0]: 'dashboard.echarts.line_chart'
+          // 保存key到localStorage
+          localStorage.setItem('curSelectedKey', state.selectedKeys)
+
           // 更新tabs
           const tabs = tabsState.editableTabs
           var isExisted = false
           var curTab = ''
           tabs.forEach((tab) => {
-              if(tab.router == key){
+              if(tab.router == key[0]){
                 isExisted = true
                 curTab = tab.name
               }
@@ -316,6 +333,8 @@
           updateRouter(router)
           // 更新路径显示
           updatePath(router)
+          // 更新菜单项
+          state.selectedKeys = [router]
         })
 
         // 新增tab
@@ -359,8 +378,7 @@
             addTab,
             removeTab
           }
-      }
-      
+      },
     });
   </script>
 
