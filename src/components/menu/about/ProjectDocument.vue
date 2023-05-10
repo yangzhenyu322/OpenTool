@@ -1,5 +1,11 @@
 <template>
-    <h1>项目文档</h1>
+    <a-page-header title="项目文档" class="header-content">
+        <span>项目文档</span>
+    </a-page-header>
+
+    <div class="center-content">
+        项目文档
+    </div>
 </template>
 
 <script>

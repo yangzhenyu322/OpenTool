@@ -1,17 +1,17 @@
 <template>
     <a-layout style="min-height: 100vh;">
-      <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible :theme="theme">
+      <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible :theme="theme" :key="theme">
         <!-- 侧边栏菜单 -->
         <div class="logo" :style="{color:logoFontColor}">
-          <img src="@/assets/images/logo/logo.png" />
+          <img class="logo-img" src="@/assets/images/logo/logo.png" />
           <span class="name">{{ titleText }}</span>
         </div>
-        <el-scrollbar style="height: calc(95vh - 40px);">
+        <el-scrollbar style="height: calc(97vh - 40px);">
           <a-menu 
           :theme="theme" 
           v-model:openKeys="openKeys"
           v-model:selectedKeys="selectedKeys" 
-          mode="inline" 
+          mode="inline"
           style="text-align: left;"
           >
           <!-- 侧边导航 -->
@@ -118,8 +118,8 @@
       </a-layout-sider>
 
       <a-layout>
-      <a-affix :offset-Top="0" style="background-color: white;">
-        <a-layout-header style="background-color: white;padding: 0;display: flex;align-items: center;">
+      <a-affix :offset-Top="0" >
+        <a-layout-header style="height: 50px;background-color: white;padding: 0;display: flex;align-items: center;" :theme="theme">
           <!-- 控制侧边栏展开组件 -->
           <menu-unfold-outlined
             v-if="collapsed"
@@ -134,7 +134,7 @@
 
           <a-row type="flex" :gutter="[8,8]" style="margin-left: auto;margin-right: 15px;">
             <!-- 头像 -->
-            <a-col class="header-col">
+            <a-col class="user-img">
                 <a-avatar :src="avatarUrl"></a-avatar>
                 <span id="userName">{{ userName }}</span>
             </a-col>
@@ -157,7 +157,7 @@
           </a-row>
         </a-layout-header>
         <!-- 标签页 -->
-        <div style="height: 40px;border-top: 0.1px solid grey;overflow: hidden;">
+        <div style="height: 40px;overflow: hidden;background-color: white;margin-top: 1px;">
           <el-tabs
             v-model="editableTabsValue"
             type="card"
@@ -382,7 +382,7 @@
     });
   </script>
 
-  <style scoped>
+  <style>
   .logo{
     display: flex;
     align-items: center;
@@ -392,7 +392,7 @@
     margin-left: 20px;
   }
 
-  img {
+  .logo-img {
     width: 40px;
     height: 40px;
   }
@@ -406,7 +406,7 @@
     overflow: hidden;  /* 超出部分隐藏 */
   }
 
-  .header-col:hover{
+  .user-img:hover{
     background-color: rgba(0, 0, 0, 0.1);
   }
 
@@ -433,6 +433,20 @@
     background: #141414;
   }
 
+  /* 中心-头部内容样式 */
+  .header-content{
+     margin-top: 3px;
+     padding-top: 5px;
+     text-align: left;
+     font-size: 14px;height: 90px;
+  }
 
+  /* 中心展示div样式 */
+  .center-content{
+      background-color: white;
+      margin: 15px 15px auto 15px;
+      padding: 15px;
+      padding-bottom: auto;
+  }
   </style>
   

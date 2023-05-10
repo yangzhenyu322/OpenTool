@@ -1,7 +1,8 @@
 <template>
-  <div>
+  <div class="center-content">
       数据分析
   </div>
+  
 </template>
 
 <script>
@@ -13,8 +14,6 @@
   })
 </script>
 
-<style scoped>
-  *{
-    background-color: red;
-  }
+<style>
+
 </style>

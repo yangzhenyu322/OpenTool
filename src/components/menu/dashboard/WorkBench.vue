@@ -1,5 +1,11 @@
 <template>
-    <h1>工作台</h1>
+    <a-page-header title="工作台" class="header-content">
+        <span>工作台</span>
+    </a-page-header>
+
+    <div class="center-content">
+      工作台
+    </div>
 </template>
 
 <script>

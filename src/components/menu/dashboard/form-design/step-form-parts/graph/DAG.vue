@@ -18,7 +18,9 @@
       const state = reactive({
         efficiencies: props.efficiencies,
         results: props.results,
-        })
+      })
+
+      var myChart
 
       const showReuslts = new Map()
       for( let key of state.efficiencies){
@@ -122,7 +124,7 @@
                 ]
             }
 
-            const myChart = echarts.init(roseCharts[i]);
+            myChart = echarts.init(roseCharts[i]);
             // 绘制图表
             myChart.setOption(option)
             // 更新下标
@@ -134,10 +136,15 @@
         initeCharts()
       })
 
-      return {
+    // 窗口大小改变时重新设置图表大小
+    window.addEventListener('resize', ()=>{
+        myChart.resize()
+    })
+
+    return {
         ...toRefs(state),
         showReuslts
-      }
+    }
     },
   })
 </script>

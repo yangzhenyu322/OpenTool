@@ -1,6 +1,6 @@
 <template>
     <div>
-      <div id="knowChart" :style="{ width: '100%', height: '600px' }"></div>
+      <div id="knowChart" :style="{ width: '100%', height: '700px' }"></div>
     </div>
 </template>
 
@@ -16,9 +16,11 @@
         graph: TestJson
       })
 
+      var myChart
+
     
       const initeCharts = () => {
-        let myChart = echarts.init(document.getElementById('knowChart'))
+        myChart = echarts.init(document.getElementById('knowChart'))
         // 绘制图表
         state.option = {
             tooltip: {},
@@ -63,6 +65,11 @@
       
       onMounted(() => {
         initeCharts()
+      })
+
+      // 窗口大小改变时重新设置图表大小
+      window.addEventListener('resize', ()=>{
+          myChart.resize()
       })
 
       return {
