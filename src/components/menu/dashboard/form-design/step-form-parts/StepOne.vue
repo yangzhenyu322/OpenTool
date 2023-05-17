@@ -4,8 +4,8 @@
         <a-form-item label="仿真数据集" v-bind="validateInfos.dataset">
           <a-select v-model:value="modelRef.dataset" placeholder="选择仿真数据集">
             <a-select-option value="卫星巡航侦查">卫星巡航侦查</a-select-option>
-            <a-select-option value="导弹攻防拦截">导弹攻防拦截</a-select-option>
-            <a-select-option value="陆地步坦作战">陆地步坦作战</a-select-option>
+            <a-select-option value="卫星地质勘测">卫星地质勘测</a-select-option>
+            <a-select-option value="雷达目标检测">雷达目标检测</a-select-option>
             <a-select-option value="网络漏洞安全攻防">网络漏洞安全攻防</a-select-option>
           </a-select>
         </a-form-item>
@@ -50,7 +50,7 @@
         name: "StepOne",
         setup() {
         const modelRef = reactive({
-            dataset: '导弹攻防拦截',
+            dataset: '卫星地质勘测',
             numbers: 100,
             modelName: 'Bayesian',
             // batch: 60,

@@ -1,6 +1,6 @@
 <template>
     <div style="display: flex;justify-content: center;">
-        <a-descriptions bordered title="作战效能关联分析">
+        <a-descriptions bordered title="地质目标侦测效能关联分析">
             <a-descriptions-item label="仿真数据集">{{ formData.dataset }}</a-descriptions-item>
             <a-descriptions-item label="数据集数量">{{ formData.numbers }}</a-descriptions-item>
             <a-descriptions-item label="模型选择">{{ formData.modelName }}</a-descriptions-item>

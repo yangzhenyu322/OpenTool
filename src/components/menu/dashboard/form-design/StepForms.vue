@@ -1,6 +1,6 @@
 <template>
     <a-page-header title="仿真数据关联分析" class="header-content" style="margin-top: 2px;text-align: left;font-size: 14px;">
-        <span>基于贝叶斯网络的作战仿真数据关联性分析</span>
+        <span>基于贝叶斯网络的仿真数据关联性分析</span>
     </a-page-header>
 
     <div class="center-content">
@@ -53,7 +53,7 @@ export default defineComponent({
                 content: '选择需要分析的效能指标',
                 },
                 {
-                title: '作战效能关联分析',
+                title: '地质目标侦测效能关联分析',
                 content: '正在分析中',
                 },
                 {
