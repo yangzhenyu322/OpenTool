@@ -15,7 +15,7 @@ export default defineComponent({
     const times = ref(props.times)
     const state = reactive({
       option : {
-        color: ['#80FFA5', '#00DDFF', '#37A2FF', '#FF0087', '#FFBF00'],
+        color: ['rgba(142,241,207,1)', 'rgb(79,185,253,1)', 'rgba(183,53,171,1)', 'rgba(251,188,61,1)'],
         title: {
           text: '流量趋势',
           show: false
@@ -70,11 +70,11 @@ export default defineComponent({
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 {
                   offset: 0,
-                  color: 'rgb(128, 255, 165)'
+                  color: 'rgba(128, 255, 165,1)'
                 },
                 {
                   offset: 1,
-                  color: 'rgb(1, 191, 236)'
+                  color: 'rgba(1, 191, 236,0.5)'
                 }
               ])
             },
@@ -97,11 +97,11 @@ export default defineComponent({
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 {
                   offset: 0,
-                  color: 'rgb(0, 221, 255)'
+                  color: 'rgba(0, 221, 255,1)'
                 },
                 {
                   offset: 1,
-                  color: 'rgb(77, 119, 255)'
+                  color: 'rgba(77, 119, 255,0.5)'
                 }
               ])
             },
@@ -124,11 +124,11 @@ export default defineComponent({
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 {
                   offset: 0,
-                  color: 'rgb(255, 0, 135)'
+                  color: 'rgba(255, 0, 135,1)'
                 },
                 {
                   offset: 1,
-                  color: 'rgb(135, 0, 157)'
+                  color: 'rgba(135, 0, 157,0.5)'
                 }
               ])
             },
@@ -155,11 +155,11 @@ export default defineComponent({
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 {
                   offset: 0,
-                  color: 'rgb(255, 191, 0)'
+                  color: 'rgba(255, 191, 0,1)'
                 },
                 {
                   offset: 1,
-                  color: 'rgb(224, 62, 76)'
+                  color: 'rgba(224, 62, 76,0.5)'
                 }
               ])
             },

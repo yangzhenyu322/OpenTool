@@ -9,7 +9,7 @@
                 <a-tag color="cyan" class="title-logo">周</a-tag>
               </div>
             </template>
-              <div style="display: flex;justify-content: space-between;">
+              <div class="show-item">
                 <BankTwoTone class="show-logo"  twoToneColor="#00CED1" />
                 <div style="line-height: 10px;">
                   <div class="show-text">总访问数</div>
@@ -26,7 +26,7 @@
                 <a-tag color="green" class="title-logo">月</a-tag>
               </div>
             </template>
-              <div style="display: flex;justify-content: space-between;">
+              <div class="show-item">
                 <IdcardTwoTone class="show-logo" twoToneColor="#ADFF2F"/>
                 <div style="line-height: 10px;">
                   <div class="show-text">总用户数</div>
@@ -43,7 +43,7 @@
                 <a-tag color="orange" class="title-logo">月</a-tag>
               </div>
             </template>
-              <div style="display: flex;justify-content: space-between;">
+              <div class="show-item">
                 <HeartTwoTone class="show-logo"  twoToneColor="#FFD700"/>
                 <div style="line-height: 10px;">
                   <div class="show-text">总收藏数</div>
@@ -60,7 +60,7 @@
                 <a-tag color="purple" class="title-logo">年</a-tag>
               </div>
             </template>
-              <div style="display: flex;justify-content: space-between;">
+              <div class="show-item">
                 <CrownTwoTone class="show-logo" twoToneColor="#800080"/>
                 <div style="line-height: 10px;">
                   <div class="show-text">总贡献数</div>
@@ -78,7 +78,6 @@
           :end-placeholder="endTime"
           style=" margin-right: 25%;"
         />
-        <!-- :default-time="defaultTime" -->
         <a-radio-group v-model:value="dataShow" style="margin-top: 20px;">
           <a-radio-button value="trendChart">趋势图</a-radio-button>
           <a-radio-button value="dataList">数据列表</a-radio-button>
@@ -186,6 +185,12 @@
 .title-logo{
   margin-left: auto;
   margin-right: 0;
+}
+.show-item{
+  display: flex;
+  justify-content: space-between;
+  padding-left: 2vh;
+  padding-right: 2vh;
 }
 .show-logo{
   font-size: 50px;
