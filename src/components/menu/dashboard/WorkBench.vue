@@ -1,31 +1,19 @@
-<!-- <template>
-    <a-page-header title="工作台" class="header-content">
-        <a-avatar :src="avatarUrl"></a-avatar>
-        <span>工作台</span>
-    </a-page-header>
-
-    <div class="center-content">
-      工作台
-    </div>
-</template> -->
-
 <template>
     <a-page-header
-    style="padding: 1vh;"
+    style="padding-top: 0%;padding-bottom: 0%;"
     >
-    <div style="display: flex;justify-content: space-between;">
+    <div style="width: 100%;display: flex;justify-content: space-between;">
         <div style="display: flex;">
             <a-avatar :src="avatarUrl" style="width: 100px;height: 100px;"></a-avatar>
             <div style="margin-left:10px;text-align: left;">
-                <p style="font-size: 20px;font-weight: 500;line-height: 20px;"><span style="font-weight: bold">Admin</span>, 欢迎回来, 开始您愉快的一天吧！</p>
-                <p style="font-size: 15px;margin-left: 0%;margin-right: auto;color: grey;line-height: 20px;">
-                    <EnvironmentFilled style="color: cornflowerblue;" /> <span style="color:lightskyblue;">湖南省长沙市</span>
-                    , 天气晴<FireFilled style="color:crimson;" />
-                    , 20℃~32℃
+                <p style="font-size: 20px;font-weight: 500;line-height: 20px;margin-bottom: 0%;"><span style="font-weight: bold;">Admin</span>, 欢迎回来, 开始您愉快的一天吧！</p>
+                <p style="font-size: 14px;color: grey;display: inline-flex;align-items: center;">
+                    <el-link type="primary" :underline="false" ><EnvironmentFilled style="color: cornflowerblue;" />湖南省长沙市</el-link>
+                    <span style="">&nbsp;&nbsp;天气晴<FireFilled style="color:crimson;" />, 20℃~32℃</span>
                 </p>
             </div>
         </div>
-        <div style="width: 20vh;margin-right: 2vh;">
+        <div style="width: 20%;margin-right: 2%;">
             <a-row type="flex" :gutter="[2]">
                 <a-col :span="8">
                     <p class="header-text-right-sub1">待办</p>
@@ -43,8 +31,32 @@
         </div>
     </div>
     </a-page-header>
-    <div class="center-content">
-        内容
+    <div class="center-content" >
+        <a-row :gutter="10">
+            <a-col span="18">
+                <a-tabs v-model:activeKy="activeKey" size="small" style="background-color: white;padding: 2%;">
+                    <a-tab-pane key="1" tab="服务">服务</a-tab-pane>
+                    <a-tab-pane key="2" tab="文章">文章</a-tab-pane>
+                    <a-tab-pane key="3" tab="项目">项目</a-tab-pane>
+                    <a-tab-pane key="4" tab="最新动态">最新动态</a-tab-pane>
+                </a-tabs>
+            </a-col>
+            <a-col span="6">
+                <div style="background-color: white;">
+                    <a-card
+                    title="个人成就"
+                    style="text-align: left;"
+                    >
+                        <div style="font-size: 1.2em;">
+                            <p><LikeTwoTone twoToneColor="rgb(228,92,92)"/> 获得 96 次点赞</p>
+                            <p><MessageTwoTone twoToneColor="rgb(69,122,213)"/> 内容获得 42 次评论</p>
+                            <p><StarTwoTone twoToneColor="rgb(241,178,38)"/> 获得 436 次收藏</p>
+                            <p><RocketTwoTone twoToneColor="rgb(74,147,190)"/> 代码片获得 1,457 次分享</p>
+                        </div>
+                    </a-card>
+                </div>
+            </a-col>
+        </a-row>
     </div>
 </template>
 
@@ -78,4 +90,3 @@ setup() {
     line-height: 0px;
 }
 </style>
-  

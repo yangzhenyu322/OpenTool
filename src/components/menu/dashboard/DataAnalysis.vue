@@ -1,5 +1,5 @@
 <template>
-  <div class="center-content" style="background-color: rgb(245,245,245);">
+  <div class="center-content" >
       <a-row :gutter="24">
         <a-col :span="6">
           <a-card>
@@ -95,7 +95,7 @@
                 <span style="font-size: 15px;">流量分布</span>
               </div>
             </template>
-            <DateRadarChartVue  style="width:100%;height: 30vh;" />
+            <DateRadarChartVue class="pie-chart"/>
           </a-card>
         </a-col>
         <a-col :span="8">
@@ -105,7 +105,7 @@
                 <span style="font-size: 15px;">访问来源</span>
               </div>
             </template>
-              <DateCirclePie style="width:100%;height: 30vh;"/>
+              <DateCirclePie class="pie-chart"/>
           </a-card>
         </a-col>
         <a-col :span="8">
@@ -115,7 +115,7 @@
                 <span style="font-size: 15px;">用户占比</span>
               </div>
             </template>
-            <DateNightingaleChart style="width:100%;height: 30vh;"/>
+            <DateNightingaleChart class="pie-chart"/>
           </a-card>
         </a-col>
       </a-row>
@@ -208,4 +208,8 @@
   margin: 20px;
 }
 
+.pie-chart{
+  width:100%;
+  height: 50vh;
+}
 </style>

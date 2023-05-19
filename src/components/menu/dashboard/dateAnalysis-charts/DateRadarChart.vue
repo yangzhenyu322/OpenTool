@@ -20,7 +20,7 @@
             },
             radar: {
                 shape: 'circle',
-                center: ['50%','46%'],
+                center: ['48%','48%'],
                 axisName: {
                     color: 'black'
                 },

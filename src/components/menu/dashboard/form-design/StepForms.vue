@@ -3,7 +3,7 @@
         <span>基于贝叶斯网络的仿真数据关联性分析</span>
     </a-page-header>
 
-    <div class="center-content">
+    <div class="center-content" style="background-color: white;">
         <a-steps :current="current">
         <a-step v-for="item in steps" :key="item.title" :title="item.title" />
         </a-steps>

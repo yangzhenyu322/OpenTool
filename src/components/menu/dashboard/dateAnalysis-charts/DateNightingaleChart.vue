@@ -12,7 +12,7 @@ export default defineComponent({
     const state = reactive({
       option: {
         legend: {
-            top: 'bottom'
+            bottom:0,
         },
         tooltip: {
             trigger: 'item'
@@ -30,13 +30,13 @@ export default defineComponent({
             {
             name: '用户占比',
             type: 'pie',
-            radius: [20,140],
-            center: ['50%', '46%'],
+            radius: ['7%','60%'],
+            center: ['50%', '50%'],
             roseType: 'radius',
             data: [
                 { value: 36, name: '游客' },
                 { value: 27, name: '普通用户' },
-                { value: 17, name: 'VIP用户' },
+                { value: 17, name: 'VIP' },
                 { value: 11, name: '管理员' },
                 { value: 4, name: '超级管理员' },
             ]

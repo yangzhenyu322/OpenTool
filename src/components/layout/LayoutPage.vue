@@ -443,7 +443,6 @@
 
   /* 中心展示div样式 */
   .center-content{
-      background-color: white;
       margin: 15px 15px auto 15px;
       padding: 15px;
       padding-bottom: auto;

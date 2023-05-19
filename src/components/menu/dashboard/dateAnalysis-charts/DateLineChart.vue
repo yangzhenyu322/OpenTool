@@ -41,7 +41,9 @@ export default defineComponent({
           left: '3%',
           right: '4%',
           bottom: '3%',
-          containLabel: true
+          containLabel: true,
+          show: true,
+          backgroundColor: 'rgb(249,249,249)'
         },
         xAxis: [
           {
@@ -52,7 +54,8 @@ export default defineComponent({
         ],
         yAxis: [
           {
-            type: 'value'
+            type: 'value',
+            // boundaryGap: [0,'30%']
           }
         ],
         series: [
@@ -70,11 +73,11 @@ export default defineComponent({
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 {
                   offset: 0,
-                  color: 'rgba(128, 255, 165,1)'
+                  color: 'rgba(128, 255, 165,0.4)'
                 },
                 {
                   offset: 1,
-                  color: 'rgba(1, 191, 236,0.5)'
+                  color: 'rgba(1, 191, 236,0.8)'
                 }
               ])
             },
@@ -97,11 +100,11 @@ export default defineComponent({
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 {
                   offset: 0,
-                  color: 'rgba(0, 221, 255,1)'
+                  color: 'rgba(0, 221, 255,0.4)'
                 },
                 {
                   offset: 1,
-                  color: 'rgba(77, 119, 255,0.5)'
+                  color: 'rgba(77, 119, 255,0.8)'
                 }
               ])
             },
@@ -124,11 +127,11 @@ export default defineComponent({
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 {
                   offset: 0,
-                  color: 'rgba(255, 0, 135,1)'
+                  color: 'rgba(255, 0, 135,0.4)'
                 },
                 {
                   offset: 1,
-                  color: 'rgba(135, 0, 157,0.5)'
+                  color: 'rgba(135, 0, 157,0.8)'
                 }
               ])
             },
@@ -155,11 +158,11 @@ export default defineComponent({
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 {
                   offset: 0,
-                  color: 'rgba(255, 191, 0,1)'
+                  color: 'rgba(255, 191, 0,0.4)'
                 },
                 {
                   offset: 1,
-                  color: 'rgba(224, 62, 76,0.5)'
+                  color: 'rgba(224, 62, 76,0.8)'
                 }
               ])
             },
