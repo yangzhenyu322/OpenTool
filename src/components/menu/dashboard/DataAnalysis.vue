@@ -83,11 +83,11 @@
           <a-radio-button value="dataList">数据列表</a-radio-button>
         </a-radio-group>
 
-        <DateLineChartVue v-if="dataShow == 'trendChart'" style="width:98%;height: 40vh;margin-top: 2vh;" :times="times" />
-        <DateBarChart v-if="dataShow == 'dataList'" style="width:98%;height: 40vh;margin-top: 2vh;" :times="times" />
+        <DateLineChartVue v-if="dataShow == 'trendChart'" style="width:98%;height: 350px;margin-top: 10px;" :times="times" />
+        <DateBarChart v-if="dataShow == 'dataList'" style="width:98%;height: 350px;margin-top: 10px;" :times="times" />
       </div>
 
-      <a-row :gutter="20" style="margin-top: 2vh;">
+      <a-row :gutter="20" style="margin-top: 15px;">
         <a-col :span="8">
           <a-card>
             <template #title>
@@ -189,8 +189,8 @@
 .show-item{
   display: flex;
   justify-content: space-between;
-  padding-left: 2vh;
-  padding-right: 2vh;
+  padding-left: 2%;
+  padding-right: 2%;
 }
 .show-logo{
   font-size: 50px;
@@ -210,6 +210,6 @@
 
 .pie-chart{
   width:100%;
-  height: 50vh;
+  height: 350px;
 }
 </style>

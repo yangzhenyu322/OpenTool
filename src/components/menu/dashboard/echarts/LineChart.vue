@@ -7,7 +7,7 @@
 <script>
   import { defineComponent, toRefs, reactive, onMounted } from 'vue'
   import * as echarts from 'echarts'
-  import TestJson from '@/assets/data/aqi-beijing.json'
+  import TestJson from '@/assets/json/aqi-beijing.json'
   
   export default defineComponent({
     setup() {

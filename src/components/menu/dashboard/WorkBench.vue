@@ -34,7 +34,7 @@
     <div class="center-content" >
         <a-row :gutter="10">
             <a-col span="18">
-                <a-tabs v-model:activeKy="activeKey" size="small" style="background-color: white;padding: 2%;">
+                <a-tabs v-model:activeKey="activeKey" size="small" style="background-color: white;padding: 2%;">
                     <a-tab-pane key="1" tab="服务">服务</a-tab-pane>
                     <a-tab-pane key="2" tab="文章">文章</a-tab-pane>
                     <a-tab-pane key="3" tab="项目">项目</a-tab-pane>
@@ -47,13 +47,92 @@
                     title="个人成就"
                     style="text-align: left;"
                     >
-                        <div style="font-size: 1.2em;">
+                        <div class="achievement" style="font-size: 1.2em;">
                             <p><LikeTwoTone twoToneColor="rgb(228,92,92)"/> 获得 96 次点赞</p>
                             <p><MessageTwoTone twoToneColor="rgb(69,122,213)"/> 内容获得 42 次评论</p>
                             <p><StarTwoTone twoToneColor="rgb(241,178,38)"/> 获得 436 次收藏</p>
                             <p><RocketTwoTone twoToneColor="rgb(74,147,190)"/> 代码片获得 1,457 次分享</p>
+
+                            <a-divider orientation="left"><ScheduleOutlined /> 创作经历</a-divider>
+                            <div style="background-color: rgb(250,250,250);padding: 10px;">
+                                <a-row :gutter="10">
+                                    <a-col :span="6">
+                                        <p class="achievement-creation-numbers">7篇</p>
+                                        <p class="achievement-creation-years">2023年</p>
+                                    </a-col>
+                                    <a-col :span="6">
+                                        <p class="achievement-creation-numbers">3篇</p>
+                                        <p class="achievement-creation-years">2022年</p>
+                                    </a-col>
+                                    <a-col :span="6">
+                                        <p class="achievement-creation-numbers">40篇</p>
+                                        <p class="achievement-creation-years">2021年</p>
+                                    </a-col>
+                                    <a-col :span="6">
+                                        <p class="achievement-creation-numbers">1篇</p>
+                                        <p class="achievement-creation-years">2020年</p>
+                                    </a-col>
+                                </a-row>
+                            </div>
+
+                            <a-divider orientation="left"><GithubOutlined /> 开源项目</a-divider>
+                            <div style="background-color: rgb(250,250,250);padding: 10px;">
+                                <a-row :gutter="10">
+                                    <a-col :span="6">
+                                        <p class="achievement-creation-numbers">1个</p>
+                                        <p class="achievement-creation-years">2023年</p>
+                                    </a-col>
+                                    <a-col :span="6">
+                                        <p class="achievement-creation-numbers">3个</p>
+                                        <p class="achievement-creation-years">2022年</p>
+                                    </a-col>
+                                    <a-col :span="6">
+                                        <p class="achievement-creation-numbers">2个</p>
+                                        <p class="achievement-creation-years">2021年</p>
+                                    </a-col>
+                                    <a-col :span="6">
+                                        <p class="achievement-creation-numbers">1个</p>
+                                        <p class="achievement-creation-years">2020年</p>
+                                    </a-col>
+                                </a-row>
+                            </div>
+
+                            <a-divider orientation="left"><SketchOutlined /> 成就勋章</a-divider>
+                            <div style="font-size:34px;">
+                                <svg class="icon">
+                                    <use xlink:href="#icon-wode-gerenchengjiu"></use>
+                                </svg>
+                                <svg class="icon">
+                                    <use xlink:href="#icon-lianxutianshu-pt-dianliang-xiao4"></use>
+                                </svg>
+                                <svg class="icon">
+                                    <use xlink:href="#icon-ewairenwuchengjiutian"></use>
+                                </svg>
+                                <svg class="icon">
+                                    <use xlink:href="#icon-caise-xiaoci"></use>
+                                </svg>
+                                <svg class="icon">
+                                    <use xlink:href="#icon-caise-datubiao"></use>
+                                </svg>
+                                <svg class="icon">
+                                    <use xlink:href="#icon-caisebeijing"></use>
+                                </svg>
+                                <svg class="icon">
+                                    <use xlink:href="#icon-caisechengdu"></use>
+                                </svg>
+                                <svg class="icon">
+                                    <use xlink:href="#icon-caisejinan"></use>
+                                </svg>
+                            </div>                            
                         </div>
+
+                        
                     </a-card>
+                </div>
+                <!-- 阿里图表动态库-工作动态图 -->
+                <div style="background-color: white;margin-top: 15px;">
+                    <div style="width: 100%;" ref="programmer">
+                    </div>
                 </div>
             </a-col>
         </a-row>
@@ -61,17 +140,34 @@
 </template>
 
 <script>
-import { defineComponent, reactive, toRefs } from 'vue';
+import { defineComponent, ref, reactive, toRefs, onMounted } from 'vue';
 import avatarUrl from '@/assets/images/head-photo/touxiang.png';
+import lottie from 'lottie-web'
+import json001 from '@/assets/json/programmer.json' // 引入下载的动效json
 
 export default defineComponent({
 setup() {
     const state = reactive({
-    avatarUrl: avatarUrl
+        activeKey: '1',
+        avatarUrl: avatarUrl
+    })
+
+    const programmer = ref(null) //获取dom
+
+    onMounted(() => {
+        const animation =  lottie.loadAnimation({
+            container: programmer.value, //选择渲染dom
+            renderer: "svg", //渲染格式
+            loop: true, //循环播放
+            autoplay: true, // 是否自动播放
+            animationData: json001, //渲染动效json
+        })
+        animation.setSpeed(0.5)
     })
 
     return {
-    ...toRefs(state)
+        ...toRefs(state),
+        programmer
     };
 },
 
@@ -88,5 +184,20 @@ setup() {
 .header-text-right-sub2{
     font-size: 26px;
     line-height: 0px;
+}
+.achievement p{
+    margin-top: 0;
+    margin-bottom: 4%;
+}
+
+.achievement-creation-numbers{
+    font-size: 15px;
+    font-weight: 500;
+}
+.achievement-creation-years{
+    color: gray;
+}
+.icon{
+    margin-left: 3%;
 }
 </style>

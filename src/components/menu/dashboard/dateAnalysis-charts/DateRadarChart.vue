@@ -25,12 +25,12 @@
                     color: 'black'
                 },
                 indicator: [
-                { name: '电脑', max: 6500 },
-                { name: '手机', max: 16000 },
-                { name: 'ipad', max: 30000 },
-                { name: 'CSDN', max: 38000 },
-                { name: 'Github', max: 52000 },
-                { name: '哔哩哔哩', max: 25000 }
+                { name: '电脑'},
+                { name: '手机'},
+                { name: 'ipad'},
+                { name: 'CSDN'},
+                { name: 'Github'},
+                { name: '哔哩哔哩'}
                 ],
             },
             series: [
