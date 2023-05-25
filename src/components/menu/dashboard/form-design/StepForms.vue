@@ -5,7 +5,7 @@
 
     <div class="center-content" style="background-color: white;">
         <a-steps :current="current">
-        <a-step v-for="item in steps" :key="item.title" :title="item.title" />
+            <a-step v-for="item in steps" :key="item.title" :title="item.title" />
         </a-steps>
         <div class="steps-content" style="width: 100%;min-height: 300px;margin-top: 70px;">
             <StepOne  v-if="current == 0" @submit="onSubmit" />

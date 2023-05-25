@@ -31,7 +31,7 @@ export default defineComponent({
             name: '用户占比',
             type: 'pie',
             radius: ['7%','60%'],
-            center: ['50%', '50%'],
+            center: ['50%', '40%'],
             roseType: 'radius',
             data: [
                 { value: 36, name: '游客' },

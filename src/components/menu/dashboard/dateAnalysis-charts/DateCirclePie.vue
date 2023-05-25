@@ -26,7 +26,7 @@ export default defineComponent({
             name: '访问来源',
             type: 'pie',
             radius: ['40%', '70%'],
-            center: ['50%','50%'],
+            center: ['50%','40%'],
             avoidLabelOverlap: false,
             itemStyle: {
                 borderRadius: 10,
