@@ -1,10 +1,14 @@
 <template>
-    <h1>MarkDown</h1>
+    <CherryMarkDown style="height:85vh;text-align: left;" />
 </template>
 
 <script>
-    import { defineComponent } from 'vue'
+import { defineComponent } from 'vue'
+import CherryMarkDown from './markdowneditor/CherryMarkDown.vue';
 
-    export default defineComponent({
-    })
+export default defineComponent({
+  components: { CherryMarkDown },
+  setup(){
+  }
+})
 </script>

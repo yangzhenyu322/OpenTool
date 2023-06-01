@@ -11,6 +11,8 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
     "ant-design-vue": "^4.0.0-beta.4",
+    "axios": "^1.4.0",
+    "cherry-markdown": "^0.8.20",
     "echarts": "^5.4.2",
     "element-plus": "^2.3.4",
     "leader-line": "^1.0.7",
