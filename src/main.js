@@ -10,7 +10,8 @@ import i18n from './lang'
 import './assets/icons/iconfont.css'
 import './assets/icons/iconfont'
 import 'cherry-markdown/dist/cherry-markdown.css'
-import 'cherry-markdown/dist/cherry-markdown.js'
+// import 'cherry-markdown/dist/cherry-markdown.js'
+import '@wangeditor/editor/dist/css/style.css'
 
 const app = createApp(App)
 // 注册ant-design组件

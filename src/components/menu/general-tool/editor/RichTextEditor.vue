@@ -1,10 +1,14 @@
 <template>
-    <h1>富文本编辑器</h1>
+    <WangRichEditor />
 </template>
 
 <script>
-    import { defineComponent } from 'vue'
+import { defineComponent } from 'vue'
+import WangRichEditor from './wangEditor/WangRichEditor.vue';
 
-    export default defineComponent({
-    })
+export default defineComponent({
+    components:{
+        WangRichEditor
+    }
+})
 </script>
