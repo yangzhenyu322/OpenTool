@@ -13,7 +13,7 @@
                 <BankTwoTone class="show-logo"  twoToneColor="#00CED1" />
                 <div style="line-height: 10px;">
                   <div class="show-text">总访问数</div>
-                  <span class="show-num">112,700</span>
+                  <span class="show-num" v-if="accessData">{{ formatNumber(accessData.accessNum) }}</span>
                 </div>
               </div>
           </a-card>
@@ -30,7 +30,7 @@
                 <IdcardTwoTone class="show-logo" twoToneColor="#ADFF2F"/>
                 <div style="line-height: 10px;">
                   <div class="show-text">总用户数</div>
-                  <span class="show-num">201,617</span>
+                  <span class="show-num" v-if="accessData">{{ formatNumber(accessData.userNum) }}</span>
                 </div>
               </div>
           </a-card>
@@ -47,7 +47,7 @@
                 <HeartTwoTone class="show-logo"  twoToneColor="#FFD700"/>
                 <div style="line-height: 10px;">
                   <div class="show-text">总收藏数</div>
-                  <span class="show-num">8,790</span>
+                  <span class="show-num" v-if="accessData">{{ formatNumber(accessData.collectNum) }}</span>
                 </div>
               </div>
           </a-card>
@@ -64,7 +64,7 @@
                 <CrownTwoTone class="show-logo" twoToneColor="#800080"/>
                 <div style="line-height: 10px;">
                   <div class="show-text">总贡献数</div>
-                  <span class="show-num">13,860</span>
+                  <span class="show-num" v-if="accessData">{{ formatNumber(accessData.contributionNum) }}</span>
                 </div>
               </div>
           </a-card>
@@ -125,12 +125,13 @@
 </template>
 
 <script>
-  import { defineComponent, reactive, toRefs } from 'vue'
+  import { defineComponent, ref, reactive, toRefs, onMounted } from 'vue'
   import DateLineChartVue from './dateAnalysis-charts/DateLineChart.vue';
   import DateBarChart from './dateAnalysis-charts/DateBarChart.vue';
   import DateRadarChartVue from './dateAnalysis-charts/DateRadarChart.vue';
   import DateCirclePie from './dateAnalysis-charts/DateCirclePie.vue';
   import DateNightingaleChart from './dateAnalysis-charts/DateNightingaleChart.vue';
+  import axios from 'axios'
 
   export default defineComponent({
     components:{
@@ -138,9 +139,11 @@
       DateBarChart,
       DateRadarChartVue,
       DateCirclePie,
-      DateNightingaleChart
+      DateNightingaleChart,
     },
     setup() {
+      const accessData = ref(null)
+
       const currentDate = new Date();
       const oneDayMillisseconds = 24 * 60 * 60 * 1000;
       const previousWeekDate = new Date(currentDate.getTime() - oneDayMillisseconds * 6)
@@ -170,8 +173,25 @@
         state.times.push(`${tempMonth}-${tempDay}`)
       }
 
+      const getAccessData = () => {
+        axios.get('/data-analysis/data')
+          .then(res => {
+              accessData.value = res.data.data;
+          })
+          .catch(err => {
+              console.error(err);
+          })
+      }
+      getAccessData()
+
+      const formatNumber = (value) => {
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      };
+
       return{
         ...toRefs(state),
+        accessData,
+        formatNumber
       }
     }
   })
