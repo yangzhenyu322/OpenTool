@@ -3,18 +3,25 @@
 </template>
 
 <script>
-import { defineComponent, toRefs, ref, reactive, onMounted } from 'vue'
+import { defineComponent,  reactive, onMounted, watch } from 'vue'
 import * as echarts from 'echarts'
 
 export default defineComponent({
   props:{
-    startTime : String,
-    times: Array
+    times: Array,
+    accessData: Array
   },
   setup(props) {
-    const times = ref(props.times)
+    // const times = ref(props.times)
+    // const accessData = ref(props.accessData)
+
     const state = reactive({
-      option : {
+      times: props.times,
+      accessData: props.accessData
+    })
+
+    const getOption = (times, accessData)=> {
+      var option = {
         color: ['rgba(142,241,207,1)', 'rgb(79,185,253,1)', 'rgba(183,53,171,1)', 'rgba(251,188,61,1)'],
         title: {
           text: '流量趋势',
@@ -84,7 +91,7 @@ export default defineComponent({
             emphasis: {
               focus: 'series'
             },
-            data: [140, 232, 101, 264, 90, 340, 250]
+            data: accessData[0]
           },
           {
             name: '用户数',
@@ -111,7 +118,7 @@ export default defineComponent({
             emphasis: {
               focus: 'series'
             },
-            data: [120, 282, 111, 234, 220, 340, 310]
+            data: accessData[1]
           },
           {
             name: '收藏数',
@@ -138,7 +145,7 @@ export default defineComponent({
             emphasis: {
               focus: 'series'
             },
-            data: [220, 402, 231, 134, 190, 230, 120]
+            data: accessData[2]
           },
           {
             name: '贡献数',
@@ -169,18 +176,20 @@ export default defineComponent({
             emphasis: {
               focus: 'series'
             },
-            data: [220, 302, 181, 234, 210, 290, 150]
+            data: accessData[3]
           }
         ]
       }
-    })
 
+      return option
+    }
+    
     var myChart;
 
     const initeCharts = () => {
       myChart = echarts.init(document.getElementById('dateLineChart'))
       // 绘制图表
-      myChart.setOption(state.option)
+      myChart.setOption(getOption(state.times, state.accessData))
     }
     
     onMounted(() => {
@@ -192,8 +201,15 @@ export default defineComponent({
       myChart.resize()
     })
 
+    // 监听props.accessData的值，当其改变时更新myChart
+    watch(()=> props.accessData, () => {
+      state.times = props.times
+      state.accessData = props.accessData
+
+      myChart.setOption(getOption(state.times, state.accessData))
+    })
+
     return {
-      ...toRefs(state),
     }
   },
 })

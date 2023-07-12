@@ -3,18 +3,22 @@
 </template>
 
 <script>
-import { defineComponent, toRefs, ref, reactive, onMounted } from 'vue'
+import { defineComponent, reactive, onMounted, watch } from 'vue'
 import * as echarts from 'echarts'
 
 export default defineComponent({
   props:{
-    times: Array
+    times: Array,
+    accessData: Array
   },
   setup(props) {
-    const times = ref(props.times)
-
     const state = reactive({
-      option: {
+      times: props.times,
+      accessData: props.accessData
+    })
+
+    const getOption = (state) => {
+      var option = {
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -34,7 +38,7 @@ export default defineComponent({
         },
         yAxis: {
           type: 'category',
-          data: times
+          data: state.times
         },
         series: [
           {
@@ -47,7 +51,7 @@ export default defineComponent({
             emphasis: {
               focus: 'series'
             },
-            data: [120, 132, 101, 134, 90, 230, 210]
+            data: state.accessData[0]
           },
           {
             name: '用户数',
@@ -59,7 +63,7 @@ export default defineComponent({
             emphasis: {
               focus: 'series'
             },
-            data: [220, 182, 191, 234, 290, 330, 310]
+            data: state.accessData[1]
           },
           {
             name: '收藏数',
@@ -71,7 +75,7 @@ export default defineComponent({
             emphasis: {
               focus: 'series'
             },
-            data: [150, 212, 201, 154, 190, 330, 410]
+            data: state.accessData[2]
           },
           {
             name: '贡献数',
@@ -83,18 +87,20 @@ export default defineComponent({
             emphasis: {
               focus: 'series'
             },
-            data: [820, 832, 901, 934, 1290, 1330, 1320]
+            data: state.accessData[3]
           }
         ]
-      },
-    })
+      }
+
+      return option
+    }
 
     var myChart;
 
     const initeCharts = () => {
       myChart = echarts.init(document.getElementById('dateBarChart'))
       // 绘制图表
-      myChart.setOption(state.option)
+      myChart.setOption(getOption(state))
     }
     
     onMounted(() => {
@@ -106,8 +112,15 @@ export default defineComponent({
       myChart.resize()
     })
 
+    // option参数更新时更新图表值
+    watch(()=> props.accessData, () => {
+      state.times = props.times
+      state.accessData = props.accessData
+
+      myChart.setOption(getOption(state))
+    })
+
     return {
-      ...toRefs(state),
     }
   },
 })

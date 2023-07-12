@@ -5,13 +5,17 @@
 </template>
 
 <script>
-import { defineComponent, toRefs, reactive, onMounted } from 'vue'
+import { defineComponent, reactive, onMounted } from 'vue'
 import * as echarts from 'echarts'
 
 export default defineComponent({
   setup() {
     const state = reactive({
-      option: {
+
+    })
+
+    const getOption = (state) => {
+      var option = {
         grid: {
           top: '4%',
           left: '2%',
@@ -42,15 +46,18 @@ export default defineComponent({
             data: [260,680,360,460,150,320],
           },
         ],
-      },
-    })
+      }
+
+      return option
+    }
+
 
     var myChart;
 
     const initeCharts = () => {
       myChart = echarts.init(document.getElementById('sampleChart'))
       // 绘制图表
-      myChart.setOption(state.option)
+      myChart.setOption(getOption(state))
     }
     
     onMounted(() => {
@@ -63,7 +70,6 @@ export default defineComponent({
     })
 
     return {
-      ...toRefs(state),
     }
   },
 })
