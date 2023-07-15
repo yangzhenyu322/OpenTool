@@ -148,7 +148,7 @@
       // 1、网站运营数据统计
       const operationDate = ref(null)
       const getOperationDataAPI = () => {
-        axios.get(`/data-analysis/operation`)
+        axios.get(`/dashboard/data-analysis/operation`)
           .then(res => {
               operationDate.value = res.data.data;
           })
@@ -201,7 +201,7 @@
 
       // 从后台请求accessData数据
       const getDataByDateRangeAPI = (startTime, endTime)=> {
-        axios.get(`/data-analysis/date/${startTime}/${endTime}`)
+        axios.get(`/dashboard/data-analysis/date/${startTime}/${endTime}`)
           .then(res => {
               state.accessData = []
               const dataRes = []

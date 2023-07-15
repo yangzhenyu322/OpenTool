@@ -6,6 +6,55 @@
   "description": "开源工具库",
   "glyphs": [
     {
+      "icon_id": "5128956",
+      "name": "天气-雷阵雨",
+      "font_class": "tianqi-leizhenyu",
+      "unicode": "e67b",
+      "unicode_decimal": 59003
+    },
+    {
+      "icon_id": "5870840",
+      "name": "天气-晴",
+      "font_class": "tianqi-qing",
+      "unicode": "e61b",
+      "unicode_decimal": 58907
+    },
+    {
+      "icon_id": "7556836",
+      "name": "天气-多云",
+      "font_class": "tianqi-duoyun",
+      "unicode": "e626",
+      "unicode_decimal": 58918
+    },
+    {
+      "icon_id": "7568271",
+      "name": "天气-小雨",
+      "font_class": "tianqi-xiaoyu",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
+      "icon_id": "7569505",
+      "name": "天气-阴",
+      "font_class": "tianqi-yin",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
+      "icon_id": "7571594",
+      "name": "天气-中雨",
+      "font_class": "tianqi-zhongyu",
+      "unicode": "e636",
+      "unicode_decimal": 58934
+    },
+    {
+      "icon_id": "7573355",
+      "name": "天气-大暴雨",
+      "font_class": "tianqi-dabaoyu",
+      "unicode": "e63a",
+      "unicode_decimal": 58938
+    },
+    {
       "icon_id": "3240316",
       "name": "我的-个人成就",
       "font_class": "wode-gerenchengjiu",

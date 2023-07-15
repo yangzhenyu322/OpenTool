@@ -10,7 +10,11 @@ export default defineComponent({
   name: 'CustomPie',
   setup() {
     const state = reactive({
-      option: {
+      
+    })
+
+    const getOption = (state) => {
+      var option = {
         legend: {
             bottom:0,
         },
@@ -41,16 +45,17 @@ export default defineComponent({
                 { value: 4, name: '超级管理员' },
             ]
             }
-        ]
-},
-    })
+        ]}
+
+      return option
+    }
 
     var myChart;
 
     const initeCharts = () => {
       myChart = echarts.init(document.getElementById('dateNightingalePieChart'))
       // 绘制图表
-      myChart.setOption(state.option)
+      myChart.setOption(getOption(state))
     }
     
     onMounted(() => {

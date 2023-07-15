@@ -1,13 +1,13 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4078794 */
-  src: url('iconfont.woff2?t=1684658688660') format('woff2'),
-       url('iconfont.woff?t=1684658688660') format('woff'),
-       url('iconfont.ttf?t=1684658688660') format('truetype');
+  src: url('iconfont.woff2?t=1689407789421') format('woff2'),
+       url('iconfont.woff?t=1689407789421') format('woff'),
+       url('iconfont.ttf?t=1689407789421') format('truetype');
 }
 
 .iconfont {
   font-family: "iconfont" !important;
-  font-size: 32px;
+  font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -20,6 +20,34 @@
   vertical-align: -0.15em;
   fill: currentColor;
   overflow: hidden;
+}
+
+.icon-tianqi-leizhenyu:before {
+  content: "\e67b";
+}
+
+.icon-tianqi-qing:before {
+  content: "\e61b";
+}
+
+.icon-tianqi-duoyun:before {
+  content: "\e626";
+}
+
+.icon-tianqi-xiaoyu:before {
+  content: "\e628";
+}
+
+.icon-tianqi-yin:before {
+  content: "\e62b";
+}
+
+.icon-tianqi-zhongyu:before {
+  content: "\e636";
+}
+
+.icon-tianqi-dabaoyu:before {
+  content: "\e63a";
 }
 
 .icon-wode-gerenchengjiu:before {

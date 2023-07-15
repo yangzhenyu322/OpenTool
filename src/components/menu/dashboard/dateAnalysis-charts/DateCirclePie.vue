@@ -10,7 +10,11 @@ export default defineComponent({
   name: 'CustomPie',
   setup() {
     const state = reactive({
-      option: {
+
+    })
+
+    const getOption = (state) => {
+      var option = {
         tooltip: {
             trigger: 'item',
             textStyle: {
@@ -55,16 +59,17 @@ export default defineComponent({
                 { value: 300, name: '广告联盟' }
             ]
             }
-        ]
-        },
-    })
+        ]}
+
+        return option
+    }
 
     var myChart;
 
     const initeCharts = () => {
       myChart = echarts.init(document.getElementById('dateCirclePieChart'))
       // 绘制图表
-      myChart.setOption(state.option)
+      myChart.setOption(getOption(state))
     }
     
     onMounted(() => {

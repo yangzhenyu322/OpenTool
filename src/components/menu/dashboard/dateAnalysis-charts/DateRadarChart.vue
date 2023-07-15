@@ -8,19 +8,23 @@
   
   export default defineComponent({
     setup() {
+      
       const state = reactive({
-        option: {
+      })
+
+      const getOption = (state) => {
+        var option = {
             color: ['#FFE434','#00F9D8'],
             legend: {
                 data: ['访问', '用户'],
-                bottom: 0
+                bottom: -5
             },
             tooltip: {
                 trigger: 'item'
             },
             radar: {
                 shape: 'circle',
-                center: ['48%','40%'],
+                center: ['48%','47%'],
                 axisName: {
                     color: 'black'
                 },
@@ -56,14 +60,16 @@
                 }
             ]
         }
-      })
+
+        return option
+      }
   
       var myChart;
   
       const initeCharts = () => {
         myChart = echarts.init(document.getElementById('dateRadarChart'))
         // 绘制图表
-        myChart.setOption(state.option)
+        myChart.setOption(getOption(state))
       }
       
       onMounted(() => {

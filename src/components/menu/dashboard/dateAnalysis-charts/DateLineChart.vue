@@ -20,7 +20,7 @@ export default defineComponent({
       accessData: props.accessData
     })
 
-    const getOption = (times, accessData)=> {
+    const getOption = (state)=> {
       var option = {
         color: ['rgba(142,241,207,1)', 'rgb(79,185,253,1)', 'rgba(183,53,171,1)', 'rgba(251,188,61,1)'],
         title: {
@@ -56,7 +56,7 @@ export default defineComponent({
           {
             type: 'category',
             boundaryGap: false,
-            data: times
+            data: state.times
           }
         ],
         yAxis: [
@@ -91,7 +91,7 @@ export default defineComponent({
             emphasis: {
               focus: 'series'
             },
-            data: accessData[0]
+            data: state.accessData[0]
           },
           {
             name: '用户数',
@@ -118,7 +118,7 @@ export default defineComponent({
             emphasis: {
               focus: 'series'
             },
-            data: accessData[1]
+            data: state.accessData[1]
           },
           {
             name: '收藏数',
@@ -145,7 +145,7 @@ export default defineComponent({
             emphasis: {
               focus: 'series'
             },
-            data: accessData[2]
+            data: state.accessData[2]
           },
           {
             name: '贡献数',
@@ -176,7 +176,7 @@ export default defineComponent({
             emphasis: {
               focus: 'series'
             },
-            data: accessData[3]
+            data: state.accessData[3]
           }
         ]
       }
@@ -189,7 +189,7 @@ export default defineComponent({
     const initeCharts = () => {
       myChart = echarts.init(document.getElementById('dateLineChart'))
       // 绘制图表
-      myChart.setOption(getOption(state.times, state.accessData))
+      myChart.setOption(getOption(state))
     }
     
     onMounted(() => {
@@ -206,7 +206,7 @@ export default defineComponent({
       state.times = props.times
       state.accessData = props.accessData
 
-      myChart.setOption(getOption(state.times, state.accessData))
+      myChart.setOption(getOption(state))
     })
 
     return {

@@ -8,8 +8,31 @@
             <div style="margin-left:10px;text-align: left;">
                 <p style="font-size: 20px;font-weight: 500;line-height: 20px;margin-bottom: 0;"><span style="font-weight: bold;">Admin</span>, 欢迎回来, 开始您愉快的一天吧！</p>
                 <p style="font-size: 14px;color: grey;display: inline-flex;align-items: center;">
-                    <el-link type="primary" :underline="false" ><EnvironmentFilled style="color: cornflowerblue;" />湖南省长沙市</el-link>
-                    <span style="">&nbsp;&nbsp;天气晴<FireFilled style="color:crimson;" />, 20℃~32℃</span>
+                    <el-link type="primary" :underline="false" ><EnvironmentFilled style="color: cornflowerblue;" />{{ location }}</el-link>
+                    <span style="white-space: nowrap">&nbsp;&nbsp;{{ weather }}
+                        <svg class="icon weather" v-if="weather == '晴'">
+                            <use xlink:href="#icon-tianqi-qing"></use>
+                        </svg>
+                        <svg class="icon weather" v-if="weather == '阴'">
+                            <use xlink:href="#icon-tianqi-yin"></use>
+                        </svg>
+                        <svg class="icon weather" v-if="weather == '多云'">
+                            <use xlink:href="#icon-tianqi-duoyun"></use>
+                        </svg>
+                        <svg class="icon weather" v-if="weather == '小雨'">
+                            <use xlink:href="#icon-tianqi-xiaoyu"></use>
+                        </svg>
+                        <svg class="icon weather" v-if="weather == '中雨'">
+                            <use xlink:href="#icon-tianqi-zhongyu"></use>
+                        </svg>
+                        <svg class="icon weather" v-if="weather == '大雨'">
+                            <use xlink:href="#icon-tianqi-dabaoyu"></use>
+                        </svg>
+                        <svg class="icon weather" v-if="weather == '雷阵雨'">
+                            <use xlink:href="#icon-tianqi-leizhenyu"></use>
+                        </svg>
+                        &nbsp;&nbsp;{{ temperature }}℃
+                    </span>
                 </p>
             </div>
         </div>
@@ -153,11 +176,12 @@
 </template>
 
 <script>
-import { defineComponent, ref, reactive, toRefs, onMounted } from 'vue';
+import { defineComponent, reactive, toRefs, onMounted } from 'vue';
 import avatarUrl from '@/assets/images/head-photo/touxiang.png';
 import lottie from 'lottie-web'
 import json001 from '@/assets/json/programmer.json' // 引入下载的动效json
 import ServiceListVue from './description-list/ServiceList.vue';
+import axios from 'axios';
 
 export default defineComponent({
 components:{
@@ -168,13 +192,62 @@ setup() {
         activeKey: '1',
         avatarUrl: avatarUrl,
         isCollapsed: true,
+        ip : '',
+        city: '',
+        location: '',
+        temperature: '',
+        weather: '',
+        programmer: null
     })
 
-    const programmer = ref(null) //获取dom
+
+    // 控制成就栏高度伸缩
+    const changeAchievement = ()=> {
+        state.isCollapsed = !state.isCollapsed;
+        var expandableRightContent = document.getElementById("expandableRightContent");
+        expandableRightContent.style.display = state.isCollapsed ? 'none': 'block'
+    }
 
     onMounted(() => {
+        // 获取用户ip地址
+        const getUserIP = () => {
+            axios.get(`http://ip-api.com/json/`)
+                .then(res => {
+                    state.ip = res.data.query
+                    getLocation()
+                }).catch(err => {
+                    console.log(err)
+                })
+        }
+        getUserIP()
+
+        // 获取用户省市位置
+        const getLocation = () => {
+            axios.get(`/dashboard/users/location/${state.ip}`)
+                .then(res => {
+                    var ad_info = res.data.result.ad_info
+                    state.city = ad_info.city
+                    state.location = ad_info.province + ad_info.city + '-' + ad_info.district
+                    getWeatherByCity()
+                }).catch(err => {
+                    console.log(err)
+                })
+        }
+
+        // 获取用户所在城市天气
+        const getWeatherByCity = () => {
+            axios.get(`/dashboard/users/weather/${state.city}`)
+                .then(res => {
+                    state.temperature = res.data.lives[0].temperature
+                    state.weather = res.data.lives[0].weather
+                }).catch(err => {
+                    console.log(err)
+                })
+        }
+
+        // 控制动态图标库
         const animation =  lottie.loadAnimation({
-            container: programmer.value, //选择渲染dom
+            container: state.programmer, //选择渲染dom
             renderer: "svg", //渲染格式
             loop: true, //循环播放
             autoplay: true, // 是否自动播放
@@ -182,17 +255,9 @@ setup() {
         })
         animation.setSpeed(0.5)
     })
-
-    const changeAchievement = ()=> {
-        state.isCollapsed = !state.isCollapsed;
-        var expandableRightContent = document.getElementById("expandableRightContent");
-        expandableRightContent.style.display = state.isCollapsed ? 'none': 'block'
-        // expandableRightContent.style.height = state.isCollapsed ? 0 : ''
-    }
-
+    
     return {
         ...toRefs(state),
-        programmer,
         changeAchievement
     };
 },
@@ -210,6 +275,9 @@ setup() {
 .header-text-right-sub2{
     font-size: 26px;
     line-height: 0px;
+}
+.weather {
+    font-size: 15px;
 }
 .achievement p{
     margin-top: 0;

@@ -4,7 +4,6 @@ import router from './router'
 import Antd from 'ant-design-vue';
 import * as Icons from '@ant-design/icons-vue';
 import ElementPlus from 'element-plus'
-// import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'element-plus/dist/index.css'
 import i18n from './lang'
 import './assets/icons/iconfont.css'
