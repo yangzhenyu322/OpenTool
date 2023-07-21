@@ -61,9 +61,14 @@
                     <a-tab-pane key="1" tab="服务">
                         <ServiceListVue />
                     </a-tab-pane>
-                    <a-tab-pane key="2" tab="文章">文章</a-tab-pane>
-                    <a-tab-pane key="3" tab="项目">项目</a-tab-pane>
-                    <a-tab-pane key="4" tab="最新动态">最新动态</a-tab-pane>
+                    <a-tab-pane key="2" tab="用户">
+                        <UserListVue />
+                    </a-tab-pane>
+                    <a-tab-pane key="3" tab="文章">
+                        <PapaerList />
+                    </a-tab-pane>
+                    <a-tab-pane key="4" tab="项目">项目</a-tab-pane>
+                    <a-tab-pane key="5" tab="最新动态">最新动态</a-tab-pane>
                 </a-tabs>
             </a-col>
             <a-col span="6">
@@ -180,12 +185,16 @@ import { defineComponent, reactive, toRefs, onMounted } from 'vue';
 import avatarUrl from '@/assets/images/head-photo/touxiang.png';
 import lottie from 'lottie-web'
 import json001 from '@/assets/json/programmer.json' // 引入下载的动效json
-import ServiceListVue from './description-list/ServiceList.vue';
+import ServiceListVue from './workbench-tab-pane/ServiceList.vue';
+import UserListVue from './workbench-tab-pane/UserList.vue';
+import PapaerList from './workbench-tab-pane/PapaerList.vue';
 import axios from 'axios';
 
 export default defineComponent({
 components:{
-    ServiceListVue
+    ServiceListVue,
+    UserListVue,
+    PapaerList
 },
 setup() {
     const state = reactive({

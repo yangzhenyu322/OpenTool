@@ -37,10 +37,11 @@
           <a-tag
             :color="record.state === '正常' ? 'green' : 'volcano'"
           >
-            {{ record.state.toUpperCase() }}
+            {{ record.state }}
           </a-tag>
         </span>
       </template>
+
       <template v-else-if="column.key === 'action'">
         <span>
           <a class="edit-text">编辑</a>
