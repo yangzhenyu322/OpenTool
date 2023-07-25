@@ -232,7 +232,7 @@ setup() {
 
         // 获取用户省市位置
         const getLocation = () => {
-            axios.get(`/dashboard/users/location/${state.ip}`)
+            axios.get(`/user/location/${state.ip}`)
                 .then(res => {
                     var ad_info = res.data.result.ad_info
                     state.city = ad_info.city
@@ -245,7 +245,7 @@ setup() {
 
         // 获取用户所在城市天气
         const getWeatherByCity = () => {
-            axios.get(`/dashboard/users/weather/${state.city}`)
+            axios.get(`/user/weather/${state.city}`)
                 .then(res => {
                     state.temperature = res.data.lives[0].temperature
                     state.weather = res.data.lives[0].weather
@@ -286,7 +286,7 @@ setup() {
     line-height: 0px;
 }
 .weather {
-    font-size: 15px;
+    font-size: 20px;
 }
 .achievement p{
     margin-top: 0;

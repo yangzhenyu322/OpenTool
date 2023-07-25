@@ -173,7 +173,7 @@ export default defineComponent({
         const page = paginationConfig.value.current
         const size = paginationConfig.value.pageSize
 
-        const res = await axios.get(`/dashboard/users/${page}/${size}`)
+        const res = await axios.get(`/user/${page}/${size}`)
         const result = res.data
         paginationConfig.value.total = result.total
 
@@ -214,7 +214,7 @@ export default defineComponent({
 
     const updateUser = async (user) => {
       try {
-        const res = await axios.put(`/dashboard/users/`, user)
+        const res = await axios.put(`/user/`, user)
         console.log(res.data.msg)
       } catch (error) {
         console.error(error)
@@ -230,7 +230,7 @@ export default defineComponent({
     const deleteUser = async (id) => {
       try {
         // await 是用来等axios请求完成后执行try里面axios下面的语句，对于在外面函数的调用依然不是按顺序执行
-        const res = await axios.delete(`/dashboard/users/${id}`)
+        const res = await axios.delete(`/user/${id}`)
         console.log(`UID-${id}: ${res.data.msg}`)
         // 更新数据源
         getUserPageList()
