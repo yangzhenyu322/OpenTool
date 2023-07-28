@@ -10,10 +10,20 @@
     name: 'CustomPie',
     setup() {
       const state = reactive({
-        option: {
+        data: [
+          { value: 2700, name: '房租水电' },
+          { value: 1500, name: '饮食' },
+          { value: 1000, name: '公积金' },
+          { value: 500, name: '日常用品' },
+          { value: 1000, name: '社交娱乐' },
+        ],
+      })
+
+      const getOption = state => {
+        var option = {
             title: {
-                text: 'Referer of a Website',
-                subtext: 'Fake Data',
+                text: '月消费支出',
+                subtext: '收入支出',
                 left: 'center'
             },
             tooltip: {
@@ -28,13 +38,7 @@
                 name: 'Access From',
                 type: 'pie',
                 radius: '50%',
-                data: [
-                    { value: 1048, name: 'Search Engine' },
-                    { value: 735, name: 'Direct' },
-                    { value: 580, name: 'Email' },
-                    { value: 484, name: 'Union Ads' },
-                    { value: 300, name: 'Video Ads' }
-                ],
+                data: state.data,
                 emphasis: {
                     itemStyle: {
                     shadowBlur: 10,
@@ -44,15 +48,16 @@
                 }
                 }
             ]
-        },
-      })
+        }
+        return option
+      }
   
       var myChart;
   
       const initeCharts = () => {
         myChart = echarts.init(document.getElementById('customPieChart'))
         // 绘制图表
-        myChart.setOption(state.option)
+        myChart.setOption(getOption(state))
       }
       
       onMounted(() => {

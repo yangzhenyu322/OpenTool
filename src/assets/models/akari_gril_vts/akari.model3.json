@@ -1,0 +1,78 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "akari.moc3",
+		"Textures": [
+			"akari.4096/texture_00.png"
+		],
+		"Physics": "akari.physics3.json",
+		"UserData": "akari.userdata3.json",
+		"DisplayInfo": "akari.cdi3.json",
+		"Expressions": [
+			{
+				"Name": "EyesCry",
+				"File": "expressions/EyesCry.exp3.json"
+			},
+			{
+				"Name": "EyesLove",
+				"File": "expressions/EyesLove.exp3.json"
+			},
+			{
+				"Name": "SignAngry",
+				"File": "expressions/SignAngry.exp3.json"
+			},
+			{
+				"Name": "SignShock",
+				"File": "expressions/SignShock.exp3.json"
+			}
+		],
+		"Motions": {
+			"Idle_2": [ 
+				{
+					"File": "animations/Idle_2.motion3.json",
+					"FadeInTime": 0.5,
+					"FadeOutTime": 0.5,
+					"sound": ""
+				}
+			],
+			"Love": [ 
+				{
+					"File": "animations/Love.motion3.json",
+					"FadeInTime": 0.5,
+					"FadeOutTime": 0.5,
+					"sound": ""
+				},
+				{
+					"File": "animations/Shock.motion3.json",
+					"FadeInTime": 0.5,
+					"FadeOutTime": 0.5
+				}
+			],
+			"Shock": [ 
+				{
+					"File": "animations/Shock.motion3.json",
+					"FadeInTime": 0.5,
+					"FadeOutTime": 0.5,
+					"sound": ""
+				},
+				{
+					"File": "animations/Idle_2.motion3.json",
+					"FadeInTime": 0.5,
+					"FadeOutTime": 0.5
+				}
+			]
+		}
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		},
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": []
+		}
+	]
+}

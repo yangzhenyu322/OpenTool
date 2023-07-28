@@ -31,7 +31,7 @@
                         <svg class="icon weather" v-if="weather == '雷阵雨'">
                             <use xlink:href="#icon-tianqi-leizhenyu"></use>
                         </svg>
-                        &nbsp;&nbsp;{{ temperature }}℃
+                        &nbsp;&nbsp;<span v-if="temperature">{{ temperature }}℃</span>
                     </span>
                 </p>
             </div>
@@ -182,6 +182,7 @@
 
 <script>
 import { defineComponent, reactive, toRefs, onMounted } from 'vue';
+import { message } from 'ant-design-vue';
 import avatarUrl from '@/assets/images/head-photo/touxiang.png';
 import lottie from 'lottie-web'
 import json001 from '@/assets/json/programmer.json' // 引入下载的动效json
@@ -209,7 +210,6 @@ setup() {
         programmer: null
     })
 
-
     // 控制成就栏高度伸缩
     const changeAchievement = ()=> {
         state.isCollapsed = !state.isCollapsed;
@@ -222,10 +222,11 @@ setup() {
         const getUserIP = () => {
             axios.get(`http://ip-api.com/json/`)
                 .then(res => {
+                    // 成功获取国内用户IP
                     state.ip = res.data.query
                     getLocation()
                 }).catch(err => {
-                    console.log(err)
+                    console.log('获取用户IP失败:' + err)
                 })
         }
         getUserIP()
@@ -249,8 +250,11 @@ setup() {
                 .then(res => {
                     state.temperature = res.data.lives[0].temperature
                     state.weather = res.data.lives[0].weather
+                    message.success('获取用户IP定位成功', 1)
                 }).catch(err => {
                     console.log(err)
+                    state.location= undefined
+                    message.error('获取国内用户IP定位失败', 2)
                 })
         }
 

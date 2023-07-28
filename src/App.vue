@@ -1,15 +1,17 @@
 <template>
   <LayoutPage/>
+  <Live2D />
 </template>
 
 <script>
 import LayoutPage from './components/layout/LayoutPage.vue';
-
+import Live2D from './components/live2D/Live2D.vue';
 
 export default {
   name: 'App',
   components: {
-    LayoutPage
+    LayoutPage,
+    Live2D
   }
 }
 </script>

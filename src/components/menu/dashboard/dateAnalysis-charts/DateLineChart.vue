@@ -12,8 +12,6 @@ export default defineComponent({
     accessData: Array
   },
   setup(props) {
-    // const times = ref(props.times)
-    // const accessData = ref(props.accessData)
 
     const state = reactive({
       times: props.times,

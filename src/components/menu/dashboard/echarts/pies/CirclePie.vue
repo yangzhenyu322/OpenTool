@@ -10,12 +10,26 @@ export default defineComponent({
   name: 'CustomPie',
   setup() {
     const state = reactive({
-      option: {
+      data: [
+        { value: 1048, name: '教育' },
+        { value: 735, name: '体育' },
+        { value: 580, name: '国防' },
+        { value: 484, name: '科技' },
+        { value: 300, name: '民生' }
+      ],
+    })
+
+    const getOption = state => {
+      var option = {
+        title: {
+            text: '国家财政支出',
+            left: 'center'
+        },
         tooltip: {
             trigger: 'item'
         },
         legend: {
-            top: '5%',
+            bottom: '0%',
             left: 'center'
         },
         series: [
@@ -43,24 +57,19 @@ export default defineComponent({
             labelLine: {
                 show: false
             },
-            data: [
-                { value: 1048, name: 'Search Engine' },
-                { value: 735, name: 'Direct' },
-                { value: 580, name: 'Email' },
-                { value: 484, name: 'Union Ads' },
-                { value: 300, name: 'Video Ads' }
-            ]
+            data: state.data
             }
-        ]
-        },
-    })
+        ]}
+
+        return option
+    }
 
     var myChart;
 
     const initeCharts = () => {
       myChart = echarts.init(document.getElementById('circlePieChart'))
       // 绘制图表
-      myChart.setOption(state.option)
+      myChart.setOption(getOption(state))
     }
     
     onMounted(() => {

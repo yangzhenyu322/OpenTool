@@ -11,9 +11,12 @@
   
   export default defineComponent({
     setup() {
-      const data = TestJson
       const state = reactive({
-        option : {
+        data: TestJson
+      })
+
+      const getOption = state => {
+        var option = {
           title: {
             text: '北京 空气质量指数',
             left: '1%'
@@ -27,7 +30,7 @@
             bottom: '10%'
           },
           xAxis: {
-            data: data.map(function (item) {
+            data: state.data.map(function (item) {
               return item[0];
             })
           },
@@ -91,7 +94,7 @@
           series: {
             name: 'Beijing AQI',
             type: 'line',
-            data: data.map(function (item) {
+            data: state.data.map(function (item) {
               return item[1];
             }),
             markLine: {
@@ -119,14 +122,15 @@
             }
           }
         }
-      })
+        return option
+      }
 
       var myChart;
 
       const initeCharts = () => {
         myChart = echarts.init(document.getElementById('lineChart'))
         // 绘制图表
-        myChart.setOption(state.option)
+        myChart.setOption(getOption(state))
       }
       
       onMounted(() => {

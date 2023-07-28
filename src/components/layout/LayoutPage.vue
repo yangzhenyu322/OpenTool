@@ -174,9 +174,7 @@
             </el-tab-pane>
           </el-tabs>
         </div>
-    </a-affix>
-
-    <!-- style="margin: 15px 15px 0px 15px;background-color: white;padding:14px 5px 0px 14px;" -->
+      </a-affix>
 
       <el-scrollbar style="height:calc(100vh - 104px)">
         <a-layout-content>
@@ -187,16 +185,15 @@
       </a-layout>
     </a-layout>
   </template>
-
-
   <script>
     import { defineComponent, ref, reactive, toRefs, watch, getCurrentInstance, onMounted} from 'vue';
     import { useRouter} from 'vue-router';
     import avatarUrl from '@/assets/images/head-photo/touxiang.png';
 
+
     export default defineComponent({
       name: "LayoutPage",
-      component: {
+      components: {
       },
       setup() {
         const state = reactive({
@@ -313,11 +310,6 @@
           }else{
             addTab(ctx.$t('menu.'+ key[0] + '.val'), key[0])
           }
-          
-          // 更新路由
-          // updateRouter(key[0])
-          // 更新路径显示
-          // updatePath(key[0])
         })
 
         // tab切换事件监听
@@ -433,6 +425,9 @@
     background: #141414;
   }
 
+  .ant-menu, .ant-menu-item, .el-tabs__item {
+    user-select: none;
+  }
   /* 中心-头部内容样式 */
   .header-content{
      margin-top: 3px;

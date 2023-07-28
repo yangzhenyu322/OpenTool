@@ -10,20 +10,24 @@ export default defineComponent({
   name: 'DataSharedPie',
   setup() {
     const state = reactive({
-      option: {
+      data: [
+        ['product', '2018', '2019', '2020', '2021', '2022', '2023'],
+        ['奶茶', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
+        ['抹茶拿铁', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
+        ['奶酪可可', 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
+        ['核桃布朗尼蛋糕', 25.2, 37.1, 41.2, 18, 33.9, 49.1]
+      ],
+    })
+
+    const getOption = state => {
+      var option = {
           legend: {},
           tooltip: {
               trigger: 'axis',
               showContent: false
           },
           dataset: {
-              source: [
-                  ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
-                  ['Milk Tea', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
-                  ['Matcha Latte', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
-                  ['Cheese Cocoa', 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
-                  ['Walnut Brownie', 25.2, 37.1, 41.2, 18, 33.9, 49.1]
-              ]
+              source: state.data
           },
           xAxis: { type: 'category' },
           yAxis: { gridIndex: 0 },
@@ -62,17 +66,19 @@ export default defineComponent({
               focus: 'self'
               },
               label: {
-              formatter: '{b}: {@2012} ({d}%)'
+              formatter: `{b}: {@${state.data[0][1]}} ({d}%)`
               },
               encode: {
               itemName: 'product',
-              value: '2012',
-              tooltip: '2012'
+              value: `${state.data[0][1]}`,
+              tooltip: `${state.data[0][1]}`
               }
           }
           ]
-      },
-    })
+      }
+
+      return option
+    }
 
     var myChart;
 
@@ -97,7 +103,7 @@ export default defineComponent({
           }
       })
       // 绘制图表
-      myChart.setOption(state.option)
+      myChart.setOption(getOption(state))
     }
     
     onMounted(() => {

@@ -11,7 +11,7 @@ import * as echarts from 'echarts'
 export default defineComponent({
   setup() {
     const state = reactive({
-
+      data: [260,680,360,460,150,320]
     })
 
     const getOption = (state) => {
@@ -43,7 +43,7 @@ export default defineComponent({
             name: '学校',
             type: 'bar',
             barWidth: '40%',
-            data: [260,680,360,460,150,320],
+            data: state.data,
           },
         ],
       }
