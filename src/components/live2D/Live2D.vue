@@ -1,7 +1,7 @@
 <template>
     <div style="width: 100%;height: 100%;position:fixed;top: 0;left: 0;pointer-events: none;">
         <canvas id="live2DCanvas" style="z-index: 1000;"></canvas>
-        <div class="tooltip" id="live2D-tooltip" v-if="showTooltip">{{ tooltipText }}</div>
+        <div class="tooltip" id="live2D-tooltip" v-if="showTooltip"></div>
     </div>
 </template>
 
@@ -61,7 +61,7 @@ export default defineComponent({
         // const hit_areas = hit_areas_list[select_model]
         // 提示词相关文字
         const showTooltip = ref(true);
-        const tooltipText = ref('');
+        // const tooltipText = ref('');
         const isClickProcessing = ref(false); // 添加isClickProcessing标志位
 
         var clickCount = 0 // 通过点击次数显示不同的台词 
@@ -148,21 +148,20 @@ export default defineComponent({
                     // 设置提示文本和提示词
                     const tooltipElement = document.getElementById('live2D-tooltip');
                     tooltipElement.style.display = 'block'
-                    tooltipText.value = tipTexts[clickCount % tipTexts.length]
+                    var text = tipTexts[clickCount % tipTexts.length]
                     updataTipPosition(model)
 
                     // 使用定时器来逐个显示文字
                     let index = 0;
                     const showNextChar = () => {
-                        const tooltip = document.getElementById('live2D-tooltip');
-                        if (tooltip && index < tooltipText.value.length) {
-                            tooltip.textContent = tooltipText.value.slice(0, index + 1);
+                        if (tooltipElement && index < text.length) {
+                            tooltipElement.textContent = text.slice(0, index + 1);
                             index++;
                             setTimeout(showNextChar, 200); // 每100毫秒显示下一个字符
                         }
 
                         // 显示完文字后结束点击动作
-                        if (index == tooltipText.value.length) {
+                        if (index === text.length) {
                             setTimeout(() => {
                                 tooltipElement.style.display = 'none'
                                 clickCount ++
@@ -309,7 +308,6 @@ export default defineComponent({
 
         return {
             showTooltip,
-            tooltipText
         }
     },
 })
@@ -320,8 +318,9 @@ export default defineComponent({
 .tooltip {
   max-width: 15%;
   padding: 10px;
-  background-color: rgba(0, 0, 0, 0.5);; /* 提示框的背景颜色 */
-  color: #fff; /* 文本颜色 */
+  background-color: rgba(250,200,88, 0.4);; /* 提示框的背景颜色 */
+  border: 2px solid rgb(250,200,88);
+  color: rgb(238,102,102); /* 文本颜色 */
   user-select: none; /* 禁止选择文本内容 */
   border-radius: 4px; /* 边框圆角 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 提示框的阴影效果 */

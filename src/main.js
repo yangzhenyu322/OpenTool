@@ -24,7 +24,6 @@ Object.keys(Icons).forEach(key => {
 //   app.component(key, component)
 // }
 
-
 // 添加到全局
 app.config.globalProperties.$antIcons = Icons
 app.use(Antd).use(ElementPlus).use(router).use(i18n)

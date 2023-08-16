@@ -117,6 +117,8 @@ export default defineComponent({
       state.times = props.times
       state.accessData = props.accessData
 
+      myChart.dispose(); // 销毁原来的图表
+      myChart = echarts.init(document.getElementById('dateBarChart')); // 重新创建图表实例
       myChart.setOption(getOption(state))
     })
 
