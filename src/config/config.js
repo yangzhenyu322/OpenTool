@@ -2,7 +2,7 @@
 
 const globalConfig = {
     baseURL: "http://localhost", // 请求的基础URL
-    timeout: 5000, //请求超时时间
+    timeout: 60000, //请求超时时间
 }
 
 export default globalConfig

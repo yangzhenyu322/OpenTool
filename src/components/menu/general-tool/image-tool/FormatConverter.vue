@@ -68,11 +68,13 @@
                             <div style="display: flex;justify-content: left;font-size: 1em;margin: 2%;">目标格式:</div>
                             <div style="margin: 2% 5% 2% 5%;display: flex;justify-content: space-between;font-size: 1.2em;">
                                 <a-select  v-model:value="state.targetFormat" style="width: 95%;text-align: left;">
+                                    <a-select-option value="JPG">JPG</a-select-option>
+                                    <a-select-option value="JPG">JPEG</a-select-option>
                                     <a-select-option value="PNG">PNG</a-select-option>
                                     <a-select-option value="JPG">JPG</a-select-option>
                                     <a-select-option value="GIF">GIF</a-select-option>
-                                    <a-select-option value="TIF">TIF</a-select-option>
-                                    <a-select-option value="SVG">SVG</a-select-option>
+                                    <a-select-option value="SVG">BMP</a-select-option>
+                                    <a-select-option value="SVG">WBMP</a-select-option>
                                 </a-select>
                             </div>
                         </div>
@@ -84,11 +86,15 @@
             <a-col :span="5">
                 <div style="display: flex;justify-content: center;align-items: center;">
                     <div style="width: 100%;">
-                        <a-button @click="convertFile" style="width: 80%;height: 70px;border-radius: 5px;font-size: 20px;color: white;background-color: rgb(84, 236, 142);">
-                            <SyncOutlined style="font-size: 18px;" /> 开始转换
-                        </a-button>
+                        <a-spin :spinning='state.isConverting'>
+                            <a-button @click="convertFile" style="width: 80%;height: 70px;border-radius: 5px;font-size: 20px;color: white;background-color: rgb(84, 236, 142);">
+                                <SyncOutlined style="font-size: 18px;" /> 
+
+                                开始转换
+                            </a-button>
+                        </a-spin>
                         <p style="font-size: 18px;margin: 2%;">
-                            <a-checkbox-group v-model:value="state.isAgreeProtocal">
+                            <a-checkbox-group @change="protocalCheckChange">
                                 <a-checkbox value="true" name="type">
                                     同意<span style="color: rgb(24,144,255);">使用条款</span>和<span style="color: rgb(24,144,255);">隐私政策</span>
                                 </a-checkbox>
@@ -103,9 +109,10 @@
         <a-divider/>
         <a-row style="font-size: 24px;font-weight: bold;">
             <a-col :span="6">文件</a-col>
-            <a-col :span="8">路径</a-col>
+            <a-col :span="4">路径</a-col>
             <a-col :span="4">文件大小</a-col>
-            <a-col :span="6"></a-col>
+            <a-col :span="6">文件状态</a-col>
+            <a-col :span="4"></a-col>
         </a-row>
         <a-divider/>
 
@@ -119,12 +126,20 @@
                 >
                 </a-upload>
             </a-col>
-            <a-col :span="8"><a :href="file.url" target="_blank">{{ file.name }}</a></a-col>
+            <a-col :span="4"><a :href="file.url" target="_blank">{{ file.name }}</a></a-col>
             <a-col :span="4">{{ formatFileSize(file.size) }}</a-col>
             <a-col :span="6">
                 <span v-if="file.status == 'uploading'" style="color: dodgerblue;">正在上传中...</span>
                 <span v-else-if="file.status == 'error'" style="color: red;">{{ file.error }}</span>
                 <span v-else style="color: forestgreen;">上传成功</span>
+            </a-col>
+            <a-col :span="4">
+                <a-button type="primary" v-if="file.convertUrl" @click="downloadFile(file.convertUrl, file.name)">
+                    <template #icon>
+                        <DownloadOutlined />
+                    </template>
+                    Download
+                </a-button>
             </a-col>
         </a-row>
     </div>
@@ -132,7 +147,8 @@
 
 <script setup>
 import { ref, reactive, watch } from 'vue'
-import uploadApi from '@/utils/file/FileUtil.js'
+import { uploadApi, formatConvertApi } from '@/utils/file/FileUtil.js'
+import { message } from 'ant-design-vue';
 
 const state = reactive({
     targetFilePath: '',
@@ -140,7 +156,8 @@ const state = reactive({
     isFilePathInPuting: true, // 文件/URL路径选择控制Flag
     urlPrefix: 'Http://',  // URL前缀
     urlPath: '', // URL路径，URL = urlPrefix + urlPath
-    isAgreeProtocal: null, // 用户是否同意协议Flag
+    isAgreeProtocal: false, // 用户是否同意协议Flag
+    isConverting: false, // 是否正在转换
 })
 
 const fileList = ref([
@@ -150,7 +167,8 @@ const fileList = ref([
     //     status: 'done', // 状态有：uploading done error removed
     //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
     //     thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    //     response: '{"status": "success"}', // 服务端响应内容
+    //     "convertUrl": "http://xxxx/img.jpg" // 处理后的图像存储url
+    //     response: '{"status": "success", }', // 服务端响应内容，存储响应码、响应信息
     // },
 ]);
 
@@ -179,8 +197,7 @@ const customUpload = e => {
     curFile.status = 'uploading'
     uploadApi({
         file: e.file,
-        URL: '/imageConvert/upload',
-        // uid: 'admin',  // 需要更改为用户id，待修改
+        route: '/imageConvert/upload',
         onUploadProgress: ev => {
             // ev - axios 上传进度实例，上传过程触发多次
             // ev.loaded 当前已上传内容的大小，ev.total - 本次上传请求内容总大小
@@ -192,10 +209,9 @@ const customUpload = e => {
     })
         .then(res => {
             let curFile = fileList.value.filter(item => item.uid == e.file.uid)[0]
-            curFile.response = res.data
             if(res.data.code == 400) {
                 curFile.status = 'error'
-                curFile['error'] = curFile.response.msg
+                curFile['error'] = res.data.msg
                 console.error(`文件${curFile.name}上传失败：${res.data.msg}`)
             } else {
                 // 通知组件该文件上传成功
@@ -242,9 +258,61 @@ const onInputURL = () => {
     state.isFilePathInPuting = !state.isFilePathInPuting
 }
 
+// 检测是否同意协议变化
+const protocalCheckChange = () => {
+    state.isAgreeProtocal = !state.isAgreeProtocal
+}
+
 // 开始文件格式转换
 const convertFile = () => {
     console.log('convertFile:' + state.isAgreeProtocal)
+    console.log('targetFormat:' + state.targetFormat)
+    state.isConverting = true
+    if (state.isAgreeProtocal) { // 同意条款
+        // 成功上传的文件列表
+        let successFiles = fileList.value.filter(file => file.status == 'done')
+        let urlsStrList = []
+        successFiles.forEach(file => {
+            urlsStrList.push(file.url)
+        });
+        // 格式转换
+        formatConvertApi({
+            urlsStrList: urlsStrList,
+            targetFormat: state.targetFormat,
+            route: '/imageConvert/conversion'
+        }).then(res => {
+            let urlsTargetPath = res.data.data
+            urlsTargetPath.forEach((url, index) => {
+                let successFile = successFiles[index]
+                let file = fileList.value.filter(item => item.uid == successFile.uid)[0] 
+                file.convertUrl = url  // 转换后图片保存的url路径
+                state.isConverting = false
+            })
+            message.success("格式转换成功")
+        })
+    } else {
+        message.error("请阅读并勾选使用条款")
+    }
+}
+
+// 下载文件
+const downloadFile = (url, name) => {
+    const fileUrl = url; // 替换为实际的文件 URL
+
+    // 创建一个隐藏的 <a> 元素用于下载
+    const downloadLink = document.createElement('a');
+    downloadLink.href = fileUrl;
+    downloadLink.target = '_blank'; // 在新窗口/标签中打开下载链接
+    downloadLink.download = name; // 设置下载的文件名
+
+    // 将 <a> 元素添加到文档中
+    document.body.appendChild(downloadLink);
+
+    // 触发点击事件以开始下载
+    downloadLink.click();
+
+    // 下载完成后移除 <a> 元素
+    document.body.removeChild(downloadLink);
 }
 
 </script>
