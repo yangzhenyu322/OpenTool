@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
+    "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@vitejs/plugin-legacy": "^4.1.1",
     "@wangeditor/editor-for-vue": "^5.1.12",
     "ant-design-vue": "^4.0.0-beta.4",
@@ -18,6 +19,7 @@
     "dayjs": "^1.11.9",
     "echarts": "^5.4.2",
     "element-plus": "^2.3.4",
+    "json-editor-vue3": "^1.0.8",
     "leader-line": "^1.0.7",
     "lottie-web": "^5.11.0",
     "pixi-live2d-display": "^0.4.0",

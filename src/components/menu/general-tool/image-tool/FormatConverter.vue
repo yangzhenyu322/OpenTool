@@ -29,8 +29,6 @@
                                 :showUploadList="false"
                                 :before-upload="beforeUpload"
                                 :customRequest="customUpload"
-                                :onChange="handleFileChange"
-                                action="https://run.mocky.io/v3/ceb8ad06-d88a-4bee-8214-b18c89645726"
                                 style="font-size: 20px;color: rgb(24,144,255);"
                             >
                             <!-- :directory="true" -->
@@ -69,9 +67,8 @@
                             <div style="margin: 2% 5% 2% 5%;display: flex;justify-content: space-between;font-size: 1.2em;">
                                 <a-select  v-model:value="state.targetFormat" style="width: 95%;text-align: left;">
                                     <a-select-option value="JPG">JPG</a-select-option>
-                                    <a-select-option value="JPG">JPEG</a-select-option>
+                                    <a-select-option value="JPEG">JPEG</a-select-option>
                                     <a-select-option value="PNG">PNG</a-select-option>
-                                    <a-select-option value="JPG">JPG</a-select-option>
                                     <a-select-option value="GIF">GIF</a-select-option>
                                     <a-select-option value="SVG">BMP</a-select-option>
                                     <a-select-option value="SVG">WBMP</a-select-option>
@@ -109,10 +106,9 @@
         <a-divider/>
         <a-row style="font-size: 24px;font-weight: bold;">
             <a-col :span="6">文件</a-col>
-            <a-col :span="4">路径</a-col>
-            <a-col :span="4">文件大小</a-col>
-            <a-col :span="6">文件状态</a-col>
-            <a-col :span="4"></a-col>
+            <a-col :span="6">文件大小</a-col>
+            <a-col :span="7">文件状态</a-col>
+            <a-col :span="5">下载</a-col>
         </a-row>
         <a-divider/>
 
@@ -126,14 +122,13 @@
                 >
                 </a-upload>
             </a-col>
-            <a-col :span="4"><a :href="file.url" target="_blank">{{ file.name }}</a></a-col>
-            <a-col :span="4">{{ formatFileSize(file.size) }}</a-col>
-            <a-col :span="6">
+            <a-col :span="6">{{ formatFileSize(file.size) }}</a-col>
+            <a-col :span="7">
                 <span v-if="file.status == 'uploading'" style="color: dodgerblue;">正在上传中...</span>
                 <span v-else-if="file.status == 'error'" style="color: red;">{{ file.error }}</span>
                 <span v-else style="color: forestgreen;">上传成功</span>
             </a-col>
-            <a-col :span="4">
+            <a-col :span="5">
                 <a-button type="primary" v-if="file.convertUrl" @click="downloadFile(file.convertUrl, file.name)">
                     <template #icon>
                         <DownloadOutlined />
@@ -176,6 +171,7 @@ const removeFile = (file) => {
     fileList.value = fileList.value.filter(item => item.uid != file.uid)
 }
 
+// 文件上传预处理
 const beforeUpload = file => {
     // 这里可以进行文件类型、大小等校验，返回 false 可取消上传
     if(file.size > 10 * 1024 * 1024) {  // 最大文件支持10MB
@@ -183,7 +179,6 @@ const beforeUpload = file => {
         file['error'] = '文件超出最大限制10M'
         return false;
     }
-    console.log('Before Upload:', file);
     return true;
 }
 
@@ -192,8 +187,6 @@ const beforeUpload = file => {
 // e.file - 上传的文件实例对象
 const customUpload = e => {
     let curFile = fileList.value.filter(item => item.uid == e.file.uid)[0]
-    // console.log('upload-e' + JSON.stringify(e))
-    // console.log('upload-e-file:' + JSON.stringify(e.file))
     curFile.status = 'uploading'
     uploadApi({
         file: e.file,
@@ -218,7 +211,7 @@ const customUpload = e => {
                 curFile.status = 'done'
                 curFile.url = res.data.data
                 curFile.thumbUrl = res.data.data
-                console.log(`文件${curFile.name}上传成功`, curFile.url);
+                console.log(`文件${curFile.name}上传成功:`, curFile.url);
             }
         })
         .catch(err => {
@@ -227,15 +220,6 @@ const customUpload = e => {
             curFile['error'] = '文件传输失败'
             console.log('上传失败', err);
         })
-}
-
-const handleFileChange = info => {
-    // 文件上传后，会触发该事件，info.file 包含文件信息
-    // console.log('File Change:', info.file);
-    // 获取文件名
-    // console.log('File Name:', info.file.name);
-    // 获取文件对象
-    // console.log('File Object:', info.file.originFileObj);
 }
 
 const formatFileSize = bytes => {
@@ -265,8 +249,6 @@ const protocalCheckChange = () => {
 
 // 开始文件格式转换
 const convertFile = () => {
-    console.log('convertFile:' + state.isAgreeProtocal)
-    console.log('targetFormat:' + state.targetFormat)
     state.isConverting = true
     if (state.isAgreeProtocal) { // 同意条款
         // 成功上传的文件列表
@@ -287,6 +269,7 @@ const convertFile = () => {
                 let file = fileList.value.filter(item => item.uid == successFile.uid)[0] 
                 file.convertUrl = url  // 转换后图片保存的url路径
                 state.isConverting = false
+                console.log(`文件${file.name}格式转换成功：${file.convertUrl}`)
             })
             message.success("格式转换成功")
         })
@@ -302,7 +285,7 @@ const downloadFile = (url, name) => {
     // 创建一个隐藏的 <a> 元素用于下载
     const downloadLink = document.createElement('a');
     downloadLink.href = fileUrl;
-    downloadLink.target = '_blank'; // 在新窗口/标签中打开下载链接
+    // downloadLink.target = '_blank'; // 在新窗口/标签中打开下载链接
     downloadLink.download = name; // 设置下载的文件名
 
     // 将 <a> 元素添加到文档中
