@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
+    "@imgly/background-removal": "^1.0.6",
     "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@vitejs/plugin-legacy": "^4.1.1",
     "@wangeditor/editor-for-vue": "^5.1.12",

@@ -46,12 +46,12 @@ export default {
                 format_converter: {
                     val: 'Format Converter'
                 },
-                image_resize: {
-                    val: 'Image Resize'
+                image_edit: {
+                    val: 'Image Edit'
                 }
             },
             json_tool: {
-                val: 'Json Process'
+                val: 'Json Resolver'
             }
         },
         ai_tool: {

@@ -86,7 +86,6 @@
                         <a-spin :spinning='state.isConverting'>
                             <a-button @click="convertFile" style="width: 80%;height: 70px;border-radius: 5px;font-size: 20px;color: white;background-color: rgb(84, 236, 142);">
                                 <SyncOutlined style="font-size: 18px;" /> 
-
                                 开始转换
                             </a-button>
                         </a-spin>

@@ -46,12 +46,12 @@ export default {
                 format_converter: {
                     val: '格式转换'
                 },
-                image_resize: {
-                    val: '图像缩放'
+                image_edit: {
+                    val: '图像编辑'
                 }
             },
             json_tool: {
-                val: 'Json处理'
+                val: 'Json解析'
             }
         },
         ai_tool: {

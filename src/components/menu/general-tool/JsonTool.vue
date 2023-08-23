@@ -1,5 +1,5 @@
 <template>
-    <JsonEditorVue class="editor" :modelValue="jsonData" @update:modelValue="changeJson" @blur="validate" style="height: 600px;" />
+    <JsonEditorVue class="editor" :modelValue="jsonData" @update:modelValue="changeJson" @blur="validate" style="height: 85vh;" />
 </template>
 
 <script setup>

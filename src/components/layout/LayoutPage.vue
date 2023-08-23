@@ -59,7 +59,7 @@
                 <span>{{ $t('menu.general_tool.image_tool.val') }}</span>
               </template>
               <a-menu-item key="general_tool.image_tool.format_converter">{{ $t('menu.general_tool.image_tool.format_converter.val')}}</a-menu-item>
-              <a-menu-item key="general_tool.image_tool.image_resize">{{ $t('menu.general_tool.image_tool.image_resize.val')}}</a-menu-item>
+              <a-menu-item key="general_tool.image_tool.image_edit">{{ $t('menu.general_tool.image_tool.image_edit.val')}}</a-menu-item>
             </a-sub-menu>
             <a-menu-item key="general_tool.json_tool">{{ $t('menu.general_tool.json_tool.val')}}</a-menu-item>
           </a-sub-menu>
