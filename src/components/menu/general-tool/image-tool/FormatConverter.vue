@@ -75,7 +75,52 @@
                                 </a-select>
                             </div>
                         </div>
-                        <p style="font-size: 18px;margin: 2%;"><span style="color: rgb(24,144,255);">设置转换选项</span>（可选）</p>
+                        <p style="font-size: 18px;margin: 2%;">
+                            <a-modal 
+                            v-model:open="state.isSetModalShow" 
+                            title="转换设置选项" @ok="handleSetModal" 
+                            :cancel-button-props="{ style: { display: 'none' } }" 
+                            width="50%">
+                                <hr>
+                                <!-- 水平居中 -->
+                                <div style="display: flex;justify-content: center;align-items: center;height: 100%;">
+                                    <a-form
+                                    ref="formRef"
+                                    :model="state.formState"
+                                    :rules="state.rules"
+                                    style="width: 100%;"
+                                    >
+                                        <p style="font-weight: bold;">图片质量：</p>
+                                        <a-form-item name="quality">
+                                            <a-input v-model:value="state.formState.quality" />
+                                        </a-form-item>
+                                        <p style="font-weight: bold;">图片尺寸：</p>
+                                        <a-form-item name="sizeType">
+                                            <a-select v-model:value="state.formState.sizeType" placeholder="please select your sex">
+                                                <a-select-option value="NoChange">保持原始图片尺寸</a-select-option>
+                                                <a-select-option value="Size">更改图片宽度和高度</a-select-option>
+                                                <a-select-option value="Width">仅更改图片宽度</a-select-option>
+                                                <a-select-option value="WidthKeepRatio">改变图片宽度保持长宽比</a-select-option>
+                                                <a-select-option value="Height">仅改变图片高度</a-select-option>
+                                                <a-select-option value="HeightKeepRatio">改变图片高度保持长宽比</a-select-option>
+                                                <a-select-option value="Scale">保持长宽比缩放图片</a-select-option>
+                                            </a-select>
+                                        </a-form-item>
+                                        <a-form-item label="宽度" name="width" v-if="['Size', 'Width', 'WidthKeepRatio'].includes(state.formState.sizeType)">
+                                            <a-input v-model:value="state.formState.width" />
+                                        </a-form-item>
+                                        <a-form-item label="高度" name="height" v-if="['Size', 'Height', 'HeightKeepRatio'].includes(state.formState.sizeType)">
+                                            <a-input v-model:value="state.formState.height" />
+                                        </a-form-item>
+                                        <a-form-item label="缩放比例" name="scale" v-if="['Scale'].includes(state.formState.sizeType)">
+                                            <a-input v-model:value="state.formState.scale" />
+                                        </a-form-item>
+                                    </a-form>
+                                </div>
+                            </a-modal>
+                            <a @click="openSetModal"><span style="color: rgb(24,144,255);">设置转换选项</span></a>
+                            （可选）
+                        </p>
                     </div>
                 </div>
             </a-col>
@@ -140,16 +185,76 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, watch, toRaw } from 'vue'
 import { uploadApi, formatConvertApi } from '@/utils/file/FileUtil.js'
-import { message } from 'ant-design-vue';
+import { message } from 'ant-design-vue';                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 
+const formRef = ref() // 表单ref
 const state = reactive({
     targetFilePath: '',
     targetFormat: 'PNG',
     isFilePathInPuting: true, // 文件/URL路径选择控制Flag
     urlPrefix: 'Http://',  // URL前缀
     urlPath: '', // URL路径，URL = urlPrefix + urlPath
+    isSetModalShow: false, // 是否显示转换设置弹窗
+
+    // 表单数据
+    formState: {
+        quality: 1, // 图片质量
+        // 尺寸更改类型：NoChange: 保持原始图片尺寸，Size: 更改图片尺寸和高度，Width: 仅更改图片宽度，WidthKeepRatio: 改变图片宽度保持长宽比
+        //   Height: 仅改变图片高度, HeightKeepRatio: 改变图片高度保持长宽比, Scale：保持长宽比缩放图片
+        sizeType: "NoChange", // 尺寸转换类型
+        width: 0, // 宽度
+        height: 0, // 高度
+        scale: 1, // 缩放倍率
+    },
+    rules: {
+        quality: [{
+            type: 'float',
+            required: true,
+            validator: async (rule, value) => {
+                if (value >= 0 && value <= 1) {
+                    return Promise.resolve()
+                }
+                return Promise.reject('请输入0~1之间的小数')
+            }
+        }],
+        sizeType: [{
+            type: 'string',
+            required: true,
+            message: '请选择尺寸更改的类型'
+        }],
+        width: [{
+            type: 'number',
+            required: false,
+            validator: async (rule, value) => {
+                if (value >= 0 && value % 1 === 0) {
+                    return Promise.resolve()
+                }
+                return Promise.reject('请输入大于0的整数')
+            }
+        }],
+        height: [{
+            type: 'number',
+            required: false,
+            validator: async (rule, value) => {
+                if (value >= 0 && value % 1 === 0) {
+                    return Promise.resolve()
+                }
+                return Promise.reject('请输入大于0的整数')
+            }
+        }],
+        scale: [{
+            type: 'number',
+            required: false,
+            validator: async (rule, value) => {
+                if (value >= 0 && value <= 4) {
+                    return Promise.resolve()
+                }
+                return Promise.reject('请输入0~4的数字')
+            }
+        }]
+    },
     isAgreeProtocal: false, // 用户是否同意协议Flag
     isConverting: false, // 是否正在转换
 })
@@ -241,6 +346,23 @@ const onInputURL = () => {
     state.isFilePathInPuting = !state.isFilePathInPuting
 }
 
+// 打开图像设置对话框
+const openSetModal = () => {
+    state.isSetModalShow = true
+}
+
+// 确认设置
+const handleSetModal = () => {
+    formRef.value.validate().then(() => {
+        state.isSetModalShow = false
+        console.log('values', state.formState, toRaw(state.formState));
+        message.success('转换设置成功',3)
+    }).catch(error => {
+        console.log('error', error);
+        message.error('设置信息有误，请检查后重新提交',5)
+    });
+}
+
 // 检测是否同意协议变化
 const protocalCheckChange = () => {
     state.isAgreeProtocal = !state.isAgreeProtocal
@@ -248,7 +370,6 @@ const protocalCheckChange = () => {
 
 // 开始文件格式转换
 const convertFile = () => {
-    state.isConverting = true
     if (state.isAgreeProtocal) { // 同意条款
         // 成功上传的文件列表
         let successFiles = fileList.value.filter(file => file.status == 'done')
@@ -256,10 +377,12 @@ const convertFile = () => {
         successFiles.forEach(file => {
             urlsStrList.push(file.url)
         });
+        state.isConverting = true  // 开始加载动画
         // 格式转换
         formatConvertApi({
             urlsStrList: urlsStrList,
             targetFormat: state.targetFormat,
+            convertConfig: state.formState, // 转换配置信息
             route: '/imageConvert/conversion'
         }).then(res => {
             let urlsTargetPath = res.data.data
@@ -271,6 +394,9 @@ const convertFile = () => {
                 console.log(`文件${file.name}格式转换成功：${file.convertUrl}`)
             })
             message.success("格式转换成功")
+        }).catch(err => {
+            message.error("转换失败，请稍后重试")
+            state.isConverting = false
         })
     } else {
         message.error("请阅读并勾选使用条款")

@@ -56,7 +56,7 @@
       },
       {
         "id": "6",
-        "name": "WindowAvg",
+        "name": "TPR",
         "symbolSize": 30,
         "x": -232.6012,
         "y": 485.16974,
@@ -65,7 +65,7 @@
       },
       {
         "id": "7",
-        "name": "WindowMax",
+        "name": "MMAXLE",
         "symbolSize": 40,
         "x": -382.69568,
         "y": 475.09113,
@@ -74,7 +74,7 @@
       },
       {
         "id": "8",
-        "name": "WindowMin",
+        "name": "MMINLE",
         "symbolSize": 30,
         "x": -320.384,
         "y": 387.17325,
@@ -83,7 +83,7 @@
       },
       {
         "id": "9",
-        "name": "RespTimeAvg",
+        "name": "ALE",
         "symbolSize": 30,
         "x": -344.39832,
         "y": 451.16772,
@@ -92,7 +92,7 @@
       },
       {
         "id": "10",
-        "name": "TimelinessAvg",
+        "name": "ADDT",
         "symbolSize": 10,
         "x": -89.34107,
         "y": 334.56128,
@@ -101,7 +101,7 @@
       },
       {
         "id": "11",
-        "name": "CloseLoopTimeAvg",
+        "name": "AWT",
         "symbolSize": 50,
         "x": -87.93029,
         "y": 400,
@@ -227,22 +227,22 @@
         "name": "Count"
       },
       {
-        "name": "WindowAvg"
+        "name": "TPR"
       },
       {
-        "name": "WindowMax"
+        "name": "MMAXLE"
       },
       {
-        "name": "WindowMin"
+        "name": "MMINLE"
       },
       {
-        "name": "RespTimeAvg"
+        "name": "ALE"
       },
       {
-        "name": "TimelinessAvg"
+        "name": "ADDT"
       },
       {
-        "name": "CloseLoopTimeAvg"
+        "name": "AWT"
       }
     ]
   }

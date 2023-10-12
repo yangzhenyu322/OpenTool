@@ -21,7 +21,7 @@
             <span>PNG or JPEG</span>
         </div>
 
-        <div class="edit-div" style="width:100%;height: 100%;border: 10px double #FF9999;border-radius: 8px;padding-top: 10%;padding: 15px;" v-else>
+        <div class="edit-div" style="width:100%;height: 100%;border: 10px double #FF9999;background-color: rgb(234, 233, 231);border-radius: 8px;padding-top: 10%;padding: 15px;" v-else>
             <a-row :gutter="10">
                 <a-col :span="9">
                     <p style="font-size: 1.2em;font-weight: bold;">原始</p>

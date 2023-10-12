@@ -17,7 +17,6 @@
       })
 
       var myChart
-
     
       const initeCharts = () => {
         myChart = echarts.init(document.getElementById('knowChart'))
@@ -31,6 +30,15 @@
                 })
             }
             ],
+            toolbox: {
+              show: true,
+              orient: "vertical",
+              left: "right",
+              top: "center",
+              feature: {
+                saveAsImage: { show: true },  // 保存图表
+              },
+            },
             series: [
             {
                 name: 'Les Miserables',
