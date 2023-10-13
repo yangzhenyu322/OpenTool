@@ -149,38 +149,42 @@
 
         <a-divider/>
         <a-row style="font-size: 24px;font-weight: bold;">
+            <a-col :span="1"><a-checkbox @click="selectAll"></a-checkbox></a-col>
             <a-col :span="6">文件</a-col>
             <a-col :span="6">文件大小</a-col>
-            <a-col :span="7">文件状态</a-col>
+            <a-col :span="6">文件状态</a-col>
             <a-col :span="5">下载</a-col>
         </a-row>
         <a-divider/>
 
-        <a-row v-for="file in fileList" :key="file.uid" style="display: flex;align-items: center;">
-            <a-col :span="6">
-                <!-- 文件上传组件 -->
-                <a-upload
-                :file-list="[file]"
-                list-type="picture"
-                @remove="removeFile"
-                >
-                </a-upload>
-            </a-col>
-            <a-col :span="6">{{ formatFileSize(file.size) }}</a-col>
-            <a-col :span="7">
-                <span v-if="file.status == 'uploading'" style="color: dodgerblue;">正在上传中...</span>
-                <span v-else-if="file.status == 'error'" style="color: red;">{{ file.error }}</span>
-                <span v-else style="color: forestgreen;">上传成功</span>
-            </a-col>
-            <a-col :span="5">
-                <a-button type="primary" v-if="file.convertUrl" @click="downloadFile(file.convertUrl, file.name)">
-                    <template #icon>
-                        <DownloadOutlined />
-                    </template>
-                    Download
-                </a-button>
-            </a-col>
-        </a-row>
+        <a-checkbox-group v-model:value="selectedFiles" style="display: block;">
+            <a-row v-for="file in fileList" :key="file.uid" style="display: flex;align-items: center;">
+                <a-col :span="1"><a-checkbox :value="file" :disabled="file.status != 'done'"></a-checkbox></a-col>
+                <a-col :span="6">
+                    <!-- 文件上传组件 -->
+                    <a-upload
+                    :file-list="[file]"
+                    list-type="picture"
+                    @remove="removeFile"
+                    >
+                    </a-upload>
+                </a-col>
+                <a-col :span="6">{{ formatFileSize(file.size) }}</a-col>
+                <a-col :span="6">
+                    <span v-if="file.status == 'uploading'" style="color: dodgerblue;">正在上传中...</span>
+                    <span v-else-if="file.status == 'error'" style="color: red;">{{ file.error }}</span>
+                    <span v-else style="color: forestgreen;">上传成功</span>
+                </a-col>
+                <a-col :span="5">
+                    <a-button type="primary" v-if="file.convertUrl" @click="downloadFile(file.convertUrl, file.name)">
+                        <template #icon>
+                            <DownloadOutlined />
+                        </template>
+                        Download
+                    </a-button>
+                </a-col>
+            </a-row>
+        </a-checkbox-group>
     </div>
 </template>
 
@@ -197,7 +201,6 @@ const state = reactive({
     urlPrefix: 'Http://',  // URL前缀
     urlPath: '', // URL路径，URL = urlPrefix + urlPath
     isSetModalShow: false, // 是否显示转换设置弹窗
-
     // 表单数据
     formState: {
         quality: 1, // 图片质量
@@ -270,6 +273,8 @@ const fileList = ref([
     //     response: '{"status": "success", }', // 服务端响应内容，存储响应码、响应信息
     // },
 ]);
+
+const selectedFiles = ref([]) // 被选中的文件
 
 const removeFile = (file) => {
     fileList.value = fileList.value.filter(item => item.uid != file.uid)
@@ -363,6 +368,22 @@ const handleSetModal = () => {
     });
 }
 
+// 是否全选
+const isCheckAll = ref(false)
+watch(isCheckAll, (newVal, oldVal) => {
+    if (newVal == true) {
+        // 选中所有已成功上传的文件
+        selectedFiles.value = fileList.value.filter(file => file.status == 'done')
+    } else {
+        // 取消全选
+        selectedFiles.value = []
+    }
+})
+
+const selectAll = () => {
+    isCheckAll.value = !isCheckAll.value
+}
+
 // 检测是否同意协议变化
 const protocalCheckChange = () => {
     state.isAgreeProtocal = !state.isAgreeProtocal
@@ -371,13 +392,19 @@ const protocalCheckChange = () => {
 // 开始文件格式转换
 const convertFile = () => {
     if (state.isAgreeProtocal) { // 同意条款
-        // 成功上传的文件列表
-        let successFiles = fileList.value.filter(file => file.status == 'done')
+        // 成功上传且被选中的文件列表url
         let urlsStrList = []
-        successFiles.forEach(file => {
+        selectedFiles.value.forEach(file => {
             urlsStrList.push(file.url)
         });
-        state.isConverting = true  // 开始加载动画
+
+        if (urlsStrList.length < 1) {
+            message.info('至少选中一个文件')
+            return
+        }
+
+        // 开始加载动画
+        state.isConverting = true  
         // 格式转换
         formatConvertApi({
             urlsStrList: urlsStrList,
@@ -387,15 +414,16 @@ const convertFile = () => {
         }).then(res => {
             let urlsTargetPath = res.data.data
             urlsTargetPath.forEach((url, index) => {
-                let successFile = successFiles[index]
-                let file = fileList.value.filter(item => item.uid == successFile.uid)[0] 
+                let convertFile = selectedFiles.value[index]
+                let file = fileList.value.filter(item => item.uid == convertFile.uid)[0] 
                 file.convertUrl = url  // 转换后图片保存的url路径
                 state.isConverting = false
-                console.log(`文件${file.name}格式转换成功：${file.convertUrl}`)
+                // console.log(`文件${file.name}格式转换成功：${file.convertUrl}`)
             })
             message.success("格式转换成功")
         }).catch(err => {
             message.error("转换失败，请稍后重试")
+            console.log("转换失败：" + err)
             state.isConverting = false
         })
     } else {

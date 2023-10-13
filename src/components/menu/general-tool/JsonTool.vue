@@ -8,8 +8,20 @@ import JsonEditorVue from 'json-editor-vue3'
 
 // 编辑器的json文本
 const jsonData = ref({
-    name: "ZenShepp",
-    role: "admin"
+    id: 123,
+    username: "john_doe",
+    email: "john.doe@example.com",
+    firstName: "John",
+    lastName: "Doe",
+    age: 30,
+    isPremiumUser: true,
+    address: {
+        street: "123 Main Street",
+        city: "Exampleville",
+        zipCode: "12345"
+    },
+    hobbies: ["Reading", "Hiking", "Cooking"],
+    roles: ["User", "Admin"]
 })
 
 // 校验
