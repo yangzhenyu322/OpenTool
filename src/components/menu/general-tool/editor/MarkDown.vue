@@ -1,5 +1,5 @@
 <template>
-    <CherryMarkDown style="height:85vh;text-align: left;" />
+    <CherryMarkDown style="height:86vh"/>
 </template>
 
 <script>

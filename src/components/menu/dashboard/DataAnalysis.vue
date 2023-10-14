@@ -2,74 +2,83 @@
   <div class="center-content" >
       <a-row :gutter="24">
         <a-col :span="6">
-          <a-card>
-            <template #title>
-              <div class="card-title">
-                <span style="font-size: 15px;">访问数</span>
-                <a-tag color="cyan" class="title-logo">周</a-tag>
-              </div>
-            </template>
-              <div class="show-item">
-                <BankTwoTone class="show-logo"  twoToneColor="#00CED1" />
-                <div style="line-height: 10px;">
-                  <div class="show-text">总访问数</div>
-                  <span class="show-num" v-if="operationDate">{{ formatNumber(operationDate.accessNum) }}</span>
+          <a-skeleton :loading="isPreLoading" active>
+            <a-card>
+              <template #title>
+                <div class="card-title">
+                  <span style="font-size: 15px;">访问数</span>
+                  <a-tag color="cyan" class="title-logo">周</a-tag>
                 </div>
-              </div>
-          </a-card>
+              </template>
+                <div class="show-item">
+                  <BankTwoTone class="show-logo"  twoToneColor="#00CED1" />
+                  <div style="line-height: 10px;">
+                    <div class="show-text">总访问数</div>
+                    <span class="show-num" v-if="operationDate">{{ formatNumber(operationDate.accessNum) }}</span>
+                  </div>
+                </div>
+            </a-card>
+          </a-skeleton>
         </a-col>
         <a-col :span="6">
-          <a-card>
-            <template #title>
-              <div class="card-title">
-                <span style="font-size: 15px;">用户</span>
-                <a-tag color="green" class="title-logo">月</a-tag>
-              </div>
-            </template>
-              <div class="show-item">
-                <IdcardTwoTone class="show-logo" twoToneColor="#ADFF2F"/>
-                <div style="line-height: 10px;">
-                  <div class="show-text">总用户数</div>
-                  <span class="show-num" v-if="operationDate">{{ formatNumber(operationDate.userNum) }}</span>
+          <a-skeleton :loading="isPreLoading" active>
+            <a-card>
+              <template #title>
+                <div class="card-title">
+                  <span style="font-size: 15px;">用户</span>
+                  <a-tag color="green" class="title-logo">月</a-tag>
                 </div>
-              </div>
-          </a-card>
+              </template>
+                <div class="show-item">
+                  <IdcardTwoTone class="show-logo" twoToneColor="#ADFF2F"/>
+                  <div style="line-height: 10px;">
+                    <div class="show-text">总用户数</div>
+                    <span class="show-num" v-if="operationDate">{{ formatNumber(operationDate.userNum) }}</span>
+                  </div>
+                </div>
+            </a-card>
+          </a-skeleton>
         </a-col>
         <a-col :span="6">
-          <a-card>
-            <template #title>
-              <div class="card-title">
-                <span style="font-size: 15px;">收藏</span>
-                <a-tag color="orange" class="title-logo">月</a-tag>
-              </div>
-            </template>
-              <div class="show-item">
-                <HeartTwoTone class="show-logo"  twoToneColor="#FFD700"/>
-                <div style="line-height: 10px;">
-                  <div class="show-text">总收藏数</div>
-                  <span class="show-num" v-if="operationDate">{{ formatNumber(operationDate.collectNum) }}</span>
+          <a-skeleton :loading="isPreLoading" active>
+            <a-card>
+              <template #title>
+                <div class="card-title">
+                  <span style="font-size: 15px;">收藏</span>
+                  <a-tag color="orange" class="title-logo">月</a-tag>
                 </div>
-              </div>
-          </a-card>
+              </template>
+                <div class="show-item">
+                  <HeartTwoTone class="show-logo"  twoToneColor="#FFD700"/>
+                  <div style="line-height: 10px;">
+                    <div class="show-text">总收藏数</div>
+                    <span class="show-num" v-if="operationDate">{{ formatNumber(operationDate.collectNum) }}</span>
+                  </div>
+                </div>
+            </a-card>
+          </a-skeleton>
         </a-col>
         <a-col :span="6">
-          <a-card>
-            <template #title>
-              <div class="card-title">
-                <span style="font-size: 15px;">贡献</span>
-                <a-tag color="purple" class="title-logo">年</a-tag>
-              </div>
-            </template>
-              <div class="show-item">
-                <CrownTwoTone class="show-logo" twoToneColor="#800080"/>
-                <div style="line-height: 10px;">
-                  <div class="show-text">总贡献数</div>
-                  <span class="show-num" v-if="operationDate">{{ formatNumber(operationDate.contributionNum) }}</span>
+          <a-skeleton :loading="isPreLoading" active>
+            <a-card>
+              <template #title>
+                <div class="card-title">
+                  <span style="font-size: 15px;">贡献</span>
+                  <a-tag color="purple" class="title-logo">年</a-tag>
                 </div>
-              </div>
-          </a-card>
+              </template>
+                <div class="show-item">
+                  <CrownTwoTone class="show-logo" twoToneColor="#800080"/>
+                  <div style="line-height: 10px;">
+                    <div class="show-text">总贡献数</div>
+                    <span class="show-num" v-if="operationDate">{{ formatNumber(operationDate.contributionNum) }}</span>
+                  </div>
+                </div>
+            </a-card>
+          </a-skeleton>
         </a-col>
       </a-row>
+
       <div style="background-color: white;margin-top: 20px;">
         <el-date-picker
           v-model="dateValue"
@@ -84,9 +93,10 @@
           <a-radio-button value="trendChart">趋势图</a-radio-button>
           <a-radio-button value="dataList">数据列表</a-radio-button>
         </a-radio-group>
-
-        <DateLineChartVue v-if="dataShow == 'trendChart'" style="width:98%;height: 350px;margin-top: 10px;" :times="times" :accessData="accessData" />
-        <DateBarChart v-if="dataShow == 'dataList'" style="width:98%;height: 350px;margin-top: 10px;" :times="times" :accessData="accessData"/>
+        <a-skeleton :loading="isPreLoading" active>
+          <DateLineChartVue v-if="dataShow == 'trendChart'" style="width:98%;height: 350px;margin-top: 10px;" :times="times" :accessData="accessData" />
+          <DateBarChart v-if="dataShow == 'dataList'" style="width:98%;height: 350px;margin-top: 10px;" :times="times" :accessData="accessData"/>
+        </a-skeleton>
       </div>
 
       <a-row :gutter="20" style="margin-top: 15px;">
@@ -97,7 +107,9 @@
                 <span style="font-size: 15px;">流量分布</span>
               </div>
             </template>
-            <DateRadarChartVue class="pie-chart"/>
+            <a-skeleton :loading="isPreLoading" active>
+              <DateRadarChartVue class="pie-chart"/>
+            </a-skeleton>
           </a-card>
         </a-col>
         <a-col :span="8">
@@ -107,7 +119,9 @@
                 <span style="font-size: 15px;">访问来源</span>
               </div>
             </template>
+            <a-skeleton :loading="isPreLoading" active>
               <DateCirclePie class="pie-chart"/>
+            </a-skeleton>
           </a-card>
         </a-col>
         <a-col :span="8">
@@ -117,13 +131,13 @@
                 <span style="font-size: 15px;">用户占比</span>
               </div>
             </template>
-            <DateNightingaleChart class="pie-chart"/>
+            <a-skeleton :loading="isPreLoading" active>
+              <DateNightingaleChart class="pie-chart"/>
+            </a-skeleton>
           </a-card>
         </a-col>
       </a-row>
-
   </div>
-  
 </template>
 
 <script>
@@ -145,12 +159,16 @@
       DateNightingaleChart,
     },
     setup() {
+      // 0、组件控制
+      const isPreLoading = ref(true) // 预加载动画
+
       // 1、网站运营数据统计
       const operationDate = ref(null)
       const getOperationDataAPI = () => {
         axios.get(`/data-analysis/operation`)
           .then(res => {
               operationDate.value = res.data.data;
+              isPreLoading.value = false
           })
           .catch(err => {
               console.error(err);
@@ -228,6 +246,7 @@
 
       return{
         ...toRefs(state),
+        isPreLoading,
         operationDate,
         formatNumber,
         changeDate
