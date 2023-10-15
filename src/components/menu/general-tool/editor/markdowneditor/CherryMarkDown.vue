@@ -1,27 +1,20 @@
 <template>
-    <div>
-       <div id="cherry-markdown" ref="cherrymarkdown" style="text-align: left;" />
-       <a-button @click="getContent">获取content</a-button>
-       <a-button @click="clearContent">清除content</a-button>
-       <a-button @click="exportPDF">导出PDF</a-button>
-       <a-button @click="exportMarkDown">导出MarkDown</a-button>
-       <a-button @click="exportHtml">导出Html</a-button>
-    </div>
+    <div id="cherry-markdown" ref="cherrymarkdown" style="text-align:left;" />
 </template>
   
 <script>
-import { defineComponent, onMounted, ref } from 'vue'
-// import { uploadApi } from '@/utils/file/FileUtil.js'
+import { defineComponent, onMounted, ref, reactive } from 'vue'
+import { uploadApi } from '@/utils/file/FileUtil.js'
 
 import 'cherry-markdown/dist/cherry-markdown.css';
 import Cherry from 'cherry-markdown'
-// import Cherry from 'cherry-markdown/dist/cherry-markdown.core';
-// import CherryMermaidPlugin from 'cherry-markdown/dist/addons/cherry-code-block-mermaid-plugin';
-// import mermaid from 'mermaid';
 
 export default defineComponent({
 setup(){
     var cherrymarkdown
+    var defaultContent = '# welcome to cherry editor!\n' +
+        'github: [https://github.com/Tencent/cherry-markdown/blob/main/README.CN.md](https://github.com/Tencent/cherry-markdown/blob/main/README.CN.md)\n\n' +
+        '使用说明：[https://tencent.github.io/cherry-markdown/examples/index.html](https://tencent.github.io/cherry-markdown/examples/index.html) '
     // 定义cherry-markdown示例中的回调函数
     // const callbacks = reactive({
     //     fileUpload: (file, callback) => {
@@ -37,7 +30,13 @@ setup(){
     //                 console.log('开始上传：' + ev)
     //             }
     //         }).then(res => {
-    //             callback(res.data.data)
+    //             // callback(url,config): url是图像url，config是配置图像在markdown的显示样式
+    //             callback(res.data.data, {
+    //                 name: `${file.name.replace(/\.[^.]+$/, '')}`,
+    //                 isShadow: true,
+    //                 width: '60%',
+    //                 height: 'auto',
+    //             })
     //         }).catch(err => {
     //             console.log('文件上传失败：' + err)
     //         })
@@ -48,46 +47,72 @@ setup(){
     // })
 
     const initMarkDown = () => {
-        // // 插件注册必须在Cherry实例化之前完成
-        // Cherry.usePlugin(CherryMermaidPlugin, {
-        //     mermaid, // 传入mermaid引用
-        //     // mermaidAPI: mermaid.mermaidAPI, // 也可以传入mermaid API
-        //     // 同时可以在这里配置mermaid的行为，可参考mermaid官方文档
-        //     // theme: 'neutral',
-        //     // sequence: { useMaxWidth: false, showSequenceNumbers: true }
-        // });
-
         cherrymarkdown = new Cherry({
             id: 'cherry-markdown',
-            value: '# welcome to cherry editor!', // 默认文本内容
+            value: defaultContent, // 默认文本内容
             editor: {
                 codemirror: {
-                    // depend on codemirror theme name: https://codemirror.net/demo/theme.html
-                    // manual import theme: `import 'codemirror/theme/<theme-name>.css';`
-                    theme: 'default',
+                    // markdown主题：default、dark暗黑、light明亮、green清新、red热情、violet淡雅、blue清幽
+                    theme: 'green',
                 },
-                // height: '100%',
-                // defaultModel 编辑器初始化后的默认模式，一共有三种模式：1、双栏编辑预览模式；2、纯编辑模式；3、预览模式
-                // edit&preview: 双栏编辑预览模式
-                // editOnly: 纯编辑模式（没有预览，可通过toolbar切换成双栏或预览模式）
-                // previewOnly: 预览模式（没有编辑框，toolbar只显示“返回编辑”按钮，可通过toolbar切换成编辑模式）
-                // defaultModel: 'edit&preview',
+                // defaultModel 编辑器初始化后的模式：1、edit&preview双栏编辑预览模式（）；2、editOnly纯编辑模式；3、previewOnly预览模式
                 defaultModel: 'edit&preview',
             },
-            toolbar:{
-                theme: 'dark',  // light or dark
-                toolbar: ['bold', 'italic', 'underline', 'strikethrough', '|', 'color', 'header', '|', 'list', { insert: ['image', 'audio', 'video', 'link', 'br', 'code', 'formula', 'toc', 'table', 'line-table', 'bar-table', 'pdf', 'word'] }, 'graph', 'settings'],
-                bubble: ['bold', 'italic', 'underline', 'strikethrough', 'sub', 'sup', '|', 'size', 'color'],
-                float: ['h1', 'h2', 'h3', '|', 'checklist', 'quote', 'quickTable', 'code'],
-                customMenu: []
+            toolbars:{
+                // 工具栏主题：light or dark（默认）
+                theme: 'light',
+                // 是否展示顶部工具栏：true展示(默认)；false不展示
+                showToolbar: true,
+                // 工具栏功能设置：自定义
+                toolbar: ['color', 'size', 'justify', 'bold', 'italic', 'underline', 'strikethrough', '|', 'header', 'quote', '|', 'list', { insert: ['table', 'code','image', 'audio', 'video', 'link', 'br', 'formula', 'toc', 'pdf', 'word'] }, 'graph'],
+                // 右侧工具栏
+                toolbarRight: ['export', 'codeTheme'],
+                // 侧边工具栏
+                sidebar: ['settings', 'theme'],
+                // 选中时工具栏
+                bubble: ['size', 'color', 'justify', '|', 'bold', 'italic', 'underline', 'strikethrough', 'sub', 'sup'],
+                // 浮动工具栏
+                float: ['h1', 'h2', 'h3', '|', 'quote', 'quickTable', 'code', 'image'],
             },
-            // 文件上传，需要将文件存储的url在callback返回，fileUpload(file, callback)
+            // 解锁引擎配置
+            engine: {
+                // 全局配置
+                global: {
+                    // 是否启用经典换行逻辑: true一个换行会被忽略，两个以上连续换行会分割成段落；false(默认)一个换行会转成<br>，两个会分割成段落，三个会转成<br>并分割段落
+                    classicBr: false,
+                },
+                // 内置语法配置
+                syntax: {
+                    codeBlock: {
+                        theme: 'default', //默认为dark深色主题, default、dark、funky、okaidia、twilight、coy、(solarized light、tomorrow night, 这两个主题还不可用，不知道为什么)
+                        wrap: true, // 超出长度是否换行，false则显示滚动条
+                        lineNumber: true, // 默认显示行号
+                    },
+                    header: {
+                        // 标题样式：default 默认样式，前面有锚点；autonumber 标题前面有自增序号锚点；none 标题前面没有锚点
+                        anchorStyle: 'default'
+                    }
+                }
+            },
+            // 文件上传：默认以base64编码存储，也可以以图片的形式存储，但需要将文件存储的url在callback返回，fileUpload(file, callback)
             // fileUpload: callbacks.fileUpload,
+
             // callback: {
             //     afterChange: callbacks.afterChange,
             //     afterInit: callbacks.afterInit,
             //     beforeImageMounted: callbacks.beforeImageMounted,
             // },
+
+            // chatGpt的openai配置
+            openai: {
+                apiKey: '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', // apiKey
+                // proxy: {
+                //   host: '127.0.0.1',
+                //   port: '7890',
+                // }, // http & https代理配置
+                apilink: 'https://github.com/',
+                ignoreError: false, // 是否忽略请求失败，默认忽略
+            }
         })
     }
 
