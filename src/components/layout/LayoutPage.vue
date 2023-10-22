@@ -188,7 +188,7 @@
   <script>
     import { defineComponent, ref, reactive, toRefs, watch, getCurrentInstance, onMounted} from 'vue';
     import { useRouter} from 'vue-router';
-    import avatarUrl from '@/assets/images/head-photo/touxiang.png';
+    import avatarUrl from '@/assets/images/avatar/avatar.png';
 
 
     export default defineComponent({
@@ -441,6 +441,13 @@
       margin: 15px 15px auto 15px;
       padding: 15px;
       padding-bottom: auto;
+  }
+
+  /* 内容水平垂直居中 */
+  .item-center{
+      display: flex;
+      justify-content: center;
+      align-items: center;
   }
   </style>
   

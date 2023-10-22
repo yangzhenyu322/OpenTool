@@ -1,14 +1,9 @@
 <template>
-    <CherryMarkDown style="height:86vh;"/>
+    <CherryMarkDown style="height:86vh;" :id="id" />
 </template>
 
-<script>
-import { defineComponent } from 'vue'
+<script setup>
 import CherryMarkDown from './markdowneditor/CherryMarkDown.vue';
 
-export default defineComponent({
-  components: { CherryMarkDown },
-  setup(){
-  }
-})
+const id = 'cherry-markdown'
 </script>

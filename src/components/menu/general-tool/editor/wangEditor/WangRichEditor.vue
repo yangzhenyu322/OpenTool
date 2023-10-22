@@ -1,73 +1,76 @@
 <template>
-    <div style="border: 1px solid #ccc;">
+    <div style="border: 1px solid #ccc;height:75vh">
         <Toolbar
             style="border-bottom: 1px solid #ccc;"
             :editor="editorRef"
             :defaultConfig="toolbarConfig"
-            :mode="mode"
+            :mode="editorMode"
         />
         <Editor
-            style="height: 500px; overflow-y: hidden;"
-            v-model="valueHtml"
+            style="overflow-y: hidden;"
+            v-model="htmlContent"
             :defaultConfig="editorConfig"
-            :mode="mode"
+            :mode="editorMode"
             @onCreated="handleCreated"
         />
     </div>
-    <button @click="insertText">insert text</button>
+    <a-button @click="getToolConfig">config</a-button>
 </template>
 
-<script>
+<script setup>
 import { onBeforeUnmount, ref, shallowRef, onMounted } from 'vue'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+import { DomEditor } from'@wangeditor/editor'
 
+// 编辑器实例，必须用 shallowRef
+const editorRef = shallowRef()
+// HTML内容
+const htmlContent = ref('<h1>Welcome to WangEditor！</h1><p>WangEditor介绍：<a href="https://www.wangeditor.com/">https://www.wangeditor.com/</p>')
+// 编辑器模式: default、simple
+const editorMode = 'default'
+// 工具栏配置: https://www.wangeditor.com/v5/toolbar-config.html#getconfig
+const toolbarConfig = {}
+// toolbarConfig.toolbarKeys = [
+//   // 菜单 key
+//   'bold', 'italic',
 
-export default {
-  components: { Editor, Toolbar },
-  setup() {
-    // 编辑器实例，必须用 shallowRef
-    const editorRef = shallowRef()
-
-    // 内容 HTML
-    const valueHtml = ref('<p>hello</p>')
-
-    // 模拟 ajax 异步获取内容
-    onMounted(() => {
-        setTimeout(() => {
-            valueHtml.value = '<p>模拟 Ajax 异步设置内容</p>'
-        }, 1500)
-    })
-
-    const toolbarConfig = {}
-    const editorConfig = { placeholder: '请输入内容...' }
-
-    // 组件销毁时，也及时销毁编辑器
-    onBeforeUnmount(() => {
-        const editor = editorRef.value
-        if (editor == null) return
-        editor.destroy()
-    })
-
-    const handleCreated = (editor) => {
-      editorRef.value = editor // 记录 editor 实例，重要！
-    }
-
-    const insertText = () => {
-        const editor = editorRef.value // 获取 editor ，必须等待它渲染完之后
-        if (editor == null) return
-
-        editor.insertText('hello world') // 执行 editor API
-    }
-
-    return {
-      editorRef,
-      valueHtml,
-      mode: 'default', // 或 'simple'
-      toolbarConfig,
-      editorConfig,
-      handleCreated,
-      insertText
-    };
-  }
+//   // 菜单组，包含多个菜单
+//   {
+//       key: 'group-more-style', // 必填，要以 group 开头
+//       title: '更多样式', // 必填
+//       iconSvg: '<svg>....</svg>', // 可选
+//       menuKeys: ["through", "code", "clearStyle"] // 下级菜单 key ，必填
+//   },
+// ]
+// 编辑器配置:https://www.wangeditor.com/v5/editor-config.html
+const editorConfig = {
+  placeholder: '请输入内容...' 
 }
+
+const handleCreated = (editor) => {
+  editorRef.value = editor // 记录 editor 实例，重要！
+}
+const getToolConfig = () => {
+  // 通过获取configKeys来自定义工具栏
+  const toolbar = DomEditor.getToolbar(editorRef.value)
+  const curToolbarConfig = toolbar.getConfig()
+  console.log('curToolbarConfig:')
+  console.log(curToolbarConfig.toolbarKeys)
+  console.log('allToolConfigKeys:')
+  console.log(editorRef.value.getAllMenuKeys())
+}
+
+// 模拟 ajax 异步获取内容
+onMounted(() => {
+  // setTimeout(() => {
+  //     htmlContent.value = '<p>模拟 Ajax 异步设置内容</p>'
+  // }, 1500)
+})
+
+// 组件销毁时，也及时销毁编辑器
+onBeforeUnmount(() => {
+    const editor = editorRef.value
+    if (editor == null) return
+    editor.destroy()
+})
 </script>

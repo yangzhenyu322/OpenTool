@@ -1,6 +1,6 @@
 <template>
     <a-page-header title="图像编辑" class="header-content" style="margin-top: 2px;text-align: left;font-size: 14px;">
-        <span>可以对图像进行抠图、去水印、质量增强、图片裁剪、自由缩放等操作</span>
+        <span>可以对人物、物品图像进行背景自动抠图</span>
     </a-page-header>
 
     <div class="center-content" style="background-color: white;min-height: 70vh;display: flex;justify-content: center;align-items: center;">
