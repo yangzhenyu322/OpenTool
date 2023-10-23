@@ -11,7 +11,6 @@
         :showHeader="false" 
         :pagination="false"
         :rowClassName="(record, index) => (index % 2 == 1 ? 'row-answer' : 'row-question')"
-        :customRow="customRow"
         >
             <template v-slot:bodyCell="{ column, record, index}">
                 <!-- 头像 -->
@@ -26,11 +25,11 @@
                 <template v-if="column.dataIndex == 'content'">
                     <!-- 问题框 -->
                     <div v-if="record.key % 2 == 0">
-                        <span :id="uid + index">{{ record.content }}</span>
+                        <span :id="uid + '-' + index">{{ record.content }}</span>
                     </div>
                     <!-- 回答框 -->
                     <div v-else>
-                        <ChatMarkDown :id="uid + index" :content="record.content"/>
+                        <ChatMarkDown :id="uid + '-' + index" :content="record.content"/>
                     </div>
                 </template>
 
@@ -40,7 +39,7 @@
                         <a-button 
                         shape="circle" 
                         size="small"
-                        @click="copyDomText(uid + index)"
+                        @click="copyDomText(uid + '-' + index)"
                         style="border: 0;background-color: transparent;box-shadow: none;"
                         >
                             <CopyFilled />
@@ -64,15 +63,21 @@
             >
             </a-textarea>
 
-            <a-button @click="sendMessage" :disabled="isChating" style="margin-left: 2px;">
-                <RocketFilled />
+            <a-button @click="sendMessage" :disabled="isChating || question == null || question == ''" style="margin-left: 2px;">
+                <!-- <a-spin v-if="isChating" :indicator="loadIcon"/> -->
+                <SyncOutlined v-if="isChating" spin style="color: rgb(24,144,255);" />
+                <RocketFilled v-else />
+            </a-button>
+            <a-button v-if="isChating" @click="closeSse" danger style="margin-left: 2px;">
+                Stop
             </a-button>
         </div>
     </div>
 </template>
 
 <script setup>
-import { onBeforeUnmount, ref } from "vue";
+import { onBeforeUnmount, ref, h } from "vue";
+import { LoadingOutlined } from '@ant-design/icons-vue'
 import axios from "axios";
 import ChatMarkDown from "./chatgpt-markdown/ChatMarkDown.vue";
 import gptUrl from '@/assets/images/avatar/chatgpt.png'
@@ -109,29 +114,6 @@ let keyCount = 0 //列下标
 const tableData = ref([
 ])
 
-// 鼠标移入移出行事件处理
-const customRow = (record) => {
-    return {
-        style: {
-            // 字体颜色
-            // color: record.remarkDesc ? record.remarkDesc.fontColor : 'red'
-        },
-        // 鼠标移入行
-        onmouseenter: () => {
-        },
-        // 鼠标移出行
-        onMouseleave: () => {
-        }
-    }
-}
-
-// const uid = window.localStorage.getItem("uid")
-let uid = "" // 用户id
-const question = ref('') // 问题文本
-const sse = ref(null) // sse连接
-const source = ref()
-const isChating = ref(false) // 是否处于chating状态
-
 // 随机生成字符串
 const generateRandomStr = (length) => {
     let result = ''
@@ -142,6 +124,13 @@ const generateRandomStr = (length) => {
     } 
     return result
 }
+
+// const uid = window.localStorage.getItem("uid")
+let uid = 'zensheep-' + generateRandomStr(10) // 用户id
+const question = ref('') // 问题文本
+const sse = ref(null) // sse连接
+const source = ref()
+const isChating = ref(false) // 是否处于chating状态
 
 // 发送信息
 const sendMessage = () => {
@@ -156,7 +145,7 @@ const sendMessage = () => {
     }
 
     // 随机生成uid
-    uid = 'zensheep-' + generateRandomStr(10)
+    // uid = 'zensheep-' + generateRandomStr(10)
     // 新增问题框
     tableData.value.push({
         key: keyCount,
@@ -195,9 +184,12 @@ const connectSse = () => {
     source.value.onopen = event => {
         console.log('建立SSE连接', event)
         sse.value = event.target
+
+        let length = tableData.value.length // 对话列表长度
+
         // 向后端发送问题文本(等sse连接后再发送，否则会出异常)
         axios.post(`/chat/msg/${uid}`, {
-            'msg': tableData.value[keyCount - 2].content // 当前问题文本
+            'msg': tableData.value[length - 2].content, // 当前问题文本
         }).then(res => {
             console.log('res:' + JSON.stringify(res))
             isChating.value = true
@@ -243,7 +235,7 @@ const connectSse = () => {
 const closeSse = () => {
     axios.get(`/chat/closeSse/${uid}`)
         .then( res => {
-            console.log('关闭sse连接')
+            console.log('关闭sse连接：' + res)
             sse.value.close()
             isChating.value = false
         }).catch(err => {
