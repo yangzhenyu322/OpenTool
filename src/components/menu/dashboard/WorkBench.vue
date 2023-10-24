@@ -183,7 +183,7 @@
 <script>
 import { defineComponent, reactive, toRefs, onMounted } from 'vue';
 import { message } from 'ant-design-vue';
-import avatarUrl from '@/assets/images/head-photo/touxiang.png';
+import avatarUrl from '@/assets/images/avatar/avatar.png';
 import lottie from 'lottie-web'
 import json001 from '@/assets/json/programmer.json' // 引入下载的动效json
 import ServiceListVue from './workbench-tab-pane/ServiceList.vue';
@@ -237,7 +237,13 @@ setup() {
                 .then(res => {
                     var ad_info = res.data.result.ad_info
                     state.city = ad_info.city
-                    state.location = ad_info.province + ad_info.city + '-' + ad_info.district
+                    state.location = ad_info.province  // 必填
+                    if (ad_info.city != null && ad_info.city != ''){ // 非必填
+                        state.location += ad_info.city
+                    }
+                    if (ad_info.district != null && ad_info.district != '') { // 非必填
+                        state.location += ad_info.district
+                    }
                     getWeatherByCity()
                 }).catch(err => {
                     console.log(err)

@@ -18,7 +18,7 @@ export default defineComponent({
     setup() {
         var app
         var model
-        const select_model = 1
+        const select_model = 2
         // 模型文件路径
         const model_files = [
             '../../../src/assets/models/姬萌/llny.model3.json',

@@ -17,3 +17,14 @@ export function copyDomText (id) {
         message.success('已复制', 1)
     }
 }
+
+// 随机生成字符串
+export function generateRandomStr(length){
+    let result = ''
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    const charactersLength = characters.length
+    for (let i = 0; i < length; i++) { 
+        result += characters.charAt(Math.floor(Math.random() * charactersLength)); 
+    } 
+    return result
+}

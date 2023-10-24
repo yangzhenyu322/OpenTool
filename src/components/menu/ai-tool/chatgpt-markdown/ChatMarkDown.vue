@@ -4,7 +4,7 @@
 </template>
   
 <script setup>
-import {  onMounted, defineProps, watch } from 'vue'
+import {  onMounted,  watch } from 'vue'
 
 import 'cherry-markdown/dist/cherry-markdown.css';
 import Cherry from 'cherry-markdown'
@@ -53,7 +53,7 @@ const initMarkDown = () => {
 
     // 更新文本内容
     watch(()=>props.content, (newVal) => {
-        console.log('newVal:' + newVal)
+        // console.log('newVal:' + newVal)
         cherrymarkdown.setMarkdown(newVal)
     })
 }

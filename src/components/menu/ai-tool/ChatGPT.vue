@@ -76,15 +76,21 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, ref, h } from "vue";
-import { LoadingOutlined } from '@ant-design/icons-vue'
+import { onBeforeUnmount, ref } from "vue";
 import axios from "axios";
+import { useStorage } from '@vueuse/core'
 import ChatMarkDown from "./chatgpt-markdown/ChatMarkDown.vue";
 import gptUrl from '@/assets/images/avatar/chatgpt.png'
-import { copyDomText } from '@/utils//common.js'
+import { copyDomText, generateRandomStr } from '@/utils//common.js'
 
 // gpt头像
 const gptAvatarUrl = ref(gptUrl)
+// const uid = 'zensheep-' + generateRandomStr(10) // 用户id
+const uid = 'zensheep' // 用户id
+const question = ref('') // 问题文本
+const sse = ref(null) // sse连接
+const source = ref()
+const isChating = ref(false) // 是否处于chating状态
 
 // 表格列名对象数组
 const columns = [
@@ -111,26 +117,13 @@ const columns = [
 ]
 // 表格数据
 let keyCount = 0 //列下标
-const tableData = ref([
-])
-
-// 随机生成字符串
-const generateRandomStr = (length) => {
-    let result = ''
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-    const charactersLength = characters.length
-    for (let i = 0; i < length; i++) { 
-        result += characters.charAt(Math.floor(Math.random() * charactersLength)); 
-    } 
-    return result
-}
-
-// const uid = window.localStorage.getItem("uid")
-let uid = 'zensheep-' + generateRandomStr(10) // 用户id
-const question = ref('') // 问题文本
-const sse = ref(null) // sse连接
-const source = ref()
-const isChating = ref(false) // 是否处于chating状态
+const tableData = ref([]) 
+// useStorage(`${uid}-chatData`, ref([]))
+// const tableData = useStorage(`${uid}-chatData`)// 根据uid初始化tableData
+// if (useStorage(`${uid}-chatData`).value.length > 0) {
+//     console.log('加载缓存')
+//     tableData.value = useStorage(`${uid}-chatData`)
+// }
 
 // 发送信息
 const sendMessage = () => {
@@ -154,6 +147,7 @@ const sendMessage = () => {
         operation: '操作区'
     })
     keyCount++
+
     // 清空消息文本
     question.value = ''
 
@@ -179,7 +173,7 @@ const connectSse = () => {
     }
 
     // 建立连接
-    source.value = new EventSource(`${axios.defaults.baseURL}/chat/createSse/${uid}`)
+    source.value = new EventSource(`${axios.defaults.baseURL}/chatgpt/createSse/${uid}`)
     // 连接一旦建立，就会触发open事件
     source.value.onopen = event => {
         console.log('建立SSE连接', event)
@@ -188,10 +182,11 @@ const connectSse = () => {
         let length = tableData.value.length // 对话列表长度
 
         // 向后端发送问题文本(等sse连接后再发送，否则会出异常)
-        axios.post(`/chat/msg/${uid}`, {
-            'msg': tableData.value[length - 2].content, // 当前问题文本
+        axios.post(`/chatgpt/message`, {
+            'uid': uid,
+            'question': tableData.value[length - 2].content, // 当前问题文本
         }).then(res => {
-            console.log('res:' + JSON.stringify(res))
+            console.log('res:' + JSON.stringify(res.data))
             isChating.value = true
         }).catch(err => {
             console.log('chat失败:' + err)
@@ -199,9 +194,9 @@ const connectSse = () => {
     }
     // 客户端收到服务器发来的数据
     source.value.onmessage = event => {
-        console.log(event)
-        console.log(event.data)
-        console.log(event.lastEventId)
+        // console.log(event)
+        // console.log(event.data)
+        // console.log(event.lastEventId)
         if (event.lastEventId == "[TOKENS]") {
             console.log('tokens:' + JSON.parse(event.data).tokens)
             return;
@@ -211,15 +206,20 @@ const connectSse = () => {
                 // 关闭sse
                 console.log('完成对话，关闭sse连接')
                 sse.value.close()
-                isChating.value = false
+                
             }
+            isChating.value = false
+            // console.log('**********tableData update********:')
+            // console.log(useStorage(`${uid}-chatData`))
+            // useStorage(`${uid}-chatData`, tableData.value)
+
             return;
         }
         let content = JSON.parse(event.data).content // 返回的文本内容
         if (content == null || content == 'null') {
             return
         }
-        console.log('content:' + JSON.parse(event.data).content)
+        // console.log('content:' + JSON.parse(event.data).content)
         // 更新答案框文本
         tableData.value[keyCount - 1].content += content
     }
@@ -233,15 +233,16 @@ const connectSse = () => {
 
 // 主动关闭sse连接(停止生成)
 const closeSse = () => {
-    axios.get(`/chat/closeSse/${uid}`)
+    axios.get(`/chatgpt/closeSse/${uid}`)
         .then( res => {
-            console.log('关闭sse连接：' + res)
+            console.log('关闭sse连接：' + res.data)
             sse.value.close()
             isChating.value = false
         }).catch(err => {
             console.log('关闭sse连接失败:' + err)
         })
 }
+
 
 onBeforeUnmount(() => {
     if (source.value) {
@@ -252,11 +253,11 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .ant-table-chatgpt :deep(.row-question) td {
-    background-color: rgb(246, 246, 249)!important;
+    background-color: rgb(248,250,251)!important;
 }
 
 .ant-table-chatgpt :deep(.row-question):hover td {
-    background-color: rgb(246, 246, 249)!important;
+    background-color: rgb(248,250,251)!important;
     border-radius: 0!important;
 }
 
