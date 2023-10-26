@@ -3,6 +3,21 @@
         <!-- 表头 -->
         <div class="item-center" style="height: 50px;border-bottom: 2px solid rgb(250,250,250)" >
             <span style="font-size: 1.3em;font-weight: 400;">Default(GPT-3.5-turbo)</span>
+            <!-- 重置窗口按钮 -->
+            <a-popconfirm 
+            title="确认重置对话窗口？(这将清空对话记录)"
+            ok-text="确认" 
+            cancel-text="取消"
+            placement="bottomRight"
+            @confirm="resetChatWindow"
+            >
+                <template #icon>
+                    <question-circle-outlined style="color: red" />
+                </template>
+                <a-button danger size="small" style="margin-left: 10px;">
+                    <RedoOutlined />
+                </a-button>
+            </a-popconfirm>
         </div>
         <a-table 
         class="ant-table-chatgpt"
@@ -78,15 +93,14 @@
 <script setup>
 import { onBeforeUnmount, ref } from "vue";
 import axios from "axios";
-import { useStorage } from '@vueuse/core'
 import ChatMarkDown from "./chatgpt-markdown/ChatMarkDown.vue";
 import gptUrl from '@/assets/images/avatar/chatgpt.png'
-import { copyDomText, generateRandomStr } from '@/utils//common.js'
+import { copyDomText } from '@/utils//common.js'
 
 // gpt头像
 const gptAvatarUrl = ref(gptUrl)
-// const uid = 'zensheep-' + generateRandomStr(10) // 用户id
 const uid = 'zensheep' // 用户id
+const wid = 'windowId' // 窗口id
 const question = ref('') // 问题文本
 const sse = ref(null) // sse连接
 const source = ref()
@@ -118,12 +132,27 @@ const columns = [
 // 表格数据
 let keyCount = 0 //列下标
 const tableData = ref([]) 
-// useStorage(`${uid}-chatData`, ref([]))
-// const tableData = useStorage(`${uid}-chatData`)// 根据uid初始化tableData
-// if (useStorage(`${uid}-chatData`).value.length > 0) {
-//     console.log('加载缓存')
-//     tableData.value = useStorage(`${uid}-chatData`)
-// }
+
+// 获取历史对话记录，初始化表格数据
+const initTableData = () => {
+    axios.get(`/chatgpt/history?uid=${uid}&wid=${wid}`)
+        .then(res => {
+            const historys = res.data.data
+            console.log('获取历史记录成功：' + historys)
+            historys.forEach(history => {
+                tableData.value.push({
+                    key: keyCount,
+                    avatar: '头像',
+                    content: history,
+                    operation: '操作区'
+                })
+                keyCount++;
+            });
+        }).catch(err => {
+            console.log('获取历史记录失败：' + err)
+        })
+}
+initTableData()
 
 // 发送信息
 const sendMessage = () => {
@@ -178,12 +207,12 @@ const connectSse = () => {
     source.value.onopen = event => {
         console.log('建立SSE连接', event)
         sse.value = event.target
-
         let length = tableData.value.length // 对话列表长度
 
         // 向后端发送问题文本(等sse连接后再发送，否则会出异常)
         axios.post(`/chatgpt/message`, {
             'uid': uid,
+            'wid': wid,
             'question': tableData.value[length - 2].content, // 当前问题文本
         }).then(res => {
             console.log('res:' + JSON.stringify(res.data))
@@ -209,9 +238,6 @@ const connectSse = () => {
                 
             }
             isChating.value = false
-            // console.log('**********tableData update********:')
-            // console.log(useStorage(`${uid}-chatData`))
-            // useStorage(`${uid}-chatData`, tableData.value)
 
             return;
         }
@@ -240,6 +266,18 @@ const closeSse = () => {
             isChating.value = false
         }).catch(err => {
             console.log('关闭sse连接失败:' + err)
+        })
+}
+
+// 重置窗口：清空对话内容
+const resetChatWindow = () => {
+    axios.delete(`/chatgpt/reset?uid=${uid}&wid=${wid}`)
+        .then(res => {
+            console.log(res.data.data)
+            tableData.value = []
+            keyCount = 0
+        }).catch(err => {
+            console('重置窗口失败：' + err)
         })
 }
 
