@@ -370,7 +370,7 @@ const handleSetModal = () => {
 
 // 是否全选
 const isCheckAll = ref(false)
-watch(isCheckAll, (newVal, oldVal) => {
+watch(isCheckAll, (newVal) => {
     if (newVal == true) {
         // 选中所有已成功上传的文件
         selectedFiles.value = fileList.value.filter(file => file.status == 'done')

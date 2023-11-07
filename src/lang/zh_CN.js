@@ -46,8 +46,8 @@ export default {
                 format_converter: {
                     val: '格式转换'
                 },
-                image_edit: {
-                    val: '图像编辑'
+                image_matting: {
+                    val: '图像抠图'
                 }
             },
             json_tool: {
@@ -58,6 +58,9 @@ export default {
             val: 'AI工具',
             chatgpt: {
                 val: 'ChatGPT'
+            },
+            voice_synthesis: {
+                val: '语音合成'
             },
             face_recognition: {
                 val: '人脸识别'

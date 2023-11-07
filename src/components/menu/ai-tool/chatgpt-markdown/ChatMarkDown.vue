@@ -38,7 +38,7 @@ const initMarkDown = () => {
             // 内置语法配置
             syntax: {
                 codeBlock: {
-                    theme: 'okaidia', //默认为dark深色主题, default、dark、funky、okaidia、twilight、coy、(solarized light、tomorrow night, 这两个主题还不可用，不知道为什么)
+                    theme: 'dark', //默认为dark深色主题, default、dark、funky、okaidia、twilight、coy、(solarized light、tomorrow night, 这两个主题还不可用，不知道为什么)
                     wrap: true, // 超出长度是否换行，false则显示滚动条
                     lineNumber: true, // 默认显示行号
                     editCode: false, // 是否显示“编辑”按钮

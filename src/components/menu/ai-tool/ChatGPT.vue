@@ -64,7 +64,7 @@
             </template>
         </a-table>
         <!-- 表尾 -->
-        <div style="height: 60vh;"></div>
+        <div style="height: 40vh;"></div>
 
         <!-- 底部输入框 -->
         <div class="fixed-bottom item-center">

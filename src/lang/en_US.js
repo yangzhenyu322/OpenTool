@@ -46,8 +46,8 @@ export default {
                 format_converter: {
                     val: 'Format Converter'
                 },
-                image_edit: {
-                    val: 'Image Edit'
+                image_matting: {
+                    val: 'Image Matting'
                 }
             },
             json_tool: {
@@ -58,6 +58,9 @@ export default {
             val: 'AI Tool',
             chatgpt: {
                 val: 'ChatGPT'
+            },
+            voice_synthesis: {
+                val: 'Voice Synthesis'
             },
             face_recognition: {
                 val: 'Face Recognition'

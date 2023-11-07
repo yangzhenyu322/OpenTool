@@ -59,7 +59,7 @@
                 <span>{{ $t('menu.general_tool.image_tool.val') }}</span>
               </template>
               <a-menu-item key="general_tool.image_tool.format_converter">{{ $t('menu.general_tool.image_tool.format_converter.val')}}</a-menu-item>
-              <a-menu-item key="general_tool.image_tool.image_edit">{{ $t('menu.general_tool.image_tool.image_edit.val')}}</a-menu-item>
+              <a-menu-item key="general_tool.image_tool.image_matting">{{ $t('menu.general_tool.image_tool.image_matting.val')}}</a-menu-item>
             </a-sub-menu>
             <a-menu-item key="general_tool.json_tool">{{ $t('menu.general_tool.json_tool.val')}}</a-menu-item>
           </a-sub-menu>
@@ -71,6 +71,7 @@
               </span>
             </template>
             <a-menu-item key="ai_tool.chatgpt">{{ $t('menu.ai_tool.chatgpt.val')}}</a-menu-item>
+            <a-menu-item key="ai_tool.voice_synthesis">{{ $t('menu.ai_tool.voice_synthesis.val') }}</a-menu-item>
             <a-menu-item key="ai_tool.face_recognition">{{ $t('menu.ai_tool.face_recognition.val')}}</a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="api_open_platform">
