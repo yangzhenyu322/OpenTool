@@ -135,8 +135,8 @@
                             </a-button>
                         </a-spin>
                         <p style="font-size: 18px;margin: 2%;">
-                            <a-checkbox-group @change="protocalCheckChange">
-                                <a-checkbox value="true" name="type">
+                            <a-checkbox-group v-model:value="state.selectAgreeProtocal" @change="protocalCheckChange">
+                                <a-checkbox value="true" name="type" >
                                     同意<span style="color: rgb(24,144,255);">使用条款</span>和<span style="color: rgb(24,144,255);">隐私政策</span>
                                 </a-checkbox>
                             </a-checkbox-group>
@@ -258,7 +258,8 @@ const state = reactive({
             }
         }]
     },
-    isAgreeProtocal: false, // 用户是否同意协议Flag
+    isAgreeProtocal: true, // 用户是否同意协议Flag
+    selectAgreeProtocal: ['true'],
     isConverting: false, // 是否正在转换
 })
 
@@ -269,7 +270,7 @@ const fileList = ref([
     //     status: 'done', // 状态有：uploading done error removed
     //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
     //     thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    //     "convertUrl": "http://xxxx/img.jpg" // 处理后的图像存储url
+    //     convertUrl: "http://xxxx/img.jpg" // 处理后的图像存储url
     //     response: '{"status": "success", }', // 服务端响应内容，存储响应码、响应信息
     // },
 ]);
@@ -321,6 +322,7 @@ const customUpload = e => {
                 curFile.url = res.data.data
                 curFile.thumbUrl = res.data.data
                 console.log(`文件${curFile.name}上传成功:`, curFile.url);
+                console.log('uid:' + curFile.uid)
             }
         })
         .catch(err => {
@@ -331,6 +333,7 @@ const customUpload = e => {
         })
 }
 
+// 计算文件大小
 const formatFileSize = bytes => {
     if (bytes < 1024) {
         return bytes + ' Bytes';
@@ -387,6 +390,7 @@ const selectAll = () => {
 // 检测是否同意协议变化
 const protocalCheckChange = () => {
     state.isAgreeProtocal = !state.isAgreeProtocal
+    state.selectAgreeProtocal = [`${state.isAgreeProtocal}`]
 }
 
 // 开始文件格式转换

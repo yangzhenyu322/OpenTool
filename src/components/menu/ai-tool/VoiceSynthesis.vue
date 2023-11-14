@@ -1,43 +1,6 @@
 <template>
-    <!-- <a-layout>
-        <a-layout style="background-color: white;">
-            <a-layout-content>
-                <a-row>
-                    <a-col :span="24">
-                        <a-textarea
-                            v-model="textContent"
-                            placeholder="请输入语音合成内容"
-                            allow-clear
-                            showCount
-                            :maxlength="20000"
-                            :auto-size="{ minRows: 10, maxRows: 12 }"
-                        />
-                    </a-col>
-                </a-row>
-
-                <a-divider/>
-
-                <a-row style="font-size: 1.2em;font-weight: bold;">
-                    <a-col :span="7">文件</a-col>
-                    <a-col :span="6">文件大小</a-col>
-                    <a-col :span="6">文件状态</a-col>
-                    <a-col :span="5">下载</a-col>
-                </a-row>
-
-                <div style="height: 250px;"></div>
-            </a-layout-content>
-
-            <a-layout-sider style="background-color: white;">
-                111
-            </a-layout-sider>
-        </a-layout>
-        <a-layout-footer style="background-color: white;">
-            播放器
-        </a-layout-footer>
-    </a-layout> -->
-
     <div style="background-color: white;padding: 1%;">
-        <a-row :gutter="20" style="border: 1px rgb(240,240,240) s solid;">
+        <a-row :gutter="20" style="min-height:600px;border: 1px rgb(240,240,240) s solid;">
             <a-col :span="18">
                 <a-row>
                     <a-col :span="24">
@@ -54,17 +17,26 @@
                 <br>
 
                 <a-row style="font-size: 1.2em;font-weight: bold;">
-                    <a-col :span="7">文件</a-col>
-                    <a-col :span="6">文件大小</a-col>
-                    <a-col :span="6">文件状态</a-col>
-                    <a-col :span="5">下载</a-col>
+                    <a-col :span="8">文件</a-col>
+                    <a-col :span="16">播放</a-col>
                 </a-row>
 
                 <a-divider/>
 
-                <div style="height: 40vh;">
-                    合成语音文件
-                </div>
+                <a-row :gutter="10" v-for="voiceFile in syntheticVoiceList" :key="voiceFile.uid" style="display: flex;align-items: center;">
+                    <a-col :span="8">
+                        <a-upload
+                        :file-list="[voiceFile]"
+                        list-type="picture"
+                        @remove="removeFile"
+                        >
+                        </a-upload>
+                    </a-col>
+                    <a-col :span="16">
+                        <audio style="width: 80%;" :src="voiceFile.url" controls="controls"></audio>
+                        <!-- <audio-player :audio-list="[voiceFile.url]" :before-play="handleBeforePlay" theme-color="grey" cocontinuation="false"  /> -->
+                    </a-col>
+                </a-row>
             </a-col>
 
             <a-col :span="6" style="text-align: left;border: 1px rgb(240,240,240) solid;">
@@ -90,11 +62,11 @@
             </a-col>
         </a-row>
 
-        <a-row :gutter="20" style="border: 1px rgb(240,240,240) s solid;">
+        <!-- <a-row :gutter="20" style="border: 1px rgb(240,240,240) s solid;">
             <a-col :span="24">
                 播放器
             </a-col>
-        </a-row>
+        </a-row> -->
     </div>
 </template>
 
@@ -102,14 +74,15 @@
 import { ref, watch } from "vue";
 import { message } from 'ant-design-vue'; 
 import axios from "axios";
+import { v4 as uuidv4 } from 'uuid';
 
-const textContent = ref('')  // 文本框内容（语音合成内容）
+const textContent = ref('长沙的春天是一个鲜花盛开、绿意盎然的季节。随着冬天的离去，春天的阳光温暖而明媚，给人一种焕发生机的感觉。整个城市弥漫着樱花、桃花和杜鹃花的芬芳香气，街道两旁的树木披上嫩绿的新叶，湖泊和河流水面波光粼粼。人们纷纷走出家门，享受春日的美好。公园里，孩子们放飞风筝，家人们野餐聚会，年轻人们漫步在湖畔。长沙的春天是一个充满活力和希望的季节，让人心情愉悦，仿佛一切都充满了可能性。')  // 文本框内容（语音合成内容）
 const languageList = ref([]) // 可选语言列表
 const language = ref('中文（普通话，简体）') // 语言
 const gender = ref('Male') // 角色性别
 const voiceRole = ref('') // 语音角色
 const voiceRoleList = ref([]) // 语音角色列表
-const syntheticVoiceList = ref([]) // 合成语音列表
+const syntheticVoiceList = ref([]) // 合成语音列表 {uid、name、status、url、response}
 
 // 获取语言列表
 const getLanguagesApi = () => {
@@ -155,11 +128,61 @@ const synthesizeVoice = () => {
         'text': textContent.value,
         'voiceRole': voiceRole.value
     }).then(res => {
-        syntheticVoiceList.value.push(res.data.data)
+        // 获取合成语音的url地址
+        let curFile = {
+            uid: 'voice-' + uuidv4(),
+            name: 'voice-' + uuidv4() + '.mp3',
+            status: 'done',
+            url: res.data.data,
+            thumbUrl: res.data.data
+        }
+        syntheticVoiceList.value.push(curFile)
         console.log('合成语音url:' + res.data.data)
+        console.log(syntheticVoiceList.value)
     }).catch(err => {
         console.log('合成语音失败:' + err)
     })
 }
 
+// 下载文件
+const downloadFile = (url, name) => {
+    const fileUrl = url; // 替换为实际的文件 URL
+
+    // 创建一个隐藏的 <a> 元素用于下载
+    const downloadLink = document.createElement('a');
+    downloadLink.href = fileUrl;
+    downloadLink.target = '_blank'; // 在新窗口/标签中打开下载链接
+    downloadLink.download = name; // 设置下载的文件名
+
+    // 将 <a> 元素添加到文档中
+    document.body.appendChild(downloadLink);
+
+    // 触发点击事件以开始下载
+    downloadLink.click();
+
+    // 下载完成后移除 <a> 元素
+    document.body.removeChild(downloadLink);
+}
+
+// 移除语音
+const removeFile = (file) => {
+    syntheticVoiceList.value = syntheticVoiceList.value.filter(item => item.uid != file.uid)
+}
+
+// 音频播放前
+const handleBeforePlay = (next) => {
+    next()
+}
+
+
 </script>
+
+<style>
+/* .audio__play-prev {
+    display: none !important;
+}
+
+.audio__play-next {
+    display: none !important;
+} */
+</style>
