@@ -1,6 +1,6 @@
 <template>
     <div style="background-color: white;padding: 1%;">
-        <a-row :gutter="20" style="min-height:600px;border: 1px rgb(240,240,240) s solid;">
+        <a-row :gutter="20" style="min-height:85vh;border: 1px rgb(240,240,240) s solid;">
             <a-col :span="18">
                 <a-row>
                     <a-col :span="24">
@@ -10,7 +10,7 @@
                             allow-clear
                             showCount
                             :maxlength="20000"
-                            :auto-size="{ minRows: 8, maxRows: 8 }"
+                            :auto-size="{ minRows: 10, maxRows: 12 }"
                         />
                     </a-col>
                 </a-row>
@@ -34,7 +34,6 @@
                     </a-col>
                     <a-col :span="16">
                         <audio style="width: 80%;" :src="voiceFile.url" controls="controls"></audio>
-                        <!-- <audio-player :audio-list="[voiceFile.url]" :before-play="handleBeforePlay" theme-color="grey" cocontinuation="false"  /> -->
                     </a-col>
                 </a-row>
             </a-col>
@@ -58,15 +57,64 @@
                     <a-select-option v-for="voiceRoleItem in voiceRoleList" :value="voiceRoleItem" :key="voiceRoleItem">{{ voiceRoleItem }}</a-select-option>
                 </a-select>
 
+                <p>风格类型</p>
+                <a-select v-model:value="voiceStyle" style="width: 95%;text-align: left;">
+                    <a-select-option v-for="voiceStyleItem in voiceStyleList" :value="voiceStyleItem.name" :key="voiceStyleItem.styleId">{{ voiceStyleItem.name }} - {{ voiceStyleItem.description }}</a-select-option>
+                </a-select>
+
+                <p>风格类型强度（柔和->阳刚）</p>
+                <a-row :gutter="15">
+                    <a-col :span="15">
+                        <a-slider v-model:value="voiceStyleDegree" :min="0.01" :max="2" :step="0.01" />
+                    </a-col>
+                    <a-col :span="4">
+                        <a-input-number
+                            v-model:value="voiceStyleDegree"
+                            :min="0.01"
+                            :max="2"
+                            :step="0.01"
+                        />
+                    </a-col>
+                </a-row>
+
+                <p>风格角色（变声成某类型角色）</p>
+                <a-select v-model:value="styleRole" style="width: 95%;text-align: left;">
+                    <a-select-option v-for="styleRoleItem in styleRoleList" :value="styleRoleItem.name" :key="styleRoleItem.styleId">{{ styleRoleItem.name }} - {{ styleRoleItem.description }}</a-select-option>
+                </a-select>
+                
+                <p>音速（慢 -> 快）</p>
+                <a-row :gutter="15">
+                    <a-col :span="15">
+                        <a-slider v-model:value="voiceRate" :min="0.5" :max="2" :step="0.01" />
+                    </a-col>
+                    <a-col :span="4">
+                        <a-input-number
+                            v-model:value="voiceRate"
+                            :min="0.5"
+                            :max="2"
+                            :step="0.01"
+                        />
+                    </a-col>
+                </a-row>
+
+                <p>音调（低 -> 高）</p>
+                <a-row :gutter="15">
+                    <a-col :span="15">
+                        <a-slider v-model:value="voicePitch" :min="0.5" :max="1.5" :step="0.01" />
+                    </a-col>
+                    <a-col :span="4">
+                        <a-input-number
+                            v-model:value="voicePitch"
+                            :min="0.5"
+                            :max="1.5"
+                            :step="0.01"
+                        />
+                    </a-col>
+                </a-row>
+
                 <a-button @click="synthesizeVoice" type="primary" style="margin-top: 5%;">开始转换</a-button>
             </a-col>
         </a-row>
-
-        <!-- <a-row :gutter="20" style="border: 1px rgb(240,240,240) s solid;">
-            <a-col :span="24">
-                播放器
-            </a-col>
-        </a-row> -->
     </div>
 </template>
 
@@ -82,6 +130,13 @@ const language = ref('中文（普通话，简体）') // 语言
 const gender = ref('Male') // 角色性别
 const voiceRole = ref('') // 语音角色
 const voiceRoleList = ref([]) // 语音角色列表
+const voiceStyle = ref('default') // 风格类型
+const voiceStyleList = ref([]) // 风格类型列表: [{styleId、name、description}]
+const voiceStyleDegree = ref(1) // 风格强度
+const styleRole = ref('Boy') // 风格角色
+const styleRoleList = ref([]) // 风格角色列表
+const voiceRate = ref(1) // 音速
+const voicePitch = ref(1) // 音调
 const syntheticVoiceList = ref([]) // 合成语音列表 {uid、name、status、url、response}
 
 // 获取语言列表
@@ -116,6 +171,29 @@ watch(gender, () => {
     getVoiceRolesByLanguageApi()
 })
 
+// 获取语音风格类型列表
+const getStylesApi = () => {
+    axios.get(`/tts/styles`)
+        .then(res => {
+            voiceStyleList.value = res.data.data
+        }).catch(err => {
+            console.log('获取风格列表失败：' + err)
+        })
+}
+getStylesApi()
+
+// 获取风格角色列表
+const getStyleRolesApi = () => {
+    axios.get(`/tts/style/roles`)
+        .then(res => {
+            styleRoleList.value = res.data.data
+        }).catch(err => {
+            console.log('获取风格角色列表失败：' + err)
+        })
+}
+getStyleRolesApi()
+
+
 // 合成语音
 const synthesizeVoice = () => {
     // 检测文本内容是否为空
@@ -126,7 +204,12 @@ const synthesizeVoice = () => {
 
     axios.post(`/tts/voice`, {
         'text': textContent.value,
-        'voiceRole': voiceRole.value
+        'voiceRole': voiceRole.value,
+        'style': voiceStyle.value,
+        'styleDegree': voiceStyleDegree.value,
+        'styleRole': styleRole.value,
+        'rate': voiceRate.value,
+        'pitch': voicePitch.value
     }).then(res => {
         // 获取合成语音的url地址
         let curFile = {
@@ -144,36 +227,11 @@ const synthesizeVoice = () => {
     })
 }
 
-// 下载文件
-const downloadFile = (url, name) => {
-    const fileUrl = url; // 替换为实际的文件 URL
-
-    // 创建一个隐藏的 <a> 元素用于下载
-    const downloadLink = document.createElement('a');
-    downloadLink.href = fileUrl;
-    downloadLink.target = '_blank'; // 在新窗口/标签中打开下载链接
-    downloadLink.download = name; // 设置下载的文件名
-
-    // 将 <a> 元素添加到文档中
-    document.body.appendChild(downloadLink);
-
-    // 触发点击事件以开始下载
-    downloadLink.click();
-
-    // 下载完成后移除 <a> 元素
-    document.body.removeChild(downloadLink);
-}
 
 // 移除语音
 const removeFile = (file) => {
     syntheticVoiceList.value = syntheticVoiceList.value.filter(item => item.uid != file.uid)
 }
-
-// 音频播放前
-const handleBeforePlay = (next) => {
-    next()
-}
-
 
 </script>
 
