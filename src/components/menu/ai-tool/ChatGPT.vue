@@ -71,6 +71,7 @@
             <a-textarea
             v-model:value="question"
             placeholder="Send a message"
+            size="large"
             :auto-size="{ minRows: 1, maxRows: 9}"
             style="width: 60%;"
             allow-clear
@@ -78,8 +79,7 @@
             >
             </a-textarea>
 
-            <a-button @click="sendMessage" :disabled="isChating || question == null || question == ''" style="margin-left: 2px;">
-                <!-- <a-spin v-if="isChating" :indicator="loadIcon"/> -->
+            <a-button @click="sendMessage" :disabled="isChating || question == null || question == ''" style="margin-left: 2px;height: 2.5em;">
                 <SyncOutlined v-if="isChating" spin style="color: rgb(24,144,255);" />
                 <RocketFilled v-else />
             </a-button>
