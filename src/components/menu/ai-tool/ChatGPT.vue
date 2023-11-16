@@ -166,8 +166,6 @@ const sendMessage = () => {
         return
     }
 
-    // 随机生成uid
-    // uid = 'zensheep-' + generateRandomStr(10)
     // 新增问题框
     tableData.value.push({
         key: keyCount,
@@ -223,9 +221,6 @@ const connectSse = () => {
     }
     // 客户端收到服务器发来的数据
     source.value.onmessage = event => {
-        // console.log(event)
-        // console.log(event.data)
-        // console.log(event.lastEventId)
         if (event.lastEventId == "[TOKENS]") {
             console.log('tokens:' + JSON.parse(event.data).tokens)
             return;
@@ -235,7 +230,6 @@ const connectSse = () => {
                 // 关闭sse
                 console.log('完成对话，关闭sse连接')
                 sse.value.close()
-                
             }
             isChating.value = false
 
@@ -245,7 +239,6 @@ const connectSse = () => {
         if (content == null || content == 'null') {
             return
         }
-        // console.log('content:' + JSON.parse(event.data).content)
         // 更新答案框文本
         tableData.value[keyCount - 1].content += content
     }

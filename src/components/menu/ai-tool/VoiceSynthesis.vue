@@ -140,6 +140,19 @@
                             </a-col>
                         </a-row>
                     </a-collapse-panel>
+                    <a-collapse-panel key="3" header="文件配置">
+                        <p>文件名(检查是否合法)</p>
+                        <a-input v-model:value="audioFileName" placeholder="请输入文件名" style="width: 95%;" />
+
+                        <p>音频文件类型</p>
+                        <a-select
+                            v-model:value="audioFileStyle" 
+                            style="width: 95%;text-align: left;"
+                        >
+                            <a-select-option value="wav">wav</a-select-option>
+                            <a-select-option value="mp3">mp3</a-select-option>
+                        </a-select>
+                    </a-collapse-panel>
                 </a-collapse>
 
                 <a-button @click="synthesizeVoice" type="primary"  :loading="isSynthesisLoading" style="margin-top: 5%;">
@@ -173,6 +186,8 @@ const voiceRate = ref(1) // 音速
 const voicePitch = ref(1) // 音调
 const syntheticVoiceList = ref([]) // 合成语音列表 {uid、name、status、url、response}
 const isSynthesisLoading = ref(false) // 是否正在进行语音合成
+const audioFileName = ref('audio') // 音频文件名
+const audioFileStyle = ref('wav') // 音频文件类型
 
 // 获取语言列表
 const getLanguagesApi = () => {
@@ -247,7 +262,9 @@ const synthesizeVoice = () => {
         'styleDegree': voiceStyleDegree.value,
         'styleRole': styleRole.value,
         'rate': voiceRate.value,
-        'pitch': voicePitch.value
+        'pitch': voicePitch.value,
+        'audioFileName': audioFileName.value,
+        'audioFileStyle': audioFileStyle.value
     }).then(res => {
         // 获取合成语音的url地址
         let curFile = {
@@ -263,7 +280,6 @@ const synthesizeVoice = () => {
     }).catch(err => {
         message.error('语音合成失败：' + err)
         isSynthesisLoading.value = false
-
     })
 }
 
@@ -281,7 +297,7 @@ const downloadMp3 = (fileUrl) => {
         a.style.display = 'none'
         const url = window.URL.createObjectURL(blob);
         a.href = url;
-        a.download = 'audio.mp3';
+        a.download = `${audioFileName.value}.${audioFileStyle.value}`;
         a.click();
         document.body.removeChild(a)
         window.URL.revokeObjectURL(url);
