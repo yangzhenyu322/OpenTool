@@ -1,7 +1,7 @@
 <template>
     <div style="background-color: white;">
         <!-- 表头 -->
-        <div class="item-center" style="height: 50px;border-bottom: 2px solid rgb(250,250,250)" >
+        <div class="horizontal-center" style="height: 50px;border-bottom: 2px solid rgb(250,250,250)" >
             <span style="font-size: 1.3em;font-weight: 400;">Default(GPT-3.5-turbo)</span>
             <!-- 重置窗口按钮 -->
             <a-popconfirm 
@@ -67,7 +67,7 @@
         <div style="height: 40vh;"></div>
 
         <!-- 底部输入框 -->
-        <div class="fixed-bottom item-center">
+        <div class="fixed-bottom horizontal-center">
             <a-textarea
             v-model:value="question"
             placeholder="Send a message"
@@ -92,6 +92,7 @@
 
 <script setup>
 import { onBeforeUnmount, ref } from "vue";
+import { message } from 'ant-design-vue'
 import axios from "axios";
 import ChatMarkDown from "./chatgpt-markdown/ChatMarkDown.vue";
 import gptUrl from '@/assets/images/avatar/chatgpt.png'
@@ -99,7 +100,7 @@ import { copyDomText } from '@/utils//common.js'
 
 // gpt头像
 const gptAvatarUrl = ref(gptUrl)
-const uid = 'zensheep' // 用户id
+const uid = 'zensheep' + '-chatgpt' // 用户id
 const wid = 'windowId' // 窗口id
 const question = ref('') // 问题文本
 const sse = ref(null) // sse连接
@@ -157,12 +158,13 @@ initTableData()
 // 发送信息
 const sendMessage = () => {
     if (question.value == null || question.value == '') {
+        message.error('问题不能为空')
         console.log('问题不能为空')
         return
     }
 
     if (isChating.value) {
-        console.log('已存在sse，不能重复创建')
+        console.log('正在对话中，暂时无法发送新的对话')
         return
     }
 
@@ -203,7 +205,7 @@ const connectSse = () => {
     source.value = new EventSource(`${axios.defaults.baseURL}/chatgpt/createSse/${uid}`)
     // 连接一旦建立，就会触发open事件
     source.value.onopen = event => {
-        console.log('建立SSE连接', event)
+        console.log('建立SSE连接:', event)
         sse.value = event.target
         let length = tableData.value.length // 对话列表长度
 
@@ -213,29 +215,28 @@ const connectSse = () => {
             'wid': wid,
             'question': tableData.value[length - 2].content, // 当前问题文本
         }).then(res => {
-            console.log('res:' + JSON.stringify(res.data))
+            console.log('成功发送请求，res:', res.data)
             isChating.value = true
         }).catch(err => {
-            console.log('chat失败:' + err)
+            console.log('chat失败:', err)
         })
     }
     // 客户端收到服务器发来的数据
     source.value.onmessage = event => {
+        let eventData = JSON.parse(event.data)
+
         if (event.lastEventId == "[TOKENS]") {
-            console.log('tokens:' + JSON.parse(event.data).tokens)
+            console.log('tokens:', eventData.tokens)
             return;
         }
         if (event.lastEventId == "[DONE]") {
-            if (sse.value) {
-                // 关闭sse
-                console.log('完成对话，关闭sse连接')
-                sse.value.close()
-            }
+            console.log('完成对话，关闭sse连接')
+            sse.value.close()
             isChating.value = false
 
-            return;
+            return
         }
-        let content = JSON.parse(event.data).content // 返回的文本内容
+        let content = eventData.content // 返回的文本内容
         if (content == null || content == 'null') {
             return
         }
@@ -244,26 +245,32 @@ const connectSse = () => {
     }
     // 如果发生通信错误（比如连接中断，就会触发error事件）
     source.value.onerror = event => {
-        console.log('通信失败:' + event)
+        let eventData = JSON.parse(event.data)
+        console.log('通信失败:', event)
+        console.log('SSE连接异常')
+        console.log('【error】：', eventData.error)
         sse.value.close()
-        isChating.value = false
     }
 }
 
 // 主动关闭sse连接(停止生成)
 const closeSse = () => {
     axios.get(`/chatgpt/closeSse/${uid}`)
-        .then( res => {
-            console.log('关闭sse连接：' + res.data)
+        .then(res => {
+            console.log('主动关闭sse连接成功：' + res.data)
             sse.value.close()
             isChating.value = false
         }).catch(err => {
-            console.log('关闭sse连接失败:' + err)
+            console.log('主动关闭sse连接失败成功:', err)
         })
 }
 
 // 重置窗口：清空对话内容
 const resetChatWindow = () => {
+    if (sse.value) {
+        closeSse()
+    }
+
     axios.delete(`/chatgpt/reset?uid=${uid}&wid=${wid}`)
         .then(res => {
             console.log(res.data.data)
@@ -272,6 +279,7 @@ const resetChatWindow = () => {
         }).catch(err => {
             console('重置窗口失败：' + err)
         })
+    isChating.value = false
 }
 
 

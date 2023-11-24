@@ -30,7 +30,9 @@
     "vue": "^3.2.47",
     "vue-i18n": "^9.3.0-beta.17",
     "vue-request": "^2.0.3",
-    "vue-router": "^4.1.6"
+    "vue-router": "^4.1.6",
+    "xgplayer": "^3.0.10",
+    "xgplayer-music": "^3.0.10"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",

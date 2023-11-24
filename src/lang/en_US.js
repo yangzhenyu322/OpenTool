@@ -62,6 +62,9 @@ export default {
             voice_synthesis: {
                 val: 'Voice Synthesis'
             },
+            speech_recognition: {
+                val: "Speech Recognition"
+            },
             face_recognition: {
                 val: 'Face Recognition'
             }

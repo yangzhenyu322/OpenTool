@@ -14,6 +14,7 @@ const routes = [
     { path:'/general-tool/json-tool', name:'json-tool', component: () => import('@/components/menu/general-tool/JsonTool.vue') },
     { path:'/ai-tool/chatgpt', name:'chatgpt', component: () => import('@/components/menu/ai-tool/ChatGPT.vue') },
     { path:'/ai-tool/voice-synthesis', name:'voice-synthesis', component: () => import('@/components/menu/ai-tool/VoiceSynthesis.vue') },
+    { path:'/ai-tool/speech-recognition', name:'speech-recognition', component: () => import('@/components/menu/ai-tool/SpeechRecognition.vue') },
     { path:'/ai-tool/face-recognition', name:'face-recognition', component: () => import('@/components/menu/ai-tool/FaceRecognition.vue') },
     { path:'/api-open-platform/weather', name:'weather', component: () => import('@/components/menu/api-open-platform/WeaTher.vue') },
     { path:'/api-open-platform/map', name:'map', component: () => import('@/components/menu/api-open-platform/MapAPI.vue') },

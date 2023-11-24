@@ -62,6 +62,9 @@ export default {
             voice_synthesis: {
                 val: '语音合成'
             },
+            speech_recognition: {
+                val: "语音转文本"
+            },
             face_recognition: {
                 val: '人脸识别'
             }

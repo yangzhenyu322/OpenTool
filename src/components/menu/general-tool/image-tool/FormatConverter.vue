@@ -200,6 +200,7 @@ const state = reactive({
     isFilePathInPuting: true, // 文件/URL路径选择控制Flag
     urlPrefix: 'Http://',  // URL前缀
     urlPath: '', // URL路径，URL = urlPrefix + urlPath
+    url: '', // url完整路径
     isSetModalShow: false, // 是否显示转换设置弹窗
     // 表单数据
     formState: {
@@ -272,6 +273,7 @@ const fileList = ref([
     //     thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
     //     convertUrl: "http://xxxx/img.jpg" // 处理后的图像存储url
     //     response: '{"status": "success", }', // 服务端响应内容，存储响应码、响应信息
+    //     error: "xxx", // 上传错误信息
     // },
 ]);
 
@@ -321,7 +323,7 @@ const customUpload = e => {
                 curFile.status = 'done'
                 curFile.url = res.data.data
                 curFile.thumbUrl = res.data.data
-                console.log(`文件${curFile.name}上传成功:`, curFile.url);
+                console.log(`文件${curFile.name}上传成功:`, curFile.url)
                 console.log('uid:' + curFile.uid)
             }
         })
@@ -346,7 +348,8 @@ const formatFileSize = bytes => {
 
 // 自动拼接网络资源url
 watch(()=>state.urlPath, ()=> {
-    console.log("URL:" + state.urlPrefix + state.urlPath)
+    state.url = state.urlPrefix + state.urlPath
+    console.log("URL:" + state.url)
 })
 
 // 开启URL路径输入

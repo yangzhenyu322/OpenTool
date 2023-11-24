@@ -1,6 +1,6 @@
 <template>
   <LayoutPage/>
-  <Live2D />
+  <!-- <Live2D /> -->
 </template>
 
 <script>

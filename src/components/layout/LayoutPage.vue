@@ -72,6 +72,7 @@
             </template>
             <a-menu-item key="ai_tool.chatgpt">{{ $t('menu.ai_tool.chatgpt.val')}}</a-menu-item>
             <a-menu-item key="ai_tool.voice_synthesis">{{ $t('menu.ai_tool.voice_synthesis.val') }}</a-menu-item>
+            <a-menu-item key="ai_tool.speech_recognition">{{ $t('menu.ai_tool.speech_recognition.val') }}</a-menu-item>
             <a-menu-item key="ai_tool.face_recognition">{{ $t('menu.ai_tool.face_recognition.val')}}</a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="api_open_platform">
@@ -444,11 +445,19 @@
       padding-bottom: auto;
   }
 
-  /* 内容水平垂直居中 */
-  .item-center{
+  /* 纵向排列子元素垂直居中 */
+  .vertical-center{
       display: flex;
-      justify-content: center;
-      align-items: center;
+      flex-direction: column; /* 垂直排列子元素 */
+      justify-content: center; /* 垂直居中 */
+      align-items: center; /* 水平居中 */
+  }
+
+    /* 横向排列子元素垂直居中 */
+  .horizontal-center{
+      display: flex;
+      justify-content: center; /* 垂直居中 */
+      align-items: center; /* 水平居中 */
   }
   </style>
   
