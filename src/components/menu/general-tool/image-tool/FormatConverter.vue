@@ -10,15 +10,15 @@
                     <span>
                         <ProfileTwoTone style="font-size: 40px; float: left; margin-right: 10px;"/>
                         <span style="font-size: 16px;">
-                            1：选择本地图片或输入在线PNG文件的URL。 
-                            2：选择目标图像格式并设置转换选项（可选）。 
-                            3：点击“开始转换”按钮将原图像在线转换为目标格式图像。
+                            1：选择本地图片或输入在线PNG文件的URL
+                            2：选择目标图像格式并设置转换选项（可选）
+                            3：点击“开始转换”按钮将原图像在线转换为目标格式图像
                         </span>
                     </span>
                 </div>
             </a-col>
             <a-divider type="vertical" class="file-divider"/>
-            <a-col :span="6" >
+            <a-col :span="5" >
                 <div style="display: flex;justify-content: center;align-items: center;">
                     <div style="width: 80%;">
                         <div v-if="state.isFilePathInPuting" style="height: 70px;border: 1px solid rgb(24,144,255);border-radius: 5px;">
@@ -156,35 +156,38 @@
             <a-col :span="5">下载</a-col>
         </a-row>
         <a-divider/>
-
-        <a-checkbox-group v-model:value="selectedFiles" style="display: block;">
-            <a-row v-for="file in fileList" :key="file.uid" style="display: flex;align-items: center;">
-                <a-col :span="1"><a-checkbox :value="file" :disabled="file.status != 'done'"></a-checkbox></a-col>
-                <a-col :span="6">
-                    <!-- 文件上传组件 -->
-                    <a-upload
-                    :file-list="[file]"
-                    list-type="picture"
-                    @remove="removeFile"
-                    >
-                    </a-upload>
-                </a-col>
-                <a-col :span="6">{{ formatFileSize(file.size) }}</a-col>
-                <a-col :span="6">
-                    <span v-if="file.status == 'uploading'" style="color: dodgerblue;">正在上传中...</span>
-                    <span v-else-if="file.status == 'error'" style="color: red;">{{ file.error }}</span>
-                    <span v-else style="color: forestgreen;">上传成功</span>
-                </a-col>
-                <a-col :span="5">
-                    <a-button type="primary" v-if="file.convertUrl" @click="downloadFile(file.convertUrl, file.name)">
-                        <template #icon>
-                            <DownloadOutlined />
-                        </template>
-                        Download
-                    </a-button>
-                </a-col>
-            </a-row>
-        </a-checkbox-group>
+        
+        <el-scrollbar style="height:calc(100vh - 515px);">
+            <a-checkbox-group v-model:value="selectedFiles" style="display: block;">
+                <a-row v-for="file in fileList" :key="file.uid" style="display: flex;align-items: center;">
+                    <a-col :span="1"><a-checkbox :value="file" :disabled="file.status != 'done'"></a-checkbox></a-col>
+                    <a-col :span="6">
+                        <!-- 文件上传组件 -->
+                        <a-upload
+                        :file-list="[file]"
+                        list-type="picture"
+                        @remove="removeFile"
+                        >
+                        </a-upload>
+                    </a-col>
+                    <a-col :span="6">{{ formatFileSize(file.size) }}</a-col>
+                    <a-col :span="6">
+                        <span v-if="file.status == 'uploading'" style="color: dodgerblue;">正在上传中...</span>
+                        <span v-else-if="file.status == 'error'" style="color: red;">{{ file.error }}</span>
+                        <span v-else style="color: forestgreen;">上传成功</span>
+                    </a-col>
+                    <a-col :span="5">
+                        <a-button type="primary" v-if="file.convertUrl" @click="downloadFile(file.convertUrl, file.name)">
+                            <template #icon>
+                                <DownloadOutlined />
+                            </template>
+                            Download
+                        </a-button>
+                    </a-col>
+                </a-row>
+            </a-checkbox-group>
+        </el-scrollbar>
+        
     </div>
 </template>
 

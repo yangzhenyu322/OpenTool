@@ -1,5 +1,5 @@
 <template>
-    <div style="background-color: white;">
+    <div style="height:calc(100vh - 90px);background-color: white;">
         <!-- 表头 -->
         <div class="horizontal-center" style="height: 50px;border-bottom: 2px solid rgb(250,250,250)" >
             <span style="font-size: 1.3em;font-weight: 400;">Default(GPT-3.5-turbo)</span>
@@ -19,53 +19,55 @@
                 </a-button>
             </a-popconfirm>
         </div>
-        <a-table 
-        class="ant-table-chatgpt"
-        :columns="columns"
-        :data-source="tableData"
-        :showHeader="false" 
-        :pagination="false"
-        :rowClassName="(record, index) => (index % 2 == 1 ? 'row-answer' : 'row-question')"
-        >
-            <template v-slot:bodyCell="{ column, record, index}">
-                <!-- 头像 -->
-                <template v-if="column.dataIndex == 'avatar'">
-                    <a-avatar class="avatar" v-if="record.key % 2 == 0" size="large" style="background-color: #fde3cf;">
-                        {{ uid.substring(0,2).toUpperCase() }}
-                    </a-avatar>
-                    <a-avatar class="avatar" v-else shape="square" size="large" style="background-color: rgb(191, 246, 208)" :src="gptAvatarUrl"></a-avatar>
-                </template>
 
-                <!-- 文本 -->
-                <template v-if="column.dataIndex == 'content'">
-                    <!-- 问题框 -->
-                    <div v-if="record.key % 2 == 0">
-                        <span :id="uid + '-' + index">{{ record.content }}</span>
-                    </div>
-                    <!-- 回答框 -->
-                    <div v-else>
-                        <ChatMarkDown :id="uid + '-' + index" :content="record.content"/>
-                    </div>
-                </template>
+        <!-- 聊天对话 -->
+        <a-skeleton :loading="isPreLoading" active>
+            <a-table 
+            class="ant-table-chatgpt"
+            :columns="columns"
+            :data-source="tableData"
+            :showHeader="false" 
+            :pagination="false"
+            :rowClassName="(record, index) => (index % 2 == 1 ? 'row-answer' : 'row-question')"
+            >
+                <template v-slot:bodyCell="{ column, record, index}">
+                    <!-- 头像 -->
+                    <template v-if="column.dataIndex == 'avatar'">
+                        <a-avatar class="avatar" v-if="record.key % 2 == 0" size="large" style="background-color: #fde3cf;">
+                            {{ uid.substring(0,2).toUpperCase() }}
+                        </a-avatar>
+                        <a-avatar class="avatar" v-else shape="square" size="large" style="background-color: rgb(191, 246, 208)" :src="gptAvatarUrl"></a-avatar>
+                    </template>
 
-                <!-- 操作区 -->
-                <template v-if="column.dataIndex == 'operation'">
-                    <div class="operation">
-                        <a-button 
-                        shape="circle" 
-                        size="small"
-                        @click="copyDomText(uid + '-' + index)"
-                        style="border: 0;background-color: transparent;box-shadow: none;"
-                        >
-                            <CopyFilled />
-                        </a-button>
-                    </div>
-                </template>
-            </template>
-        </a-table>
-        <!-- 表尾 -->
-        <div style="height: 40vh;"></div>
+                    <!-- 文本 -->
+                    <template v-if="column.dataIndex == 'content'">
+                        <!-- 问题框 -->
+                        <div v-if="record.key % 2 == 0">
+                            <span :id="uid + '-' + index">{{ record.content }}</span>
+                        </div>
+                        <!-- 回答框 -->
+                        <div v-else>
+                            <ChatMarkDown :id="uid + '-' + index" :content="record.content"/>
+                        </div>
+                    </template>
 
+                    <!-- 操作区 -->
+                    <template v-if="column.dataIndex == 'operation'">
+                        <div class="operation">
+                            <a-button 
+                            shape="circle" 
+                            size="small"
+                            @click="copyDomText(uid + '-' + index)"
+                            style="border: 0;background-color: transparent;box-shadow: none;"
+                            >
+                                <CopyFilled />
+                            </a-button>
+                        </div>
+                    </template>
+                </template>
+            </a-table>
+        </a-skeleton>
+        
         <!-- 底部输入框 -->
         <div class="fixed-bottom horizontal-center">
             <a-textarea
@@ -73,9 +75,9 @@
             placeholder="Send a message"
             size="large"
             :auto-size="{ minRows: 1, maxRows: 9}"
-            style="width: 60%;"
             allow-clear
             @keydown.enter="sendMessage"
+            style="width: 60%;"
             >
             </a-textarea>
 
@@ -98,6 +100,7 @@ import ChatMarkDown from "./chatgpt-markdown/ChatMarkDown.vue";
 import gptUrl from '@/assets/images/avatar/chatgpt.png'
 import { copyDomText } from '@/utils//common.js'
 
+const isPreLoading = ref(true) // 预加载动画
 // gpt头像
 const gptAvatarUrl = ref(gptUrl)
 const uid = 'zensheep' + '-chatgpt' // 用户id
@@ -140,17 +143,21 @@ const initTableData = () => {
         .then(res => {
             const historys = res.data.data
             console.log('获取历史记录成功：' + historys)
-            historys.forEach(history => {
-                tableData.value.push({
-                    key: keyCount,
-                    avatar: '头像',
-                    content: history,
-                    operation: '操作区'
-                })
-                keyCount++;
-            });
+            if (historys) {
+                historys.forEach(history => {
+                    tableData.value.push({
+                        key: keyCount,
+                        avatar: '头像',
+                        content: history,
+                        operation: '操作区'
+                    })
+                    keyCount++;
+                });
+            }
+            isPreLoading.value = false
         }).catch(err => {
             console.log('获取历史记录失败：' + err)
+            isPreLoading.value = false
         })
 }
 initTableData()
@@ -326,8 +333,8 @@ onBeforeUnmount(() => {
 
 .fixed-bottom{
     position: absolute;
-    bottom: 0;
-    left: 0;
+    top: auto;
+    bottom: 1%;
     width: 100%;
     display: flex;
     z-index: 10000;

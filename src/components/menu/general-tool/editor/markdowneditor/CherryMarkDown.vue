@@ -4,8 +4,8 @@
 </template>
   
 <script setup>
-import { defineComponent, onMounted, ref, reactive, defineProps } from 'vue'
-import { uploadApi } from '@/utils/file/FileUtil.js'
+import { onMounted, defineProps } from 'vue'
+// import { uploadApi } from '@/utils/file/FileUtil.js'
 
 import 'cherry-markdown/dist/cherry-markdown.css';
 import Cherry from 'cherry-markdown'

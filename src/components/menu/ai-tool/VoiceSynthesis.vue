@@ -1,6 +1,6 @@
 <template>
-    <div style="background-color: white;padding: 1%;">
-        <a-row :gutter="20" style="min-height:85vh;border: 1px rgb(240,240,240) s solid;">
+    <div style="height: calc(100vh - 90px);background-color: white;padding: 1%;">
+        <a-row :gutter="20" style="border: 1px rgb(240,240,240) s solid;">
             <a-col :span="18">
                 <a-row>
                     <a-col :span="24">
@@ -25,31 +25,33 @@
 
                 <a-divider/>
 
-                <a-row :gutter="10" v-for="voiceFile in syntheticVoiceList" :key="voiceFile.uid" style="display: flex;align-items: center;">
-                    <a-col :span="8">
-                        <a-upload
-                        :file-list="[voiceFile]"
-                        list-type="picture"
-                        @remove="removeFile"
-                        >
-                        </a-upload>
-                    </a-col>
-                    <a-col :span="14">
-                        <audio
-                            preload="auto" 
-                            :src="voiceFile.url" 
-                            controls="controls" 
-                            style="width: 80%;" 
-                        ></audio>
-                    </a-col>
-                    <a-col :span="2">
-                        <a-button type="link" size="large" shape="circle" @click="downloadMp3(voiceFile.url)">
-                            <template #icon>
-                                <DownloadOutlined />
-                            </template>
-                        </a-button>
-                    </a-col>
-                </a-row>
+                <el-scrollbar style="height:calc(100vh - 600px);">
+                    <a-row  v-for="voiceFile in syntheticVoiceList" :key="voiceFile.uid" style="display: flex;align-items: center;">
+                        <a-col :span="8">
+                            <a-upload
+                            :file-list="[voiceFile]"
+                            list-type="picture"
+                            @remove="removeFile"
+                            >
+                            </a-upload>
+                        </a-col>
+                        <a-col :span="14">
+                            <audio
+                                preload="auto" 
+                                :src="voiceFile.url" 
+                                controls="controls" 
+                                style="width: 80%;" 
+                            ></audio>
+                        </a-col>
+                        <a-col :span="2">
+                            <a-button type="link" size="large" shape="circle" @click="downloadMp3(voiceFile.url)">
+                                <template #icon>
+                                    <DownloadOutlined />
+                                </template>
+                            </a-button>
+                        </a-col>
+                    </a-row>
+                </el-scrollbar>
             </a-col>
 
             <a-col :span="6" style="text-align: left;border: 1px rgb(240,240,240) solid;">
@@ -301,7 +303,7 @@ const downloadMp3 = (fileUrl) => {
         a.click();
         document.body.removeChild(a)
         window.URL.revokeObjectURL(url);
-      });
+    });
 }
 
 </script>

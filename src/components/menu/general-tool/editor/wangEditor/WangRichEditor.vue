@@ -1,20 +1,18 @@
 <template>
-    <div style="border: 1px solid #ccc;height:75vh">
-        <Toolbar
-            style="border-bottom: 1px solid #ccc;"
-            :editor="editorRef"
-            :defaultConfig="toolbarConfig"
-            :mode="editorMode"
-        />
-        <Editor
-            style="overflow-y: hidden;"
-            v-model="htmlContent"
-            :defaultConfig="editorConfig"
-            :mode="editorMode"
-            @onCreated="handleCreated"
-        />
-    </div>
-    <a-button @click="getToolConfig">config</a-button>
+    <Toolbar
+        :editor="editorRef"
+        :defaultConfig="toolbarConfig"
+        :mode="editorMode"
+        style="border-bottom: 1px solid #ccc;"
+    />
+    <Editor
+        v-model="htmlContent"
+        :defaultConfig="editorConfig"
+        :mode="editorMode"
+        @onCreated="handleCreated"
+        style="height: calc(100vh - 131px);"
+    />
+    <!-- <a-button @click="getToolConfig">config</a-button> -->
 </template>
 
 <script setup>
@@ -50,15 +48,15 @@ const editorConfig = {
 const handleCreated = (editor) => {
   editorRef.value = editor // 记录 editor 实例，重要！
 }
-const getToolConfig = () => {
-  // 通过获取configKeys来自定义工具栏
-  const toolbar = DomEditor.getToolbar(editorRef.value)
-  const curToolbarConfig = toolbar.getConfig()
-  console.log('curToolbarConfig:')
-  console.log(curToolbarConfig.toolbarKeys)
-  console.log('allToolConfigKeys:')
-  console.log(editorRef.value.getAllMenuKeys())
-}
+// const getToolConfig = () => {
+//   // 通过获取configKeys来自定义工具栏
+//   const toolbar = DomEditor.getToolbar(editorRef.value)
+//   const curToolbarConfig = toolbar.getConfig()
+//   console.log('curToolbarConfig:')
+//   console.log(curToolbarConfig.toolbarKeys)
+//   console.log('allToolConfigKeys:')
+//   console.log(editorRef.value.getAllMenuKeys())
+// }
 
 // 模拟 ajax 异步获取内容
 onMounted(() => {

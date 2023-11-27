@@ -20,6 +20,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { message } from 'ant-design-vue';
 import Recorder from 'recorder-core'
 // 引入mp3格式支持文件，如果需要多个格式支持，把这些格式的编码引擎js文件放到后面统统引入进来即可
 import 'recorder-core/src/engine/mp3';
@@ -48,7 +49,7 @@ const openRecorder = () => {
     isOpening.value = true
     // 创建录音对象
     rec = Recorder({
-        type: recorderFileType, // 录音格式，可以换成wav等其它格式
+        type: recorderFileType, // 录音格式，已有的音频格式：pcm、wav、mp3、g711、g711u、beta-ogg、
         sampleRate: 16000, // 录音的采样率，越大细节越丰富越细腻
         bitRate: 16, // 录音的比特率，越大音质越好
         onProcess: (
@@ -65,7 +66,7 @@ const openRecorder = () => {
         },
     })
     if (!rec) {
-        alert('当前浏览器不支持录音功能！')
+        message.error('当前浏览器不支持录音功能！', 2)
         return;
     }
     // 打开录音，获得权限
@@ -89,8 +90,9 @@ const openRecorder = () => {
         },
         (msg, isUserNotAllow) => {
             // 用户拒绝了录音权限，或者浏览器不支持录音
-            console.log((isUserNotAllow ? 'UserNotAllow,' : ''), '无法录音：', msg)
+            console.log((isUserNotAllow ? 'UserNotAllow,' : ''), msg)
             isOpening.value = false
+            message.error((isUserNotAllow ? 'UserNotAllow,' : '') + msg, 2)
         }
     )
 }

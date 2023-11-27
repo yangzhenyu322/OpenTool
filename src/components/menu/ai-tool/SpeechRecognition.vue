@@ -1,5 +1,5 @@
 <template>
-    <div style="background-color: white;padding: 1%;">
+    <div style="height: calc(100vh - 90px);background-color: white;padding: 1%;">
         <a-row :gutter="15">
             <a-col :span="8" style="text-align: left;">
                 <p style="font-size: 1.2em;font-weight: bold;">选择音频文件</p>
@@ -37,47 +37,49 @@
 
                     <a-divider style="margin-top: 2%;margin-bottom: 1%;" />
 
-                    <a-menu
-                        v-model:selectedKeys="itemKeys"
-                        theme="light"
-                        mode="inline"
-                    >
-                        <a-menu-item v-for="file in fileList" :key="file.uid">
-                            <a-row v-if="file.status == 'done'" style="font-size: 1.3em;">
-                                <a-col :span="2" style="font-size: 1em;color: rgb(87,163,0);"><CheckCircleFilled /></a-col>
-                                <a-col :span="16" style="font-size: 1em;">
-                                    <span>{{ file.name }}</span>
-                                </a-col>
-                                <a-col :span="2" style="font-size: 1em">
-                                    <a-tooltip v-if="isStting && selectedFile.uid == file.uid"  placement="top">
-                                        <template #title>
-                                            正在识别中，切换音频会自动中断
-                                        </template>
-                                        <InfoCircleOutlined style="color:red" />
-                                    </a-tooltip>
-                                </a-col>
-                                <a-col :span="2" style="font-size: 1em;">
-                                    <div v-if="selectedFile.uid === file.uid">
-                                        <a-tooltip v-if="!isStting" placement="top">
+                    <el-scrollbar style="height: 460px;">
+                        <a-menu
+                            v-model:selectedKeys="itemKeys"
+                            theme="light"
+                            mode="inline"
+                        >
+                            <a-menu-item v-for="file in fileList" :key="file.uid">
+                                <a-row v-if="file.status == 'done'" style="font-size: 1.3em;">
+                                    <a-col :span="2" style="font-size: 1em;color: rgb(87,163,0);"><CheckCircleFilled /></a-col>
+                                    <a-col :span="16" style="font-size: 1em;">
+                                        <span>{{ file.name }}</span>
+                                    </a-col>
+                                    <a-col :span="2" style="font-size: 1em">
+                                        <a-tooltip v-if="isStting && selectedFile.uid == file.uid"  placement="top">
                                             <template #title>
-                                                识别
+                                                正在识别中，切换音频会自动中断
                                             </template>
-                                            <a @click="speechRecognition()"><InteractionTwoTone /></a>
+                                            <InfoCircleOutlined style="color:red" />
                                         </a-tooltip>
-                                        <a-spin v-else />
-                                    </div>
-                                </a-col>
-                                <a-col :span="2" style="font-size: 1em;">
-                                    <a-tooltip placement="top">
-                                        <template #title>
-                                            删除
-                                        </template>
-                                        <a @click="deleteFile(file.uid)" style="color: rgb(237, 101, 101);"><RestOutlined /></a>
-                                    </a-tooltip>
-                                </a-col>
-                            </a-row>
-                        </a-menu-item>
-                    </a-menu>
+                                    </a-col>
+                                    <a-col :span="2" style="font-size: 1em;">
+                                        <div v-if="selectedFile.uid === file.uid">
+                                            <a-tooltip v-if="!isStting" placement="top">
+                                                <template #title>
+                                                    识别
+                                                </template>
+                                                <a @click="speechRecognition()"><InteractionTwoTone /></a>
+                                            </a-tooltip>
+                                            <a-spin v-else />
+                                        </div>
+                                    </a-col>
+                                    <a-col :span="2" style="font-size: 1em;">
+                                        <a-tooltip placement="top">
+                                            <template #title>
+                                                删除
+                                            </template>
+                                            <a @click="deleteFile(file.uid)" style="color: rgb(237, 101, 101);"><RestOutlined /></a>
+                                        </a-tooltip>
+                                    </a-col>
+                                </a-row>
+                            </a-menu-item>
+                        </a-menu>
+                    </el-scrollbar>
                 </div>
             </a-col>
 
@@ -486,12 +488,14 @@ const connectSse = () => {
         console.log('建立SSE连接:', event)
         sse.value = event.target
         isStting.value = true
+        // 根据targetLanguage找到locate
+        let locate = supportedLanguageList.value.filter(item => item.language == targetLanguage.value)[0].locate
         
         // 向后端发送问题文本
         axios.post(`/stt/speechRecognition`, {
             'uid': uid,
             'urlPath': selectedFile.value.url,
-            'targetLanguage': targetLanguage.value,
+            'targetLanguage': locate,
         }).then(res => {
             console.log('成功发送请求，res:', res.data.data)
         }).catch(err => {

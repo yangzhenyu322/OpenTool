@@ -2,7 +2,6 @@
   <div class="center-content" >
       <a-row :gutter="24">
         <a-col :span="6">
-          <a-skeleton :loading="isPreLoading" active>
             <a-card>
               <template #title>
                 <div class="card-title">
@@ -10,6 +9,7 @@
                   <a-tag color="cyan" class="title-logo">周</a-tag>
                 </div>
               </template>
+              <a-skeleton :loading="isPreLoading" active>
                 <div class="show-item">
                   <BankTwoTone class="show-logo"  twoToneColor="#00CED1" />
                   <div style="line-height: 10px;">
@@ -17,11 +17,10 @@
                     <span class="show-num" v-if="operationDate">{{ formatNumber(operationDate.accessNum) }}</span>
                   </div>
                 </div>
+              </a-skeleton>
             </a-card>
-          </a-skeleton>
         </a-col>
         <a-col :span="6">
-          <a-skeleton :loading="isPreLoading" active>
             <a-card>
               <template #title>
                 <div class="card-title">
@@ -29,6 +28,7 @@
                   <a-tag color="green" class="title-logo">月</a-tag>
                 </div>
               </template>
+              <a-skeleton :loading="isPreLoading" active>
                 <div class="show-item">
                   <IdcardTwoTone class="show-logo" twoToneColor="#ADFF2F"/>
                   <div style="line-height: 10px;">
@@ -36,11 +36,10 @@
                     <span class="show-num" v-if="operationDate">{{ formatNumber(operationDate.userNum) }}</span>
                   </div>
                 </div>
+              </a-skeleton>
             </a-card>
-          </a-skeleton>
         </a-col>
         <a-col :span="6">
-          <a-skeleton :loading="isPreLoading" active>
             <a-card>
               <template #title>
                 <div class="card-title">
@@ -48,6 +47,7 @@
                   <a-tag color="orange" class="title-logo">月</a-tag>
                 </div>
               </template>
+              <a-skeleton :loading="isPreLoading" active>
                 <div class="show-item">
                   <HeartTwoTone class="show-logo"  twoToneColor="#FFD700"/>
                   <div style="line-height: 10px;">
@@ -55,11 +55,10 @@
                     <span class="show-num" v-if="operationDate">{{ formatNumber(operationDate.collectNum) }}</span>
                   </div>
                 </div>
+              </a-skeleton>
             </a-card>
-          </a-skeleton>
         </a-col>
         <a-col :span="6">
-          <a-skeleton :loading="isPreLoading" active>
             <a-card>
               <template #title>
                 <div class="card-title">
@@ -67,6 +66,7 @@
                   <a-tag color="purple" class="title-logo">年</a-tag>
                 </div>
               </template>
+              <a-skeleton :loading="isPreLoading" active>
                 <div class="show-item">
                   <CrownTwoTone class="show-logo" twoToneColor="#800080"/>
                   <div style="line-height: 10px;">
@@ -74,30 +74,31 @@
                     <span class="show-num" v-if="operationDate">{{ formatNumber(operationDate.contributionNum) }}</span>
                   </div>
                 </div>
+              </a-skeleton>
             </a-card>
-          </a-skeleton>
         </a-col>
       </a-row>
 
-      <div style="background-color: white;margin-top: 20px;">
-        <el-date-picker
-          v-model="dateValue"
-          :format= "startTime + ' 至 ' + endTime"
-          placeholder="选择周"
-          type="week"
-          @change="changeDate"
-          style="margin-right: 25%;"
-        />
+        <div style="background-color: white;margin-top: 20px;">
+          <el-date-picker
+            v-model="dateValue"
+            :format= "startTime + ' 至 ' + endTime"
+            placeholder="选择周"
+            type="week"
+            @change="changeDate"
+            style="margin-right: 25%;"
+          />
 
-        <a-radio-group v-model:value="dataShow" style="margin-top: 20px;">
-          <a-radio-button value="trendChart">趋势图</a-radio-button>
-          <a-radio-button value="dataList">数据列表</a-radio-button>
-        </a-radio-group>
-        <a-skeleton :loading="isPreLoading" active>
-          <DateLineChartVue v-if="dataShow == 'trendChart'" style="width:98%;height: 350px;margin-top: 10px;" :times="times" :accessData="accessData" />
-          <DateBarChart v-if="dataShow == 'dataList'" style="width:98%;height: 350px;margin-top: 10px;" :times="times" :accessData="accessData"/>
-        </a-skeleton>
-      </div>
+          <a-radio-group v-model:value="dataShow" style="margin-top: 20px;">
+            <a-radio-button value="trendChart">趋势图</a-radio-button>
+            <a-radio-button value="dataList">数据列表</a-radio-button>
+          </a-radio-group>
+          <a-skeleton :loading="isPreLoading" active>
+            <DateLineChartVue v-if="dataShow == 'trendChart'" style="width:98%;height: 350px;margin-top: 10px;" :times="times" :accessData="accessData" />
+            <DateBarChart v-if="dataShow == 'dataList'" style="width:98%;height: 350px;margin-top: 10px;" :times="times" :accessData="accessData"/>
+          </a-skeleton>
+        </div>
+
 
       <a-row :gutter="20" style="margin-top: 15px;">
         <a-col :span="8">
@@ -172,6 +173,7 @@
           })
           .catch(err => {
               console.error(err);
+              isPreLoading.value = false
           })
       }
       getOperationDataAPI()

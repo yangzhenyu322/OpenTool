@@ -1,5 +1,5 @@
 <template>
-    <CherryMarkDown style="height:86vh;" :id="id" />
+    <CherryMarkDown style="height: calc(100vh - 90px);" :id="id" />
 </template>
 
 <script setup>

@@ -1,12 +1,12 @@
 <template>
-    <a-layout style="min-height: 100vh;">
+    <a-layout>
       <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible :theme="theme" :key="theme">
         <!-- 侧边栏菜单 -->
-        <div class="logo" :style="{color:logoFontColor}">
+        <div class="logo" :style="{color:logoFontColor, height: '40px'}">
           <img class="logo-img" src="@/assets/images/logo/logo.png" />
           <span class="name">{{ titleText }}</span>
         </div>
-        <el-scrollbar style="height: calc(97vh - 40px);">
+        <el-scrollbar style="height: calc(100vh - 40px);">
           <a-menu 
           :theme="theme" 
           v-model:openKeys="openKeys"
@@ -178,7 +178,7 @@
         </div>
       </a-affix>
 
-      <el-scrollbar style="height:calc(100vh - 104px)">
+      <el-scrollbar style="height:calc(100vh - 90px)">
         <a-layout-content>
             <!-- 中心主体内容：通过router切换组件 -->
             <router-view></router-view>

@@ -20,6 +20,7 @@ export default {
 /* 将 html 和 body 的高度设置为 100% */
 html,body {
     margin: 0;
+    overflow-y: hidden;
 }
 
 /* 设置 #app 元素的高度为 100%，并且去除内外边距 */
