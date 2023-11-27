@@ -16,8 +16,7 @@
                     <div style="height:275px;" class="vertical-center">
                         <p><CloudUploadOutlined style="font-size: 1.4em;" />&nbsp;&nbsp;<span style="font-size: 1.2em;color: rgb(24,144,255);">浏览文件</span></p>
                         <p>或将音频文件拖放到此处</p>
-                        <p><AudioTwoTone /></p>
-                        <p>使用麦克风录制音频</p>
+                        <SpeechRecorderVue :fileList="fileList" />
                     </div>
                 </a-upload-dragger>
 
@@ -54,7 +53,7 @@
                                         <template #title>
                                             正在识别中，切换音频会自动中断
                                         </template>
-                                        <InfoCircleOutlined />
+                                        <InfoCircleOutlined style="color:red" />
                                     </a-tooltip>
                                 </a-col>
                                 <a-col :span="2" style="font-size: 1em;">
@@ -88,13 +87,40 @@
                     <!-- 音频文件信息 -->
                     <div style="height:80px;text-align: left;font-size: 1.2em;padding:1%;">
                         <a-row style="font-size: 1em;">
-                            <a-col :span="8" style="font-size: 1em;">文件名：<span style="font-weight: 500;">{{ selectedFile.name }}</span></a-col>
-                            <a-col :span="8" style="font-size: 1em;">语言：<span style="font-weight: 500;">英语（美国）</span></a-col>
-                            <a-col :span="8" style="font-size: 1em;">输出格式：<span style="font-weight: 500;">普通文本</span></a-col>
+                            <a-col :span="8" style="font-size: 1em;">
+                                文件名：
+                                <span v-if="selectedFile.uid" style="font-weight: 500;">{{ selectedFile.name }}</span>
+                                <span v-else>--</span>
+                            </a-col>
+                            <a-col :span="10" style="font-size: 1em;">
+                                语言：
+                                <a-select
+                                    v-if="selectedFile.uid"
+                                    v-model:value="targetLanguage"
+                                    size="small"
+                                    style="width:220px;text-align: left;"
+                                >
+                                    <a-select-option v-for="supportedLanguage in supportedLanguageList" :key="supportedLanguage.language" :value="supportedLanguage.language">{{ supportedLanguage.language }}</a-select-option>
+                                </a-select> 
+                                <span v-else>--</span> 
+                            </a-col>
+                            <a-col :span="6" style="font-size: 1em;">
+                                输出格式：
+                                <span v-if="selectedFile.uid" style="font-weight: 500;">普通文本</span>
+                                <span v-else>--</span>
+                            </a-col>
                         </a-row>
                         <a-row style="font-size: 1em;">
-                            <a-col :span="8" style="font-size: 1em;">自定义终结点：<span style="font-weight: 500;">[无]</span></a-col>
-                            <a-col :span="8" style="font-size: 1em;">短语列表：<span style="font-weight: 500;">关</span></a-col>
+                            <a-col :span="8" style="font-size: 1em;">
+                                自定义终结点：
+                                <span v-if="selectedFile.uid" style="font-weight: 500;">[无]</span>
+                                <span v-else>--</span>
+                            </a-col>
+                            <a-col :span="8" style="font-size: 1em;">
+                                短语列表：
+                                <span v-if="selectedFile.uid" style="font-weight: 500;">关</span>
+                                <span v-else>--</span>
+                            </a-col>
                         </a-row>
                     </div>
 
@@ -162,6 +188,7 @@ import 'xgplayer/dist/index.min.js'
 import 'xgplayer-music/dist/index.min.js'
 import  MusicPreset, { Analyze }  from 'xgplayer-music'
 import axios from 'axios'
+import SpeechRecorderVue from './recorder/SpeechRecorder.vue'
 
 const fileList = ref([]) // {uid、name、status、url、thumbUrl、textTimeStamps(文本时间戳，数组)、textRoles(对话人，数组)、transcribedContents(语音识别文本内容，数组)、transcribingContent(正在识别的文本内容，String)、error}
 const textTabKey = ref('1') // 文本tab激活key
@@ -218,6 +245,11 @@ const customUpload = e => {
 
 // 删除指定uid文件
 const deleteFile = (uid) => {
+    // 删除前检测是否在进行语音识别
+    if (isStting.value) {
+        // 主动关闭SSE连接，结束语音识别
+        closeSse()
+    }
     fileList.value = fileList.value.filter(item => item.uid != uid)
 
     if (fileList.value.length == 0) {
@@ -229,6 +261,11 @@ const deleteFile = (uid) => {
 
 // 删除所有文件
 const deleteAllFile = () => {
+    // 删除前检测是否在进行语音识别
+    if (isStting.value) {
+        // 主动关闭SSE连接，结束语音识别
+        closeSse()
+    }
     fileList.value = []
     selectedFile.value = {}
 }
@@ -354,6 +391,20 @@ const commonTextContent = ref('') // 普通文本
 const detailedTextContent = ref('') // 详细文本
 const talkTextContent = ref('') // 对话文本
 const isStting = ref(false) // 是否正在进行语音识别
+// 音频识别配置
+const targetLanguage = ref('中文（普通话，简体）');
+const supportedLanguageList = ref([])
+
+// 获取sst支持的语言列表
+const getSttSupportedLanguages = () => {
+    axios.get('/stt/languages')
+        .then(res => {
+            supportedLanguageList.value = res.data.data
+        }).catch(err => {
+            console.log('获取sst支持的语言列表失败', err)
+        })
+}
+getSttSupportedLanguages()
 
 // 普通文本
 const computedCommenTextContent = () => {
@@ -439,7 +490,8 @@ const connectSse = () => {
         // 向后端发送问题文本
         axios.post(`/stt/speechRecognition`, {
             'uid': uid,
-            'urlPath': selectedFile.value.url
+            'urlPath': selectedFile.value.url,
+            'targetLanguage': targetLanguage.value,
         }).then(res => {
             console.log('成功发送请求，res:', res.data.data)
         }).catch(err => {
