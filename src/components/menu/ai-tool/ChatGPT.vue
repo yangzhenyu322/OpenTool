@@ -2,14 +2,50 @@
     <div style="height:calc(100vh - 90px);background-color: white;">
         <!-- 表头 -->
         <div class="horizontal-center" style="height: 50px;border-bottom: 2px solid rgb(250,250,250)" >
-            <span style="font-size: 1.3em;font-weight: 400;">Default(GPT-3.5-turbo)</span>
+            <a-select 
+                v-model:value="selectedChatModel"
+                @change="handleChatModelChange"
+                :disabled="isChating"
+                style="width: 200px" 
+            >
+                <!-- style="font-size: 1.3em;font-weight: 400;" -->
+                <a-select-opt-group>
+                    <template #label>
+                        <span>
+                            <message-outlined />
+                            GPT3.5
+                        </span>
+                    </template>
+                    <a-select-option value="gpt-3.5-turbo-1106">GPT-3.5-turbo-1106</a-select-option>
+                    <a-select-option value="gpt-3.5-turbo-16k">GPT-3.5-turbo-16k</a-select-option>
+                </a-select-opt-group>
+                <a-select-opt-group>
+                    <template #label>
+                        <span>
+                            <comment-outlined />
+                            GPT4
+                        </span>
+                    </template>
+                    <a-select-option value="gpt-4-1106-preview">GPT-4-1106-preview</a-select-option>
+                    <a-select-option value="gpt-4-vision-preview">GPT-4-vision-preview</a-select-option>
+                </a-select-opt-group>
+                <a-select-opt-group>
+                    <template #label>
+                        <span>
+                            <file-image-outlined />
+                            DALL
+                        </span>
+                    </template>
+                    <a-select-option value="dall-e-3">Dall-e-3</a-select-option>
+                </a-select-opt-group>
+            </a-select>
             <!-- 重置窗口按钮 -->
             <a-popconfirm 
-            title="确认重置对话窗口？(这将清空对话记录)"
-            ok-text="确认" 
-            cancel-text="取消"
-            placement="bottomRight"
-            @confirm="resetChatWindow"
+                title="确认重置对话窗口？(这将清空对话记录)"
+                ok-text="确认" 
+                cancel-text="取消"
+                placement="bottomRight"
+                @confirm="resetChatWindow"
             >
                 <template #icon>
                     <question-circle-outlined style="color: red" />
@@ -85,9 +121,16 @@
                 <SyncOutlined v-if="isChating" spin style="color: rgb(24,144,255);" />
                 <RocketFilled v-else />
             </a-button>
-            <a-button v-if="isChating" @click="closeSse" danger style="margin-left: 2px;">
-                Stop
-            </a-button>
+            <a-tooltip placement="top">
+                <template #title>
+                    若等待时间过长，可中断对话
+                </template>
+                <a-button v-if="isChating" @click="closeSse" danger style="margin-left: 2px;">
+                    Stop
+                </a-button>
+            </a-tooltip>
+        </div>
+        <div style="height: 10vh;">
         </div>
     </div>
 </template>
@@ -101,10 +144,11 @@ import gptUrl from '@/assets/images/avatar/chatgpt.png'
 import { copyDomText } from '@/utils//common.js'
 
 const isPreLoading = ref(true) // 预加载动画
+const selectedChatModel = ref('gpt-3.5-turbo-1106')
 // gpt头像
 const gptAvatarUrl = ref(gptUrl)
 const uid = 'zensheep' + '-chatgpt' // 用户id
-const wid = 'windowId' // 窗口id
+const wid = ref(selectedChatModel.value) // 窗口id
 const question = ref('') // 问题文本
 const sse = ref(null) // sse连接
 const source = ref()
@@ -137,10 +181,19 @@ const columns = [
 let keyCount = 0 //列下标
 const tableData = ref([]) 
 
+// 用户更换Chat模型
+const handleChatModelChange = () => {
+    wid.value = selectedChatModel.value
+    // 重新获取历史对话记录
+    initTableData()
+}
+
 // 获取历史对话记录，初始化表格数据
 const initTableData = () => {
-    axios.get(`/chatgpt/history?uid=${uid}&wid=${wid}`)
+    axios.get(`/chatgpt/history?uid=${uid}&wid=${wid.value}`)
         .then(res => {
+            tableData.value = []
+            keyCount = 0
             const historys = res.data.data
             console.log('获取历史记录成功：' + historys)
             if (historys) {
@@ -151,7 +204,7 @@ const initTableData = () => {
                         content: history,
                         operation: '操作区'
                     })
-                    keyCount++;
+                    keyCount++
                 });
             }
             isPreLoading.value = false
@@ -219,10 +272,11 @@ const connectSse = () => {
         // 向后端发送问题文本(等sse连接后再发送，否则会出异常)
         axios.post(`/chatgpt/message`, {
             'uid': uid,
-            'wid': wid,
+            'wid': wid.value,
+            'model': selectedChatModel.value,
             'question': tableData.value[length - 2].content, // 当前问题文本
         }).then(res => {
-            console.log('成功发送请求，res:', res.data)
+            console.log('成功发送请求，res:', res.data.data)
             isChating.value = true
         }).catch(err => {
             console.log('chat失败:', err)
@@ -252,10 +306,8 @@ const connectSse = () => {
     }
     // 如果发生通信错误（比如连接中断，就会触发error事件）
     source.value.onerror = event => {
-        let eventData = JSON.parse(event.data)
         console.log('通信失败:', event)
         console.log('SSE连接异常')
-        console.log('【error】：', eventData.error)
         sse.value.close()
     }
 }
@@ -278,7 +330,7 @@ const resetChatWindow = () => {
         closeSse()
     }
 
-    axios.delete(`/chatgpt/reset?uid=${uid}&wid=${wid}`)
+    axios.delete(`/chatgpt/reset?uid=${uid}&wid=${wid.value}`)
         .then(res => {
             console.log(res.data.data)
             tableData.value = []

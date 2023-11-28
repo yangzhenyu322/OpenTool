@@ -51,10 +51,26 @@ const initMarkDown = () => {
         },
     })
 
+    const countSubstrings = (mainString, subString) => {
+        let count = 0;
+        let position = mainString.indexOf(subString);
+        while (position !== -1) {
+            count++;
+            position = mainString.indexOf(subString, position + 1);
+        }
+        return count;
+    }
+
     // 更新文本内容
     watch(()=>props.content, (newVal) => {
         // console.log('newVal:' + newVal)
-        cherrymarkdown.setMarkdown(newVal)
+        // 检测代码块是否需要补一个```
+        let count = countSubstrings(newVal, "```")
+        if (count % 2 == 1) {
+            cherrymarkdown.setMarkdown(newVal + '\n```')
+        } else {
+            cherrymarkdown.setMarkdown(newVal)
+        }
     })
 }
 
