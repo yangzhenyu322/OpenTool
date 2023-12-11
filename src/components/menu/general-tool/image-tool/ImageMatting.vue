@@ -86,6 +86,7 @@ const fileList = ref([
     //     thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
     //     convertUrl: "http://xxxx/img.jpg" // 处理后的图像存储url
     //     response: '{"status": "success", }', // 服务端响应内容，存储响应码、响应信息
+    //     percent: 50, // 上传进度
     // },
 ]);
 

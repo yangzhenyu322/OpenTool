@@ -17,8 +17,14 @@ export const formatConvertApi = ({urlsStrList, targetFormat, convertConfig, rout
   formData.append('convertConfig', JSON.stringify(convertConfig))
   return axios.post(route, formData, {headers:{
   'Content-Type': 'application/x-www-form-urlencoded;'
-    // 'Content-Type': 'application/json;'
   }})
 }
 
-// export default uploadApi;
+export const getBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = error => reject(error)
+  })
+}

@@ -6,7 +6,7 @@
                 v-model:value="selectedChatModel"
                 @change="handleChatModelChange"
                 :disabled="isChating"
-                style="width: 200px" 
+                style="width: 190px" 
             >
                 <!-- style="font-size: 1.3em;font-weight: 400;" -->
                 <a-select-opt-group>
@@ -20,7 +20,7 @@
                     <a-select-option value="gpt-3.5-turbo-16k">GPT-3.5-turbo-16k</a-select-option>
                 </a-select-opt-group>
                 <a-select-opt-group>
-                    <template #label>
+                    <template #label>   
                         <span>
                             <comment-outlined />
                             GPT4
@@ -62,7 +62,7 @@
             class="ant-table-chatgpt"
             :columns="columns"
             :data-source="tableData"
-            :showHeader="false" 
+            :showHeader="false"
             :pagination="false"
             :rowClassName="(record, index) => (index % 2 == 1 ? 'row-answer' : 'row-question')"
             >
@@ -79,7 +79,12 @@
                     <template v-if="column.dataIndex == 'content'">
                         <!-- 问题框 -->
                         <div v-if="record.key % 2 == 0">
-                            <span :id="uid + '-' + index">{{ record.content }}</span>
+                            <!-- 图片 -->
+                            <img v-for="img in record.imgList" :key="img" :src="img" style="width: 80px;height: 80px;object-fit: cover;margin-right: 1%;" />
+                            <div>
+                                <span :id="uid + '-' + index">{{ record.content }}</span>
+                            </div>
+                            <!-- <ChatMarkDown :id="uid + '-' + index" :content="record.content"/> -->
                         </div>
                         <!-- 回答框 -->
                         <div v-else>
@@ -105,54 +110,159 @@
         </a-skeleton>
         
         <!-- 底部输入框 -->
-        <div class="fixed-bottom horizontal-center">
-            <a-textarea
-            v-model:value="question"
-            placeholder="Send a message"
-            size="large"
-            :auto-size="{ minRows: 1, maxRows: 9}"
-            allow-clear
-            @keydown.enter="sendMessage"
-            style="width: 60%;"
-            >
-            </a-textarea>
-
-            <a-button @click="sendMessage" :disabled="isChating || question == null || question == ''" style="margin-left: 2px;height: 2.5em;">
-                <SyncOutlined v-if="isChating" spin style="color: rgb(24,144,255);" />
-                <RocketFilled v-else />
-            </a-button>
-            <a-tooltip placement="top">
-                <template #title>
-                    若等待时间过长，可中断对话
-                </template>
-                <a-button v-if="isChating" @click="closeSse" danger style="margin-left: 2px;">
-                    Stop
+        <div class="fixed-bottom">
+            <!-- 图片展示区 -->
+            <div class="horizontal-center" v-if="['gpt-4-vision-preview'].includes(selectedChatModel)">
+                <a-upload
+                    v-model:file-list="fileList"
+                    list-type="picture-card"
+                    :before-upload="beforeUpload"
+                    :customRequest="customUpload"
+                    @preview="uploadPreview"
+                    style=""
+                >
+                    <div v-if="fileList.length < maxFileLength">
+                        <plus-outlined />
+                        <div style="margin-top: 8px;">Upload</div>
+                    </div>
+                </a-upload>
+                <a-modal :open="previewVisible" :title="previewTitle" :footer="null" @cancel="previewCancel">
+                    <img alt="example" style="width: 100%" :src="previewImage" />
+                </a-modal>
+            </div>
+            <!-- 问题输入区域 -->
+            <div class="horizontal-center">
+                <!-- 问题输入框 -->
+                <a-textarea
+                v-model:value="question"
+                placeholder="Send a message"
+                size="large"
+                :auto-size="{ minRows: 1, maxRows: 9}"
+                allow-clear
+                @keydown.enter="sendMessage"
+                style="width: 60%;"
+                />
+                <!-- 发送/中断 消息按钮 -->
+                <a-button @click="sendMessage" :disabled="isChating || question == null || question == ''" style="margin-left: 2px;height: 2.5em;">
+                    <SyncOutlined v-if="isChating" spin style="color: rgb(24,144,255);" />
+                    <RocketFilled v-else />
                 </a-button>
-            </a-tooltip>
+                <a-tooltip placement="top">
+                    <template #title>
+                        若等待时间过长，可中断对话
+                    </template>
+                    <a-button v-if="isChating" @click="closeSse" danger style="margin-left: 2px;">
+                        Stop
+                    </a-button>
+                </a-tooltip>
+            </div>
         </div>
-        <div style="height: 10vh;">
-        </div>
+        <div style="height: 250px;"></div>
     </div>
 </template>
 
 <script setup>
 import { onBeforeUnmount, ref } from "vue";
 import { message } from 'ant-design-vue'
+import { PlusOutlined } from '@ant-design/icons-vue';
 import axios from "axios";
 import ChatMarkDown from "./chatgpt-markdown/ChatMarkDown.vue";
 import gptUrl from '@/assets/images/avatar/chatgpt.png'
-import { copyDomText } from '@/utils//common.js'
+import { copyDomText } from '@/utils/common.js'
+import { getBase64 } from '@/utils/file/FileUtil.js'
 
 const isPreLoading = ref(true) // 预加载动画
-const selectedChatModel = ref('gpt-3.5-turbo-1106')
+const selectedChatModel = ref('gpt-4-vision-preview')
 // gpt头像
 const gptAvatarUrl = ref(gptUrl)
 const uid = 'zensheep' + '-chatgpt' // 用户id
 const wid = ref(selectedChatModel.value) // 窗口id
 const question = ref('') // 问题文本
+const fileList = ref([
+    // {
+    //     uid: '-1',  // 文件唯一标识，建议设置为负数，防止和内部产生的 id 冲突
+    //     name: 'xxx.png', // 文件名
+    //     status: 'done', // 状态有：uploading done error removed
+    //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    //     thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    //     convertUrl: "http://xxxx/img.jpg" // 处理后的图像存储url
+    // },
+])
+const maxFileLength = ref(9) // 允许上传最大图片数
+const previewVisible = ref(false); // 预览图片是否展示
+const previewImage = ref(''); // 当前预览图片
+const previewTitle = ref(''); // 预览图片名
+// 文件上传预处理
+const beforeUpload = file => {
+    // 这里可以进行文件类型、大小等校验，返回 false 可取消上传
+    if(file.size > 20 * 1024 * 1024) {  // 最大文件支持20MB
+        file.status = 'error'
+        file['error'] = '文件超出最大限制20M'
+        message.error(file['error'])
+        return false;
+    }
+    return true;
+}
+// 自定义文件上传公共函数
+const customUpload = e => {
+    let curFile = fileList.value.filter(item => item.uid == e.file.uid)[0]
+    curFile.status = 'uploading'
+    const formData = new FormData()
+    formData.append('file', e.file)
+    formData.append('width', 512)
+    formData.append('height', 512)
+    axios.post('/chatgpt/upload', formData, {headers:{
+            'Content-type': 'multipart/form-data',
+        },
+        onUploadProgress: ev => {
+            // ev - axios 上传进度实例，上传过程触发多次
+            const percent = (ev.loaded / ev.total) * 100;
+            // 计算出上传进度，调用组件进度条方法
+            e.onProgress({ percent });
+        }
+    })
+        .then(res => {
+            let curFile = fileList.value.filter(item => item.uid == e.file.uid)[0]
+            let data = res.data
+            if(res.data.code == 400) {
+                curFile.status = 'error'
+                curFile['error'] = data.msg
+                console.error(`文件${curFile.name}上传失败：${data.msg}`)
+            } else {
+                // 通知组件该文件上传成功
+                curFile.status = 'done'
+                curFile.url = data.data.url  // 原始图片url
+                curFile.thumbUrl = data.data.url // 略缩图片url
+                // curFile.convertUrl = data.data.convertUrl // 处理后的图片url（传到openai的图片）
+                console.log(`图片${curFile.name}上传成功:`, curFile.url, curFile.convertUrl)
+            }
+        })
+        .catch(err => {
+            let curFile = fileList.value.filter(item => item.uid == e.file.uid)[0]
+            curFile.status = 'error'
+            curFile['error'] = '文件传输失败'
+            console.log('上传失败', err);
+        })
+}
+// 取消预览
+const previewCancel = () => {
+    previewVisible.value = false;
+    previewTitle.value = '';
+};
+// 预览图片
+const uploadPreview = async file => {
+    if (!file.url && !file.preview) {
+    file.preview = await getBase64(file.originFileObj);
+    }
+    previewImage.value = file.url || file.preview;
+    previewVisible.value = true;
+    previewTitle.value = file.name || file.url.substring(file.url.lastIndexOf('/') + 1);
+};
+
 const sse = ref(null) // sse连接
 const source = ref()
 const isChating = ref(false) // 是否处于chating状态
+
 
 // 表格列名对象数组
 const columns = [
@@ -179,34 +289,45 @@ const columns = [
 ]
 // 表格数据
 let keyCount = 0 //列下标
-const tableData = ref([]) 
+const tableData = ref([
+    // {
+    //     key: keyCount, // 下标
+    //     avatar: '头像', // 头像
+    //     content: '', // 文本内容
+    //     imgList: [], // 图像内容
+    //     operation: '操作区', // 操作区
+    // }
+]) 
 
 // 用户更换Chat模型
 const handleChatModelChange = () => {
     wid.value = selectedChatModel.value
+    // 清空消息文本
+    question.value = ''
+    fileList.value = []
     // 重新获取历史对话记录
     initTableData()
 }
 
 // 获取历史对话记录，初始化表格数据
 const initTableData = () => {
-    axios.get(`/chatgpt/history?uid=${uid}&wid=${wid.value}`)
+    axios.get(`/chatgpt/history?uid=${uid}&wid=${wid.value}&model=${selectedChatModel.value}`)
         .then(res => {
             tableData.value = []
             keyCount = 0
             const historys = res.data.data
-            console.log('获取历史记录成功：' + historys)
-            if (historys) {
-                historys.forEach(history => {
-                    tableData.value.push({
-                        key: keyCount,
-                        avatar: '头像',
-                        content: history,
-                        operation: '操作区'
-                    })
-                    keyCount++
-                });
-            }
+            console.log('获取历史记录成功：', historys)
+
+            historys.forEach(history => {
+                tableData.value.push({
+                    key: keyCount,
+                    avatar: '头像',
+                    content: history.text,
+                    imgList: history.imageUrlList,
+                    operation: '操作区'
+                })
+                keyCount++
+            });
             isPreLoading.value = false
         }).catch(err => {
             console.log('获取历史记录失败：' + err)
@@ -229,22 +350,28 @@ const sendMessage = () => {
     }
 
     // 新增问题框
+    let questionImgList = []
+    fileList.value.forEach(file => questionImgList.push(file.url))
+    console.log('questionImgList:', questionImgList)
     tableData.value.push({
         key: keyCount,
         avatar: '头像',
         content: question.value,
+        imgList: questionImgList,
         operation: '操作区'
     })
     keyCount++
 
     // 清空消息文本
     question.value = ''
+    fileList.value = []
 
     // 新增回答框
     tableData.value.push({
         key: keyCount,
         avatar: '头像',
         content: '',
+        imgList: [],
         operation: '操作区'
     })
     keyCount++
@@ -270,11 +397,12 @@ const connectSse = () => {
         let length = tableData.value.length // 对话列表长度
 
         // 向后端发送问题文本(等sse连接后再发送，否则会出异常)
-        axios.post(`/chatgpt/message`, {
+        axios.post(`/chatgpt/question`, {
             'uid': uid,
             'wid': wid.value,
             'model': selectedChatModel.value,
             'question': tableData.value[length - 2].content, // 当前问题文本
+            'imgList': tableData.value[length - 2].imgList, // 当前问题图片列表
         }).then(res => {
             console.log('成功发送请求，res:', res.data.data)
             isChating.value = true
@@ -330,7 +458,7 @@ const resetChatWindow = () => {
         closeSse()
     }
 
-    axios.delete(`/chatgpt/reset?uid=${uid}&wid=${wid.value}`)
+    axios.delete(`/chatgpt/reset?uid=${uid}&wid=${wid.value}&model=${selectedChatModel.value}`)
         .then(res => {
             console.log(res.data.data)
             tableData.value = []
@@ -341,7 +469,6 @@ const resetChatWindow = () => {
     isChating.value = false
 }
 
-
 onBeforeUnmount(() => {
     if (source.value) {
         source.value.close() // 卸载
@@ -350,7 +477,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.ant-table-chatgpt :deep(.row-question) td {
+/* .ant-table-chatgpt :deep(.row-question) td {
     background-color: rgb(248,250,251)!important;
 }
 
@@ -366,7 +493,7 @@ onBeforeUnmount(() => {
 .ant-table-chatgpt :deep(.row-answer):hover td {
     background-color: white!important;
     border-radius: 0!important;
-}
+} */
 
 .avatar{
     position: absolute;
@@ -388,7 +515,7 @@ onBeforeUnmount(() => {
     top: auto;
     bottom: 1%;
     width: 100%;
-    display: flex;
-    z-index: 10000;
+    /* display: flex; */
+    /* z-index: 10000; */
 }
 </style>
