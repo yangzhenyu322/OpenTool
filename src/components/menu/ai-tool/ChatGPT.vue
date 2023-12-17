@@ -88,6 +88,8 @@
                         </div>
                         <!-- 回答框 -->
                         <div v-else>
+                            <!-- 图片 -->
+                            <img v-for="img in record.imgList" :key="img" :src="img" style="width: 80px;height: 80px;object-fit: cover;margin-right: 1%;" />
                             <ChatMarkDown :id="uid + '-' + index" :content="record.content"/>
                         </div>
                     </template>
@@ -172,7 +174,7 @@ import { copyDomText } from '@/utils/common.js'
 import { getBase64 } from '@/utils/file/FileUtil.js'
 
 const isPreLoading = ref(true) // 预加载动画
-const selectedChatModel = ref('gpt-4-vision-preview')
+const selectedChatModel = ref('dall-e-3')
 // gpt头像
 const gptAvatarUrl = ref(gptUrl)
 const uid = 'zensheep' + '-chatgpt' // 用户id
@@ -390,6 +392,7 @@ const connectSse = () => {
 
     // 建立连接
     source.value = new EventSource(`${axios.defaults.baseURL}/chatgpt/createSse/${uid}`)
+    isChating.value = true
     // 连接一旦建立，就会触发open事件
     source.value.onopen = event => {
         console.log('建立SSE连接:', event)
@@ -405,7 +408,6 @@ const connectSse = () => {
             'imgList': tableData.value[length - 2].imgList, // 当前问题图片列表
         }).then(res => {
             console.log('成功发送请求，res:', res.data.data)
-            isChating.value = true
         }).catch(err => {
             console.log('chat失败:', err)
         })
@@ -414,10 +416,6 @@ const connectSse = () => {
     source.value.onmessage = event => {
         let eventData = JSON.parse(event.data)
 
-        if (event.lastEventId == "[TOKENS]") {
-            console.log('tokens:', eventData.tokens)
-            return;
-        }
         if (event.lastEventId == "[DONE]") {
             console.log('完成对话，关闭sse连接')
             sse.value.close()
@@ -425,11 +423,20 @@ const connectSse = () => {
 
             return
         }
-        let content = eventData.content // 返回的文本内容
-        if (content == null || content == 'null') {
+        
+        if (event.lastEventId == "[IMAGES]") {
+            // 更新答案框的图像
+            let imageUrls = eventData.imageUrlList.substring(1, eventData.imageUrlList.length - 1).split(', ')
+            tableData.value[keyCount - 1].imgList = imageUrls
+
             return
         }
-        // 更新答案框文本
+
+        // 更新答案框的文本
+        let content = eventData.content // 返回的文本内容
+        // if (content == null || content == 'null') {
+        //     return
+        // }
         tableData.value[keyCount - 1].content += content
     }
     // 如果发生通信错误（比如连接中断，就会触发error事件）
@@ -466,7 +473,6 @@ const resetChatWindow = () => {
         }).catch(err => {
             console('重置窗口失败：' + err)
         })
-    isChating.value = false
 }
 
 onBeforeUnmount(() => {
@@ -477,7 +483,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-/* .ant-table-chatgpt :deep(.row-question) td {
+.ant-table-chatgpt :deep(.row-question) td {
     background-color: rgb(248,250,251)!important;
 }
 
@@ -493,7 +499,7 @@ onBeforeUnmount(() => {
 .ant-table-chatgpt :deep(.row-answer):hover td {
     background-color: white!important;
     border-radius: 0!important;
-} */
+}
 
 .avatar{
     position: absolute;
