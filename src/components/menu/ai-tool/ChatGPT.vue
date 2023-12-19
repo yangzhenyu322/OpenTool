@@ -8,7 +8,6 @@
                 :disabled="isChating"
                 style="width: 190px" 
             >
-                <!-- style="font-size: 1.3em;font-weight: 400;" -->
                 <a-select-opt-group>
                     <template #label>
                         <span>
@@ -75,21 +74,34 @@
                         <a-avatar class="avatar" v-else shape="square" size="large" style="background-color: rgb(191, 246, 208)" :src="gptAvatarUrl"></a-avatar>
                     </template>
 
-                    <!-- 文本 -->
+                    <!-- 文本 -->  
                     <template v-if="column.dataIndex == 'content'">
                         <!-- 问题框 -->
                         <div v-if="record.key % 2 == 0">
-                            <!-- 图片 -->
-                            <img v-for="img in record.imgList" :key="img" :src="img" style="width: 80px;height: 80px;object-fit: cover;margin-right: 1%;" />
-                            <div>
-                                <span :id="uid + '-' + index">{{ record.content }}</span>
+                            <!-- 图片展示区 -->
+                            <div v-if="record.imgList != null && record.imgList.length > 0" style="margin-bottom: 1%;">
+                                <a-image-preview-group>
+                                    <div v-for="(group, index) in groupedImages(record.imgList)" :key="index"> 
+                                        <a-image :width="200" :height="200" v-for="(img, i) in group" :key="i" :src="img" style="object-fit: cover;margin-right: 1%;border-radius: 2%;" />
+                                    </div>
+                                </a-image-preview-group>
                             </div>
-                            <!-- <ChatMarkDown :id="uid + '-' + index" :content="record.content"/> -->
+                            <!-- 文本展示区 -->
+                            <div>
+                                <span :id="uid + '-' + index" style="font-weight: bold;white-space: pre-wrap;">{{ record.content }}</span>
+                            </div>
                         </div>
                         <!-- 回答框 -->
                         <div v-else>
-                            <!-- 图片 -->
-                            <img v-for="img in record.imgList" :key="img" :src="img" style="width: 80px;height: 80px;object-fit: cover;margin-right: 1%;" />
+                            <!-- 图片展示区 -->
+                            <div v-if="record.imgList != null && record.imgList.length > 0" style="margin-bottom: 1%;">
+                                <a-image-preview-group>
+                                    <div v-for="(group, index) in groupedImages(record.imgList)" :key="index"> 
+                                        <a-image :width="200" :height="200" v-for="(img, i) in group" :key="i" :src="img" style="object-fit: cover;margin-right: 1%;border-radius: 2%;" />
+                                    </div>
+                                </a-image-preview-group>
+                            </div>
+                            <!-- 文本展示区 -->
                             <ChatMarkDown :id="uid + '-' + index" :content="record.content"/>
                         </div>
                     </template>
@@ -159,7 +171,7 @@
                 </a-tooltip>
             </div>
         </div>
-        <div style="height: 250px;"></div>
+        <div style="height: 300px;"></div>
     </div>
 </template>
 
@@ -174,7 +186,7 @@ import { copyDomText } from '@/utils/common.js'
 import { getBase64 } from '@/utils/file/FileUtil.js'
 
 const isPreLoading = ref(true) // 预加载动画
-const selectedChatModel = ref('dall-e-3')
+const selectedChatModel = ref('gpt-4-vision-preview')
 // gpt头像
 const gptAvatarUrl = ref(gptUrl)
 const uid = 'zensheep' + '-chatgpt' // 用户id
@@ -260,6 +272,20 @@ const uploadPreview = async file => {
     previewVisible.value = true;
     previewTitle.value = file.name || file.url.substring(file.url.lastIndexOf('/') + 1);
 };
+// 图像分组显示
+const groupedImages = (imageList) => {
+    if (imageList == null) {
+        return null
+    }
+
+    let groupSize = 3 // 每组显示的图片数量
+    let groups = []
+    for (let i = 0; i < imageList.length; i += groupSize) {
+        groups.push(imageList.slice(i, i + groupSize))
+    }
+    return groups
+}
+
 
 const sse = ref(null) // sse连接
 const source = ref()
@@ -483,22 +509,27 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+
 .ant-table-chatgpt :deep(.row-question) td {
-    background-color: rgb(248,250,251)!important;
+    /* background-color: rgb(248,250,251)!important; */
+    background-color: white!important;
+    border: 0!important;
 }
 
 .ant-table-chatgpt :deep(.row-question):hover td {
-    background-color: rgb(248,250,251)!important;
-    border-radius: 0!important;
+    /* background-color: rgb(248,250,251)!important; */
+    background-color: white!important;
+    border: 0!important;
 }
 
 .ant-table-chatgpt :deep(.row-answer) td {
     background-color: white!important;
+    border: 0!important;
 }
 
 .ant-table-chatgpt :deep(.row-answer):hover td {
     background-color: white!important;
-    border-radius: 0!important;
+    border: 0!important;
 }
 
 .avatar{
@@ -521,7 +552,5 @@ onBeforeUnmount(() => {
     top: auto;
     bottom: 1%;
     width: 100%;
-    /* display: flex; */
-    /* z-index: 10000; */
 }
 </style>
