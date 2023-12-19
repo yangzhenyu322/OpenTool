@@ -59,8 +59,8 @@ export default {
             chatgpt: {
                 val: 'ChatGPT'
             },
-            voice_synthesis: {
-                val: 'Voice Synthesis'
+            text_to_Speech: {
+                val: 'Text To Speech'
             },
             speech_recognition: {
                 val: "Speech Recognition"

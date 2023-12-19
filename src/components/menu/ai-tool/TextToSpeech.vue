@@ -1,6 +1,6 @@
 <template>
-    <div style="height: calc(100vh - 90px);background-color: white;padding: 1%;">
-        <a-row :gutter="20" style="border: 1px rgb(240,240,240) s solid;">
+    <div style="min-height: calc(100vh - 90px);background-color: white;padding: 1%;">
+        <a-row :gutter="20">
             <a-col :span="18">
                 <a-row>
                     <a-col :span="24">
@@ -17,15 +17,13 @@
                 </a-row>
                 <br>
 
-                <a-row style="font-size: 1.2em;font-weight: bold;">
+                <a-row style="font-size: 1.2em;font-weight: bold;margin-bottom: 10px;">
                     <a-col :span="8">文件</a-col>
                     <a-col :span="14">播放</a-col>
                     <a-col :span="2">下载</a-col>
                 </a-row>
 
-                <a-divider/>
-
-                <el-scrollbar style="height:calc(100vh - 600px);">
+                <el-scrollbar style="height:calc(100vh - 560px);border: 1px rgb(240,240,240) solid;">
                     <a-row  v-for="voiceFile in syntheticVoiceList" :key="voiceFile.uid" style="display: flex;align-items: center;">
                         <a-col :span="8">
                             <a-upload

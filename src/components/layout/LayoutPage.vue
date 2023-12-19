@@ -71,7 +71,7 @@
               </span>
             </template>
             <a-menu-item key="ai_tool.chatgpt">{{ $t('menu.ai_tool.chatgpt.val')}}</a-menu-item>
-            <a-menu-item key="ai_tool.voice_synthesis">{{ $t('menu.ai_tool.voice_synthesis.val') }}</a-menu-item>
+            <a-menu-item key="ai_tool.text_to_Speech">{{ $t('menu.ai_tool.text_to_Speech.val') }}</a-menu-item>
             <a-menu-item key="ai_tool.speech_recognition">{{ $t('menu.ai_tool.speech_recognition.val') }}</a-menu-item>
             <a-menu-item key="ai_tool.face_recognition">{{ $t('menu.ai_tool.face_recognition.val')}}</a-menu-item>
           </a-sub-menu>

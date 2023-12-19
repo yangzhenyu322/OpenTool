@@ -59,8 +59,8 @@ export default {
             chatgpt: {
                 val: 'ChatGPT'
             },
-            voice_synthesis: {
-                val: '语音合成'
+            text_to_Speech: {
+                val: '文本转语言'
             },
             speech_recognition: {
                 val: "语音转文本"

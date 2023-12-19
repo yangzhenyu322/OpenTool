@@ -1,5 +1,5 @@
 <template>
-    <div style="height: calc(100vh - 90px);background-color: white;padding: 1%;">
+    <div style="min-height: calc(100vh - 90px);background-color: white;padding: 1%;">
         <a-row :gutter="15">
             <a-col :span="8" style="text-align: left;">
                 <p style="font-size: 1.2em;font-weight: bold;">选择音频文件</p>
