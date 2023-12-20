@@ -1,5 +1,5 @@
 <template>
-    <a-page-header title="图像格式转换" class="header-content" style="margin-top: 2px;text-align: left;font-size: 14px;">
+    <a-page-header title="图像格式转换" class="header-content" style="margin-top: 2px;text-align: left;font-size: 14px;background-color: white;">
         <span>支持任意图像格式转换为指定格式图像</span>
     </a-page-header>
 

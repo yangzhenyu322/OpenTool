@@ -1,58 +1,58 @@
 <template>
     <a-page-header
-    style="padding-top: 0;padding-bottom: 0;"
+        style="padding-top: 0;padding-bottom: 0;background-color: white;"
     >
-    <div style="width: 100%;display: flex;justify-content: space-between;">
-        <div style="display: flex;">
-            <a-avatar :src="avatarUrl" style="width: 100px;height: 100px;"></a-avatar>
-            <div style="margin-left:10px;text-align: left;">
-                <p style="font-size: 20px;font-weight: 500;line-height: 20px;margin-bottom: 0;"><span style="font-weight: bold;">Admin</span>, 欢迎回来, 开始您愉快的一天吧！</p>
-                <p style="font-size: 14px;color: grey;display: inline-flex;align-items: center;">
-                    <el-link type="primary" :underline="false" ><EnvironmentFilled style="color: cornflowerblue;" />{{ location }}</el-link>
-                    <span style="white-space: nowrap">&nbsp;&nbsp;{{ weather }}
-                        <svg class="icon weather" v-if="weather == '晴'">
-                            <use xlink:href="#icon-tianqi-qing"></use>
-                        </svg>
-                        <svg class="icon weather" v-if="weather == '阴'">
-                            <use xlink:href="#icon-tianqi-yin"></use>
-                        </svg>
-                        <svg class="icon weather" v-if="weather == '多云'">
-                            <use xlink:href="#icon-tianqi-duoyun"></use>
-                        </svg>
-                        <svg class="icon weather" v-if="weather == '小雨'">
-                            <use xlink:href="#icon-tianqi-xiaoyu"></use>
-                        </svg>
-                        <svg class="icon weather" v-if="weather == '中雨'">
-                            <use xlink:href="#icon-tianqi-zhongyu"></use>
-                        </svg>
-                        <svg class="icon weather" v-if="weather == '大雨'">
-                            <use xlink:href="#icon-tianqi-dabaoyu"></use>
-                        </svg>
-                        <svg class="icon weather" v-if="weather == '雷阵雨'">
-                            <use xlink:href="#icon-tianqi-leizhenyu"></use>
-                        </svg>
-                        &nbsp;&nbsp;<span v-if="temperature">{{ temperature }}℃</span>
-                    </span>
-                </p>
+        <div style="width: 100%;display: flex;justify-content: space-between;">
+            <div style="display: flex;">
+                <a-avatar :src="avatarUrl" style="width: 100px;height: 100px;"></a-avatar>
+                <div style="margin-left:10px;text-align: left;">
+                    <p style="font-size: 20px;font-weight: 500;line-height: 20px;margin-bottom: 0;"><span style="font-weight: bold;">Admin</span>, 欢迎回来, 开始您愉快的一天吧！</p>
+                    <p style="font-size: 14px;color: grey;display: inline-flex;align-items: center;">
+                        <el-link type="primary" :underline="false" ><EnvironmentFilled style="color: cornflowerblue;" />{{ location }}</el-link>
+                        <span style="white-space: nowrap">&nbsp;&nbsp;{{ weather }}
+                            <svg class="icon weather" v-if="weather == '晴'">
+                                <use xlink:href="#icon-tianqi-qing"></use>
+                            </svg>
+                            <svg class="icon weather" v-if="weather == '阴'">
+                                <use xlink:href="#icon-tianqi-yin"></use>
+                            </svg>
+                            <svg class="icon weather" v-if="weather == '多云'">
+                                <use xlink:href="#icon-tianqi-duoyun"></use>
+                            </svg>
+                            <svg class="icon weather" v-if="weather == '小雨'">
+                                <use xlink:href="#icon-tianqi-xiaoyu"></use>
+                            </svg>
+                            <svg class="icon weather" v-if="weather == '中雨'">
+                                <use xlink:href="#icon-tianqi-zhongyu"></use>
+                            </svg>
+                            <svg class="icon weather" v-if="weather == '大雨'">
+                                <use xlink:href="#icon-tianqi-dabaoyu"></use>
+                            </svg>
+                            <svg class="icon weather" v-if="weather == '雷阵雨'">
+                                <use xlink:href="#icon-tianqi-leizhenyu"></use>
+                            </svg>
+                            &nbsp;&nbsp;<span v-if="temperature">{{ temperature }}℃</span>
+                        </span>
+                    </p>
+                </div>
+            </div>
+            <div style="width: 20%;margin-right: 2%;">
+                <a-row type="flex" :gutter="[2]">
+                    <a-col :span="8">
+                        <p class="header-text-right-sub1">待办</p>
+                        <p class="header-text-right-sub2">2/10</p>
+                    </a-col>
+                    <a-col :span="8">
+                        <p class="header-text-right-sub1">项目</p>
+                        <p class="header-text-right-sub2">8</p>
+                    </a-col>
+                    <a-col :span="8">
+                        <p class="header-text-right-sub1">团队</p>
+                        <p class="header-text-right-sub2">156</p>
+                    </a-col>
+                </a-row>
             </div>
         </div>
-        <div style="width: 20%;margin-right: 2%;">
-            <a-row type="flex" :gutter="[2]">
-                <a-col :span="8">
-                    <p class="header-text-right-sub1">待办</p>
-                    <p class="header-text-right-sub2">2/10</p>
-                </a-col>
-                <a-col :span="8">
-                    <p class="header-text-right-sub1">项目</p>
-                    <p class="header-text-right-sub2">8</p>
-                </a-col>
-                <a-col :span="8">
-                    <p class="header-text-right-sub1">团队</p>
-                    <p class="header-text-right-sub2">156</p>
-                </a-col>
-            </a-row>
-        </div>
-    </div>
     </a-page-header>
     <div class="center-content" >
         <a-row :gutter="10">

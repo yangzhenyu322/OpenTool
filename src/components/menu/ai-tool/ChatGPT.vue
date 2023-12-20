@@ -1,60 +1,62 @@
 <template>
-    <div style="height:calc(100vh - 90px);background-color: white;">
+    <div style="min-height:calc(100vh - 90px);background-color: white;">
         <!-- 表头 -->
-        <div class="horizontal-center" style="height: 50px;border-bottom: 2px solid rgb(250,250,250)" >
-            <a-select 
-                v-model:value="selectedChatModel"
-                @change="handleChatModelChange"
-                :disabled="isChating"
-                style="width: 190px" 
-            >
-                <a-select-opt-group>
-                    <template #label>
-                        <span>
-                            <message-outlined />
-                            GPT3.5
-                        </span>
+        <a-affix :offset-top="91">
+            <div class="horizontal-center" style="height: 50px;background-color: white;" >
+                <a-select 
+                    v-model:value="selectedChatModel"
+                    @change="handleChatModelChange"
+                    :disabled="isChating"
+                    style="width: 190px" 
+                >
+                    <a-select-opt-group>
+                        <template #label>
+                            <span>
+                                <message-outlined />
+                                GPT3.5
+                            </span>
+                        </template>
+                        <a-select-option value="gpt-3.5-turbo-1106">GPT-3.5-turbo-1106</a-select-option>
+                        <a-select-option value="gpt-3.5-turbo-16k">GPT-3.5-turbo-16k</a-select-option>
+                    </a-select-opt-group>
+                    <a-select-opt-group>
+                        <template #label>   
+                            <span>
+                                <comment-outlined />
+                                GPT4
+                            </span>
+                        </template>
+                        <a-select-option value="gpt-4-1106-preview">GPT-4-1106-preview</a-select-option>
+                        <a-select-option value="gpt-4-vision-preview">GPT-4-vision-preview</a-select-option>
+                    </a-select-opt-group>
+                    <a-select-opt-group>
+                        <template #label>
+                            <span>
+                                <file-image-outlined />
+                                DALL
+                            </span>
+                        </template>
+                        <a-select-option value="dall-e-3">Dall-e-3</a-select-option>
+                    </a-select-opt-group>
+                </a-select>
+                <!-- 重置窗口按钮 -->
+                <a-popconfirm 
+                    title="确认重置对话窗口？(这将清空对话记录)"
+                    ok-text="确认" 
+                    cancel-text="取消"
+                    placement="bottomRight"
+                    @confirm="resetChatWindow"
+                >
+                    <template #icon>
+                        <question-circle-outlined style="color: red" />
                     </template>
-                    <a-select-option value="gpt-3.5-turbo-1106">GPT-3.5-turbo-1106</a-select-option>
-                    <a-select-option value="gpt-3.5-turbo-16k">GPT-3.5-turbo-16k</a-select-option>
-                </a-select-opt-group>
-                <a-select-opt-group>
-                    <template #label>   
-                        <span>
-                            <comment-outlined />
-                            GPT4
-                        </span>
-                    </template>
-                    <a-select-option value="gpt-4-1106-preview">GPT-4-1106-preview</a-select-option>
-                    <a-select-option value="gpt-4-vision-preview">GPT-4-vision-preview</a-select-option>
-                </a-select-opt-group>
-                <a-select-opt-group>
-                    <template #label>
-                        <span>
-                            <file-image-outlined />
-                            DALL
-                        </span>
-                    </template>
-                    <a-select-option value="dall-e-3">Dall-e-3</a-select-option>
-                </a-select-opt-group>
-            </a-select>
-            <!-- 重置窗口按钮 -->
-            <a-popconfirm 
-                title="确认重置对话窗口？(这将清空对话记录)"
-                ok-text="确认" 
-                cancel-text="取消"
-                placement="bottomRight"
-                @confirm="resetChatWindow"
-            >
-                <template #icon>
-                    <question-circle-outlined style="color: red" />
-                </template>
-                <a-button danger size="small" style="margin-left: 10px;">
-                    <RedoOutlined />
-                </a-button>
-            </a-popconfirm>
-        </div>
-
+                    <a-button danger size="small" style="margin-left: 10px;">
+                        <RedoOutlined />
+                    </a-button>
+                </a-popconfirm>
+            </div>
+        </a-affix>
+        
         <!-- 聊天对话 -->
         <a-skeleton :loading="isPreLoading" active>
             <a-table 
@@ -186,7 +188,7 @@ import { copyDomText } from '@/utils/common.js'
 import { getBase64 } from '@/utils/file/FileUtil.js'
 
 const isPreLoading = ref(true) // 预加载动画
-const selectedChatModel = ref('gpt-4-vision-preview')
+const selectedChatModel = ref('gpt-3.5-turbo-1106')
 // gpt头像
 const gptAvatarUrl = ref(gptUrl)
 const uid = 'zensheep' + '-chatgpt' // 用户id

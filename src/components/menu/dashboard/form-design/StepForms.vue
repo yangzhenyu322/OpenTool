@@ -1,5 +1,5 @@
 <template>
-    <a-page-header title="仿真数据关联分析" class="header-content" style="margin-top: 2px;text-align: left;font-size: 14px;">
+    <a-page-header title="仿真数据关联分析" class="header-content" style="margin-top: 2px;text-align: left;font-size: 14px;background-color: white;">
         <span>基于贝叶斯网络的仿真数据关联性分析</span>
     </a-page-header>
 

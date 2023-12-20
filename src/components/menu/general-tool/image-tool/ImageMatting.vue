@@ -1,5 +1,5 @@
 <template>
-    <a-page-header title="图像编辑" class="header-content" style="margin-top: 2px;text-align: left;font-size: 14px;">
+    <a-page-header title="图像编辑" class="header-content" style="margin-top: 2px;text-align: left;font-size: 14px;background-color: white;">
         <span>可以对人物、物品图像进行背景自动抠图</span>
     </a-page-header>
 

@@ -1,7 +1,7 @@
 <template>
   <!-- 新增功能请参考:https://next.antdv.com/components/table-cn，待完成功能：编辑、更多操作、接入后端数据 -->
   <div style="margin-bottom: 8px;display: flex;justify-content: space-between;">
-    <a-row :gutter="[10]" style="width: 15%;">
+    <a-row :gutter="[10]">
       <a-col :span="12">
         <a-button class="add-btn" @click="handleAdd">新增</a-button>
       </a-col>

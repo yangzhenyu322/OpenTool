@@ -1,5 +1,5 @@
 <template>
-  <a-page-header title="基础表单" class="header-content" style="margin-top: 2px;text-align: left;font-size: 14px;">
+  <a-page-header title="基础表单" class="header-content" style="margin-top: 2px;text-align: left;font-size: 14px;background-color: white;">
       <span>基础表单的常见用法</span>
   </a-page-header>
 
