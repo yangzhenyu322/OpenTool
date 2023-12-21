@@ -21,7 +21,8 @@
             <a-col :span="5" >
                 <div style="display: flex;justify-content: center;align-items: center;">
                     <div style="width: 80%;">
-                        <div v-if="state.isFilePathInPuting" style="height: 70px;border: 1px solid rgb(24,144,255);border-radius: 5px;">
+                        <!-- 传统文件上传 -->
+                        <div style="height: 70px;border: 1px solid rgb(24,144,255);border-radius: 5px;">
                             <a-upload-dragger
                                 v-model:file-list="fileList"
                                 name="file"
@@ -35,25 +36,24 @@
                                 <PlusSquareTwoTone style="font-size: 18px;" /> 选择文件
                             </a-upload-dragger>
                         </div>
-                        <div v-else style=";height: 70px;border: 1px solid rgb(24,144,255);border-radius: 5px;">
+                        <!-- url文件上传 -->
+                        <!-- <div style=";height: 70px;border: 1px solid rgb(24,144,255);border-radius: 5px;">
                             <div style="display: flex;justify-content: left;font-size: 1em;margin: 2%;">URL:</div>
                             <div style="margin: 2% 5% 2% 5%;display: flex;justify-content: space-between;font-size: 1.2em;">
-                                <a-input v-model:value="state.urlPath" placeholder="Basic usage" >
-                                    <template #addonBefore>
-                                        <a-select v-model:value="state.urlPrefix" style="width: 90px">
-                                            <a-select-option value="Http://">Http://</a-select-option>
-                                            <a-select-option value="Https://">Https://</a-select-option>
-                                        </a-select>
-                                    </template>
-                                </a-input>
+                                <a-input v-model:value="state.urlPath" placeholder="Basic usage" />
                             </div>
-                        </div>
+                        </div> -->
+                        <a-modal v-model:open="state.isUrlPathInPuting" @ok="uploadFileByUrl">
+                            <div style="height: 80px;margin-top: 20px;">
+                                <div style="display: flex;justify-content: left;font-size: 1em;margin: 2%;">URL:</div>
+                                <div style="margin: 2% 5% 2% 5%;display: flex;justify-content: space-between;font-size: 1.2em;">
+                                    <a-input v-model:value="state.urlPath" placeholder="Basic usage" />
+                                </div>
+                            </div>
+                        </a-modal>
+
                         <p style="font-size: 18px;margin: 2%;">
-                            <span v-if="state.isFilePathInPuting">选择文件</span>
-                            <a @click="onInputURL" v-else>选择文件</a>
-                            或
-                            <a @click="onInputURL" v-if="state.isFilePathInPuting">输入远程文件URL</a>
-                            <span v-else>输入远程文件URL</span>
+                            <a @click="onInputURL">输入远程文件URL</a>
                         </p>
                     </div>
                 </div>
@@ -193,17 +193,17 @@
 
 <script setup>
 import { ref, reactive, watch, toRaw } from 'vue'
-import { uploadApi, formatConvertApi } from '@/utils/file/FileUtil.js'
 import { message } from 'ant-design-vue';                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+
+import { uploadApi, formatConvertApi } from '@/utils/file/FileUtil.js'
+import { generateRandomStr } from '@/utils/common.js'
 
 const formRef = ref() // 表单ref
 const state = reactive({
     targetFilePath: '',
     targetFormat: 'PNG',
-    isFilePathInPuting: true, // 文件/URL路径选择控制Flag
-    urlPrefix: 'Http://',  // URL前缀
-    urlPath: '', // URL路径，URL = urlPrefix + urlPath
-    url: '', // url完整路径
+    isUrlPathInPuting: false, // 文件/URL路径选择控制Flag
+    urlPath: '', // URL路径
     isSetModalShow: false, // 是否显示转换设置弹窗
     // 表单数据
     formState: {
@@ -289,9 +289,10 @@ const removeFile = (file) => {
 // 文件上传预处理
 const beforeUpload = file => {
     // 这里可以进行文件类型、大小等校验，返回 false 可取消上传
-    if(file.size > 10 * 1024 * 1024) {  // 最大文件支持10MB
+
+    if(file.size > 20 * 1024 * 1024) {  // 最大文件支持20MB
         file.status = 'error'
-        file['error'] = '文件超出最大限制10M'
+        file['error'] = '文件超出最大限制20M'
         return false;
     }
     return true;
@@ -302,6 +303,7 @@ const beforeUpload = file => {
 // e.file - 上传的文件实例对象
 const customUpload = e => {
     let curFile = fileList.value.filter(item => item.uid == e.file.uid)[0]
+
     curFile.status = 'uploading'
     uploadApi({
         file: e.file,
@@ -338,6 +340,50 @@ const customUpload = e => {
         })
 }
 
+// 通过URL上传文件
+const uploadFileByUrl = () => {
+    if (state.urlPath == null || state.urlPath.length == 0) {
+        message.warn('url不可以为空')
+        return
+    }
+
+    let url = state.urlPath
+    let uid = 'upload-' + generateRandomStr(6)
+    let name = url.substring(url.lastIndexOf('/') + 1)
+    let size = 0
+
+    // 获取url文件size
+    // https://opentool.oss-cn-shenzhen.aliyuncs.com/ImageConvert/images/origin/71cadcc8-0659-40f7-827d-3398d29ed0bc/girl06.png
+    var xhr = new XMLHttpRequest();
+    xhr.open('HEAD', url, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            if (xhr.status == 200) {
+                // url路径有效
+                var fileSize = xhr.getResponseHeader('Content-Length');
+                size = fileSize
+
+                // 将文件添加到fileList
+                fileList.value.push({
+                    uid: uid,
+                    name: name,
+                    status: 'done',
+                    url: url,
+                    thumbUrl: url,
+                    size: size
+                })
+            }
+        }
+    };
+    xhr.onerror = function() {
+        // 处理请求发送过程中的错误
+        message.error('url资源异常，请检查是否正确')
+    };
+    xhr.send();
+
+    state.isUrlPathInPuting = false
+}
+
 // 计算文件大小
 const formatFileSize = bytes => {
     if (bytes < 1024) {
@@ -349,15 +395,9 @@ const formatFileSize = bytes => {
     }
 }
 
-// 自动拼接网络资源url
-watch(()=>state.urlPath, ()=> {
-    state.url = state.urlPrefix + state.urlPath
-    console.log("URL:" + state.url)
-})
-
 // 开启URL路径输入
 const onInputURL = () => {
-    state.isFilePathInPuting = !state.isFilePathInPuting
+    state.isUrlPathInPuting = true
 }
 
 // 打开图像设置对话框
@@ -428,7 +468,6 @@ const convertFile = () => {
                 let file = fileList.value.filter(item => item.uid == convertFile.uid)[0] 
                 file.convertUrl = url  // 转换后图片保存的url路径
                 state.isConverting = false
-                // console.log(`文件${file.name}格式转换成功：${file.convertUrl}`)
             })
             message.success("格式转换成功")
         }).catch(err => {

@@ -378,7 +378,6 @@
       // 滑轮滚动时获取当前位置值
       const scroll = (scrollTop ) => {
         scrollTopValue.value = scrollTop
-        console.log('scrollTopValue.value:', scrollTopValue.value.scrollTop)
 
         // 到达一定高度才显示
         if (scrollTopValue.value.scrollTop < 1000) {
