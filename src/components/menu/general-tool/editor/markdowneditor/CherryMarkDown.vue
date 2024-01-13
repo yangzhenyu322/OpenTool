@@ -54,17 +54,31 @@ const initMarkDown = () => {
     const cherrymarkdown = new Cherry({
         id: props.id,
         value: defaultContent, // 默认文本内容
+        /**
+         * 配置主题，第三方可以自行扩展主题
+         */
+        theme: [
+            { className: 'default', label: '默认' },
+            { className: 'dark', label: '暗黑' },
+            { className: 'light', label: '明亮' },
+            { className: 'green', label: '清新' },
+            { className: 'red', label: '热情' },
+            { className: 'violet', label: '淡雅' },
+            { className: 'blue', label: '清幽' },
+        ],
         editor: {
+            // markdown主题：default、dark暗黑、light明亮、green清新、red热情、violet淡雅、blue清幽
+            theme: 'dark',
             codemirror: {
-                // markdown主题：default、dark暗黑、light明亮、green清新、red热情、violet淡雅、blue清幽
-                theme: 'green',
+                // 是否自动focus 默认为true
+                autofocus: true,
             },
             // defaultModel 编辑器初始化后的模式：1、edit&preview双栏编辑预览模式（）；2、editOnly纯编辑模式；3、previewOnly预览模式
             defaultModel: 'edit&preview',
         },
         toolbars:{
             // 工具栏主题：light or dark（默认）
-            theme: 'light',
+            theme: 'default',
             // 是否展示顶部工具栏：true展示(默认)；false不展示
             showToolbar: true,
             // 工具栏功能设置：自定义
@@ -74,7 +88,7 @@ const initMarkDown = () => {
             // 侧边工具栏
             sidebar: ['settings', 'theme', 'mobilePreview'],
             // 选中时工具栏
-            bubble: ['size', 'color', 'justify', '|', 'bold', 'italic', 'underline', 'strikethrough', 'sub', 'sup'],
+            bubble: [ 'size', 'color', 'justify', '|', 'bold', 'italic', 'underline', 'strikethrough', 'sub', 'sup'],
             // 浮动工具栏
             float: ['h1', 'h2', 'h3', '|', 'quote', 'quickTable', 'code', 'image', 'drawIo'],
         },
@@ -88,8 +102,8 @@ const initMarkDown = () => {
             // 内置语法配置
             syntax: {
                 codeBlock: {
-                    theme: 'default', //默认为dark深色主题, default、dark、funky、okaidia、twilight、coy、(solarized light、tomorrow night, 这两个主题还不可用，不知道为什么)
-                    wrap: true, // 超出长度是否换行，false则显示滚动条
+                    theme: 'dark', //默认为dark深色主题, default、dark、funky、okaidia、twilight、coy、(solarized light、tomorrow night, 这两个主题还不可用，不知道为什么)
+                    wrap: false, // 超出长度是否换行，false则显示滚动条
                     lineNumber: true, // 默认显示行号
                 },
                 header: {
@@ -99,7 +113,7 @@ const initMarkDown = () => {
             }
         },
         // 打开draw.io编辑页的url，如果为空则drawio按钮失效(访问被拒绝了，不知道什么原因，待解决)
-        drawioIframeUrl: 'https://app.diagrams.net/?src=about#Hyangzhenyu322%2FdrawIo%2Fmain%2Fopentool.drawio',
+        drawioIframeUrl: 'https://app.diagrams.net/#Hyangzhenyu322%2FdrawIo%2Fmain%2Fopentool.drawio',
         // 文件上传：默认以base64编码存储，也可以以图片的形式存储，但需要将文件存储的url在callback返回，fileUpload(file, callback)
         // fileUpload: callbacks.fileUpload,
 
@@ -111,11 +125,11 @@ const initMarkDown = () => {
 
         // chatGpt的openai配置
         openai: {
-            apiKey: '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', // apiKey
-            // proxy: {
-            //   host: '122.118.175.31',
-            //   port: '7890',
-            // }, // http & https代理配置
+            apiKey: 'sk-CMAaXEQfolbfguToC0E89d26626645CfAc8eD3D700CdE266', // apiKey
+            proxy: {
+              host: 'https://api.qqslyx.com/',
+              port: '7890',
+            }, // http & https代理配置
             ignoreError: false, // 是否忽略请求失败，默认忽略
         }
     })

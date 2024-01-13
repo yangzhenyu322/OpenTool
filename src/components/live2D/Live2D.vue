@@ -321,7 +321,7 @@ export default defineComponent({
   background-color: rgba(250,200,88, 0.4);; /* 提示框的背景颜色 */
   border: 2px solid rgb(250,200,88);
   color: rgb(238,102,102); /* 文本颜色 */
-  user-select: none; /* 禁止选择文本内容 */
+  sysUser-select: none; /* 禁止选择文本内容 */
   border-radius: 4px; /* 边框圆角 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 提示框的阴影效果 */
   position: absolute;

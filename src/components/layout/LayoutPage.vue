@@ -136,7 +136,7 @@
 
         <a-row type="flex" :gutter="[8,8]" style="margin-left: auto;margin-right: 15px;">
           <!-- 头像 -->
-          <a-col class="user-img">
+          <a-col class="sysUser-img">
               <a-avatar :src="avatarUrl"></a-avatar>
               <span id="userName">{{ userName }}</span>
           </a-col>
@@ -426,6 +426,7 @@
 </script>
 
 <style>
+
 .logo{
   display: flex;
   align-items: center;
@@ -449,7 +450,7 @@
   overflow: hidden;  /* 超出部分隐藏 */
 }
 
-.user-img:hover{
+.sysUser-img:hover{
   background-color: rgba(0, 0, 0, 0.1);
 }
 
@@ -477,7 +478,7 @@
 }
 
 .ant-menu, .ant-menu-item, .el-tabs__item {
-  user-select: none;
+  sysUser-select: none;
 }
 /* 中心-头部内容样式 */
 .header-content{

@@ -16,7 +16,7 @@ export const formatConvertApi = ({urlsStrList, targetFormat, convertConfig, rout
   formData.append('targetFormat', targetFormat)
   formData.append('convertConfig', JSON.stringify(convertConfig))
   return axios.post(route, formData, {headers:{
-  'Content-Type': 'application/x-www-form-urlencoded;'
+    'Content-Type': 'application/x-www-form-urlencoded;'
   }})
 }
 

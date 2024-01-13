@@ -1,6 +1,6 @@
 <!-- todu: drawIO、自动拼音、chaGpt、copy(等官方更新)、公式显示问题 -->
 <template>
-    <div :id="props.id" ref="cherrymarkdown" style="text-align:left;padding: 0;margin: 0;" />
+    <div :id="props.id" ref="chatmarkdown" style="width: 100%;height: 100%;" />
 </template>
   
 <script setup>
@@ -15,13 +15,15 @@ const props = defineProps({
 })
 
 const initMarkDown = () => {
-    const cherrymarkdown = new Cherry({
+    const chatmarkdown = new Cherry({
         id: props.id,
         value: props.content, // 默认文本内容
         editor: {
+            // markdown主题：default、dark暗黑、light明亮、green清新、red热情、violet淡雅、blue清幽
+            theme: 'default', // depend on codemirror theme name: https://codemirror.net/demo/theme.htm
             codemirror: {
-                // markdown主题：default、dark暗黑、light明亮、green清新、red热情、violet淡雅、blue清幽
-                theme: 'default',
+                // 是否自动focus 默认为true
+                autofocus: true,
             },
             // defaultModel 编辑器初始化后的模式：1、edit&preview双栏编辑预览模式（）；2、editOnly纯编辑模式；3、previewOnly预览模式
             defaultModel: 'previewOnly',
@@ -67,9 +69,9 @@ const initMarkDown = () => {
         // 检测代码块是否需要补一个```
         let count = countSubstrings(newVal, "```")
         if (count % 2 == 1) {
-            cherrymarkdown.setMarkdown(newVal + '\n```')
+            chatmarkdown.setMarkdown(newVal + '\n```')
         } else {
-            cherrymarkdown.setMarkdown(newVal)
+            chatmarkdown.setMarkdown(newVal)
         }
     })
 }

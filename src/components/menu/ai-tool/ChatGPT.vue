@@ -104,7 +104,7 @@
                                 </a-image-preview-group>
                             </div>
                             <!-- 文本展示区 -->
-                            <ChatMarkDown :id="uid + '-' + index" :content="record.content"/>
+                            <ChatMarkDown :id="uid + '-' + index" :content="record.content" />
                         </div>
                     </template>
 
@@ -173,6 +173,7 @@
                 </a-tooltip>
             </div>
         </div>
+        
         <div style="height: 300px;"></div>
     </div>
 </template>
@@ -186,6 +187,7 @@ import ChatMarkDown from "./chatgpt-markdown/ChatMarkDown.vue";
 import gptUrl from '@/assets/images/avatar/chatgpt.png'
 import { copyDomText } from '@/utils/common.js'
 import { getBase64 } from '@/utils/file/FileUtil.js'
+import { EventSourcePolyfill } from "event-source-polyfill"
 
 const isPreLoading = ref(true) // 预加载动画
 const selectedChatModel = ref('gpt-3.5-turbo-1106')
@@ -419,7 +421,12 @@ const connectSse = () => {
     }
 
     // 建立连接
-    source.value = new EventSource(`${axios.defaults.baseURL}/chatgpt/createSse/${uid}`)
+    source.value = new EventSource(`${axios.defaults.baseURL}/chatgpt/createSse/${uid}`, { withCredentials: true })
+    // source.value = new EventSourcePolyfill(`${axios.defaults.baseURL}/chatgpt/createSse/${uid}`, {
+    //     headers: {
+    //         Authorization: 'Bearer aaaAAAA'
+    //     }
+    // })
     isChating.value = true
     // 连接一旦建立，就会触发open事件
     source.value.onopen = event => {

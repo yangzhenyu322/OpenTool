@@ -103,8 +103,8 @@ export default defineComponent({
       dataSource: [
       {
         id: '1',
-        name: 'user-service',
-        description: '用户服务',
+        name: 'system-service',
+        description: '系统服务',
         state: '正常',
         time: '2023/5/25',
       },

@@ -168,28 +168,28 @@ export default defineComponent({
     }
 
     const getUserPageList = async () => {
-      try {
-        loading.value = true
-        const page = paginationConfig.value.current
-        const size = paginationConfig.value.pageSize
+      loading.value = true
+      const page = paginationConfig.value.current
+      const size = paginationConfig.value.pageSize
 
-        const res = await axios.get(`/user/${page}/${size}`)
-        const result = res.data
-        paginationConfig.value.total = result.total
+      axios.get(`/user/${page}/${size}`)
+        .then(res => {
+          let result = res.data
+          paginationConfig.value.total = result.total
 
-        const data = []
-        result.userInfos.forEach((item, index) => {
-          const keyIndex = (page - 1) * size + index // UUID:标识唯一行
-          item['key'] = keyIndex.toString()
-          data.push(item)
+          const data = []
+          result.userInfos.forEach((item, index) => {
+            const keyIndex = (page - 1) * size + index // UUID:标识唯一行
+            item['key'] = keyIndex.toString()
+            data.push(item)
+          })
+
+          dataSource.value = data
+          loading.value = false
+        }).catch(err => {
+          console.error('请求失败:', err)
+          loading.value = false
         })
-
-        dataSource.value = data
-        loading.value = false
-      } catch (error) {
-        console.error('请求失败:', error)
-        loading.value = false
-      }
     }
 
     getUserPageList()

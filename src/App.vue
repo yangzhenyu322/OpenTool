@@ -1,5 +1,5 @@
 <template>
-  <LayoutPage/>
+  <router-view/>
   <!-- <Live2D /> -->
 </template>
 
