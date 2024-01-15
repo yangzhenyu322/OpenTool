@@ -1,7 +1,7 @@
 <template>
     <div class="body">
         <div class="main">
-            <SwithComponent />
+            <SwitchComponent />
             <SignUp />
             <SignIn />
         </div>
@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import SwithComponent from './components/SwithComponent.vue';
+import SwitchComponent from './components/SwitchComponent.vue';
 import SignIn from './components/SignIn.vue';
 import SignUp from './components/SignUp.vue';
 

@@ -1,6 +1,6 @@
 <template>
     <div class="container a-container" id="a-container">
-        <form class="form" id="a-form" method="" action="">
+        <form class="form" id="a-form" @submit.prevent="register">
           <h2 class="form_title title">Create Account</h2>
           <div class="form_icons">
              <img class="form_icon" src=" ">
@@ -11,48 +11,54 @@
           <input class="form_input" type="text" placeholder="Name" v-model="registerForm.username">
           <input class="form_input" type="password" placeholder="Password" v-model="registerForm.password">
           <input class="form_input" type="text" placeholder="Phone" v-model="registerForm.phone">
-          <button class="form_button button submit" @click="signUp">SIGN UP</button>
+          <button type="submit" class="form_button button submit" @click="signUp">SIGN UP</button>
         </form>
     </div>
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue'
+import { reactive } from 'vue'
 import useEmitter from '@/hooks/useEmitter';
+import axios from 'axios';
+import { message } from 'ant-design-vue';
 
 const registerForm = reactive({
-    usernmae: '',
+    username: '',
     password: '',
     phone: ''
 })
 
-const signUp = () => {
-    const formData = new FormData
-    formData.append('username', registerForm.username)
-    formData.append('password', registerForm.password)
-    formData.append('phone', registerForm.phone)
-
-    console.log('sign up:', registerForm.username)
-
-    // axios.post(`/login`, formData, {headers:{
-    //     'Content-Type': 'application/x-www-form-urlencoded;'
-    // }}).then(res => {
-    //     let response = res.data
-    //     console.log('code:', response.code)
-    //     console.log('msg:', response.msg)
-    // }).catch(err => {
-    //     console.log('err:', err)
-    // })
-}
-
 const emitter = useEmitter()
-onMounted(() => {
-    emitter.on('change', () => {
-        let aContainer = document.querySelector("#a-container")
-        // 左右移动
-        aContainer.classList.toggle("is-txl")
-    })
+emitter.on('switchLoginWithRegister', () => {
+    let aContainer = document.querySelector("#a-container")
+    // 左右移动
+    aContainer.classList.toggle("is-txl")
 })
+
+// 用户注册
+const register = () => {
+    axios.post('/user/register', JSON.stringify({
+            userName: registerForm.username,
+            password: registerForm.password,
+            phoneNumber: registerForm.phone
+        }), { 
+            headers: {
+                "Content-Type":"application/json"
+            }
+         })
+    .then(res => {
+        let response = res.data
+        if (response.code === 200) {
+            // 注册成功，切换到登录界面
+            message.success(response.msg, 2)
+            emitter.emit('registerSuccess', true)
+        } else {
+            message.error(response.msg, 2)
+        }
+    }).catch(err => {
+        console.log('err:', err)
+    })
+}
 
 </script>
 

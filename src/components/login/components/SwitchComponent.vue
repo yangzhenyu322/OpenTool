@@ -6,13 +6,13 @@
         <div class="switch_container" id="switch-c1">
             <h2 class="switch_title title">Welcome Back !</h2>
             <p class="switch_description description">To keep connected with up please login with your personal info</p>
-            <button class="switch_button button switch-btn" @click="change">SIGN IN</button>
+            <button class="switch_button button switch-btn" @click="switchLoginWithRegister">SIGN IN</button>
         </div>
 
         <div class="switch_container is-hidden" id="switch-c2">
             <h2 class="switch_title title">Hello Friend !</h2>
             <p class="switch_description description">Enter your personal details and start journey with us</p>
-            <button class="switch-button button" switch-btn @click="change">SIGN UP</button>
+            <button class="switch-button button switch-btn"  @click="switchLoginWithRegister">SIGN UP</button>
         </div>
     </div>
 </template>
@@ -24,7 +24,7 @@ import useEmitter from '@/hooks/useEmitter.js'
 const sidebarOpen = ref(true)
 const emitter = useEmitter()
 
-const change = () => {
+const switchLoginWithRegister = () => {
     const switchC1 = document.querySelector("#switch-c1")
     const switchC2 = document.querySelector("#switch-c2")
     const switchCircle = document.querySelectorAll(".switch_circle")
@@ -40,8 +40,17 @@ const change = () => {
     switchC2.classList.toggle("is-hidden")
 
     sidebarOpen.value = !sidebarOpen.value
-    emitter.emit('change', sidebarOpen)
+    emitter.emit('switchLoginWithRegister', sidebarOpen)
 }
+
+emitter.on('registerSuccess', () => {
+    switchLoginWithRegister()
+})
+
+emitter.on('loginSuccess', () => {
+    switchLoginWithRegister()
+})
+
 </script>
 
 <style scoped>

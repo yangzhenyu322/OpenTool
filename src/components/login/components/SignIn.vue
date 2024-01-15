@@ -19,11 +19,12 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue';
+import { reactive } from 'vue';
 import useEmitter from '@/hooks/useEmitter';
 import axios from 'axios';
 import qs from 'qs';
 import { useRouter} from 'vue-router';
+import { message } from 'ant-design-vue';
 
 const router = useRouter()
 const loginForm = reactive({
@@ -31,6 +32,16 @@ const loginForm = reactive({
     password: ''
 })
 
+const emitter = useEmitter()
+emitter.on('switchLoginWithRegister', () => {
+    let bContainer = document.querySelector("#b-container")
+    // 左右移动
+    bContainer.classList.toggle("is-txl")
+    // 改变signIn容器的z-index
+    bContainer.classList.toggle("is-z200")
+})
+
+// 用户登录
 const login = () => {
     axios.post('/login', qs.stringify({
             username: loginForm.username,
@@ -39,28 +50,19 @@ const login = () => {
     .then(res => {
         let response = res.data
         if (response.code === 200) {
+            message.success(response.msg, 2)
+            // 复位
+            emitter.emit('loginSuccess', true)
             // 路由切换
             router.push({ path: '/index' })
-            console.log("success")
         } else {
-            console.log('账号密码有误：', response.msg)
+            message.error(response.msg, 2)
         }
     })
     .catch(err => {
         console.log('err:', err)
     })
 }
-
-const emitter = useEmitter()
-onMounted(() => {
-    emitter.on('change', () => {
-        let bContainer = document.querySelector("#b-container")
-        // 左右移动
-        bContainer.classList.toggle("is-txl")
-        // 改变signIn容器的z-index
-        bContainer.classList.toggle("is-z200")
-    })
-})
 
 </script>
 
