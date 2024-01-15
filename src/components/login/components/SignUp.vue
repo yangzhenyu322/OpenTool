@@ -11,7 +11,7 @@
           <input class="form_input" type="text" placeholder="Name" v-model="registerForm.username">
           <input class="form_input" type="password" placeholder="Password" v-model="registerForm.password">
           <input class="form_input" type="text" placeholder="Phone" v-model="registerForm.phone">
-          <button type="submit" class="form_button button submit" @click="signUp">SIGN UP</button>
+          <button type="submit" class="form_button button submit">SIGN UP</button>
         </form>
     </div>
 </template>
@@ -51,7 +51,7 @@ const register = () => {
         if (response.code === 200) {
             // 注册成功，切换到登录界面
             message.success(response.msg, 2)
-            emitter.emit('registerSuccess', true)
+            // emitter.emit('registerSuccess', true)
         } else {
             message.error(response.msg, 2)
         }
@@ -59,7 +59,6 @@ const register = () => {
         console.log('err:', err)
     })
 }
-
 </script>
 
 <style scoped>

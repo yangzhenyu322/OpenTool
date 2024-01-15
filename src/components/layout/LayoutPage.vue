@@ -136,7 +136,7 @@
 
         <a-row type="flex" :gutter="[8,8]" style="margin-left: auto;margin-right: 15px;">
           <!-- 头像 -->
-          <a-col class="sysUser-img">
+          <a-col class="user-img">
               <a-avatar :src="avatarUrl"></a-avatar>
               <span id="userName">{{ userName }}</span>
           </a-col>
@@ -155,6 +155,28 @@
               <a-radio-button value="zh_CN">中文</a-radio-button>
               <a-radio-button value="en_US">English</a-radio-button>
             </a-radio-group>
+          </a-col>
+          <!-- 登录 -->
+          <a-col v-if="!loginInfo">
+            <a-tooltip placement="bottom">
+              <template #title>
+                登录
+              </template>
+              <a-button type="text" size="small" @click="toLoginPage" style="color: rgb(9, 108, 246);">
+                <LoginOutlined />
+              </a-button>
+            </a-tooltip>
+          </a-col>
+          <!-- 登出 -->
+          <a-col v-else>
+            <a-tooltip placement="bottom">
+              <template #title>
+                注销
+              </template>
+              <a-button type="text" size="small" @click="logout" style="color: rgba(236, 7, 7);">
+                <LogoutOutlined />
+              </a-button>
+            </a-tooltip>
           </a-col>
         </a-row>
       </a-layout-header>
@@ -199,7 +221,9 @@
   import { defineComponent, ref, reactive, toRefs, watch, getCurrentInstance, onMounted} from 'vue';
   import { useRouter} from 'vue-router';
   import avatarUrl from '@/assets/images/avatar/avatar.png';
-
+  import axios from 'axios';
+  import { message } from 'ant-design-vue';
+  import VueCookies from 'vue-cookies';
 
   export default defineComponent({
     name: "LayoutPage",
@@ -376,7 +400,7 @@
       const isBackTopBtnShow = ref(false)
       const scrollTopValue = ref(0)
       // 滑轮滚动时获取当前位置值
-      const scroll = (scrollTop ) => {
+      const scroll = (scrollTop) => {
         scrollTopValue.value = scrollTop
 
         // 到达一定高度才显示
@@ -408,18 +432,40 @@
         requestAnimationFrame(animateScrollTop)
       }
 
+      // 前往登录页面
+      const loginInfo = VueCookies.get('token')
+      const toLoginPage = () => {
+        router.push({ path: '/login' })
+      }
+
+      // 退出（登出）
+      const logout = () => {
+        axios.post('/logout')
+          .then(res => {
+            message.success(res.data.msg, 2)
+            // 路由切换
+            router.push({ path: '/login' })
+          })
+          .catch(err => {
+            message.error('退出账户失败，未登录', 2)
+          })
+      }
+
       return {
           ...toRefs(state),
           ...toRefs(tabsState),
           scrollbarRef,
           isBackTopBtnShow,
           logoFontColor,
+          loginInfo,
           toggleCollapsed,
           changeTheme,
           addTab,
           removeTab,
           scrollBackTop,
-          scroll
+          scroll,
+          logout,
+          toLoginPage
         }
     },
   });
@@ -450,7 +496,7 @@
   overflow: hidden;  /* 超出部分隐藏 */
 }
 
-.sysUser-img:hover{
+.user-img:hover{
   background-color: rgba(0, 0, 0, 0.1);
 }
 

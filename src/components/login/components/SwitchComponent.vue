@@ -51,6 +51,9 @@ emitter.on('loginSuccess', () => {
     switchLoginWithRegister()
 })
 
+emitter.on('logOutSuccess', () => {
+    switchLoginWithRegister()
+})
 </script>
 
 <style scoped>

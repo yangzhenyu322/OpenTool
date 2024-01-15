@@ -52,18 +52,17 @@ const login = () => {
         if (response.code === 200) {
             message.success(response.msg, 2)
             // 复位
-            emitter.emit('loginSuccess', true)
+            // emitter.emit('loginSuccess', true)
             // 路由切换
             router.push({ path: '/index' })
-        } else {
-            message.error(response.msg, 2)
         }
     })
     .catch(err => {
+        // 登录失败时没有通过网关，因此被作为异常catch了
+        message.error(err.response.data.msg, 2)
         console.log('err:', err)
     })
 }
-
 </script>
 
 <style scoped>
