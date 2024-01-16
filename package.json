@@ -26,7 +26,6 @@
     "leader-line": "^1.0.7",
     "lottie-web": "^5.11.0",
     "mermaid": "^9.4.3",
-    "mitt": "^3.0.1",
     "pixi-live2d-display": "^0.4.0",
     "pixi.js": "^6.5.10",
     "qs": "^6.11.2",
@@ -36,6 +35,7 @@
     "vue-i18n": "^9.3.0-beta.17",
     "vue-request": "^2.0.3",
     "vue-router": "^4.1.6",
+    "vue3-puzzle-vcode": "^1.1.6",
     "xgplayer": "^3.0.10",
     "xgplayer-music": "^3.0.10"
   },

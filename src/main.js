@@ -15,7 +15,6 @@ import '@wangeditor/editor/dist/css/style.css'
 // import globalConfig from './config/config.js'
 import JsonEditorVue from 'json-editor-vue3';
 import 'jsoneditor';
-import mitt from 'mitt'
 
 const app = createApp(App)
 // 注册ant-design组件
@@ -39,7 +38,6 @@ axios.defaults.withCredentials = axiosConfig.withCredentials
 
 // 添加到全局
 app.config.globalProperties.$antIcons = Icons
-app.config.globalProperties.emitter = mitt()
 app.use(Antd).use(ElementPlus).use(router).use(i18n).use(JsonEditorVue)
 
 app.mount('#app')

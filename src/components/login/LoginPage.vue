@@ -21,11 +21,12 @@
             <!-- 登录 -->
             <div class="container a-container" id="a-container">
                 <form class="form" id="a-form" @submit.prevent="login">
-                    <h2 class="form_title title">Sign in to Website</h2>
-                    
-                    <span class="form_span">or use your phone number</span>
+                    <h2 class="form_title title">登录到OpenTool</h2>
+                    <span class="form_span">用户名或手机号码登录</span>
                     <input class="form_input" type="text" placeholder="用户名" v-model="loginForm.username">
                     <input class="form_input" type="password" placeholder="密码" v-model.lazy="loginForm.password">
+                    <!-- 验证码 -->
+                    <Vcode :show="isVerificationCodeShow" @success="verificationCodeSuccess" @close="closeVericationCode" @fail="verificationCodeFail" :imgs="verificationCodeImgUrl"></Vcode>
                     <a>忘记密码</a>
                     <a-divider>其它登录方式</a-divider>
                     <div class="form_icons" style="font-size: 2em;">
@@ -41,8 +42,8 @@
             <div class="container b-container" id="b-container">
                 <!-- 需要设置action -->
                 <form class="form" id="b-form" @submit.prevent="register">
-                    <h2 class="form_title title">Create Account</h2>
-                    <span class="form_span">or use phone number for registration</span>
+                    <h2 class="form_title title">创建新的账户</h2>
+                    <span class="form_span">使用邮箱或手机号注册</span>
                     <input class="form_input" type="text" placeholder="Name" v-model="registerForm.username">
                     <input class="form_input" type="password" placeholder="Password" v-model="registerForm.password">
                     <input class="form_input" type="text" placeholder="Phone" v-model="registerForm.phone">
@@ -59,9 +60,16 @@ import axios from 'axios';
 import { message } from 'ant-design-vue';
 import qs from 'qs';
 import { useRouter} from 'vue-router';
+// import verificationCodeImgUrl from '@/assets/images/avatar/avatar.png';
+// import ImageUrl from '@/assets/images/avatar/avatar.png';
+import Vcode from 'vue3-puzzle-vcode';
 
 const router = useRouter()
 const isSwitching = ref(false)
+
+// const verificationCodeImgUrl = ref(ImageUrl)
+const imageList = import.meta.glob('@/assets/images/verificationCode/*.*', { eager:true })
+const verificationCodeImgUrl = ref(Object.values(imageList).map(v => v.default))
 
 const switchLoginWithRegister = () => {
     const switchC1 = document.querySelector("#switch-c1")
@@ -95,7 +103,8 @@ const switchLoginWithRegister = () => {
 }
 
 // 用户注册
-const isRegistering = ref(false)
+const isRegistering = ref(false) // 是否注册中
+
 const registerForm = reactive({
     username: '',
     password: '',
@@ -130,13 +139,28 @@ const register = () => {
 }
 
 // 用户登录
-const isLogining = ref(false)
-const loginForm = reactive({
+const isLogining = ref(false) // 是否正在登录
+const loginForm = reactive({  // 登录信息
     username: '',
     password: ''
 })
+const isVerificationCodeShow = ref(false) // 是否展示验证码图片
 
 const login = () => {
+    // 展现验证码模拟框
+    isVerificationCodeShow.value = true
+}
+
+// 用户点击遮罩层，关闭模态框
+const closeVericationCode = () => {
+    isVerificationCodeShow.value = false
+}
+
+// 用户通过了验证
+const verificationCodeSuccess = (msg) => {
+    isVerificationCodeShow.value = false
+    console.log('验证通过:', msg)
+
     isLogining.value = true
     axios.post('/login', qs.stringify({
             username: loginForm.username,
@@ -159,9 +183,15 @@ const login = () => {
     })
 }
 
+
+
+// 用户验证失败
+const verificationCodeFail = () => {
+    console.log('验证失败')
+}
+
 </script>
 
 <style scoped>
-@import './components/css/login.css';
-
+@import './login.css';
 </style>
