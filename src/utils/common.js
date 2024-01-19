@@ -4,6 +4,7 @@
  */
 import { message } from 'ant-design-vue';
 
+// 复制Dom文本
 export function copyDomText (id) {
     const node = document.getElementById(id)
     if (node) {

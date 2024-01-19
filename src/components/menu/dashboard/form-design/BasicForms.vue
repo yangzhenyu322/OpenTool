@@ -6,57 +6,57 @@
   <!-- 更多功能请参考：https://next.antdv.com/components/form-cn -->
   <div class="center-content" style="background-color: white;display: flex;justify-content: center;">
     <a-form
-    ref="formRef"
-    :model="formState"
-    :rules="rules"
-    :label-col="labelCol"
-    :wrapper-col="wrapperCol"
-    style="width: 70%;"
-  >
-    <a-form-item ref="name" label="姓名" name="name">
-      <a-input v-model:value="formState.name" />
-    </a-form-item>
-    <a-form-item label="性别" name="sex">
-      <a-select v-model:value="formState.sex" placeholder="please select your sex">
-        <a-select-option value="男">男</a-select-option>
-        <a-select-option value="女">女</a-select-option>
-      </a-select>
-    </a-form-item>
-    <a-form-item label="生日" required name="birthDay">
-      <a-date-picker
-        v-model:value="formState.birthDay"
-        show-time
-        type="date"
-        placeholder="Pick a date"
-        style="width: 100%"
-      />
-    </a-form-item>
-    <a-form-item label="已婚" name="isMarried">
-      <a-switch v-model:checked="formState.isMarried" />
-    </a-form-item>
-    <a-form-item label="爱好" name="hobbies">
-      <a-checkbox-group v-model:value="formState.hobbies">
-        <a-checkbox value="羽毛球" name="type">羽毛球</a-checkbox>
-        <a-checkbox value="乒乓球" name="type">乒乓球</a-checkbox>
-        <a-checkbox value="爬山" name="type">爬山</a-checkbox>
-        <a-checkbox value="越野" name="type">越野</a-checkbox>
-        <a-checkbox value="其他" name="type">其他</a-checkbox>
-      </a-checkbox-group>
-    </a-form-item>
-    <a-form-item label="工作" name="isWork">
-      <a-radio-group v-model:value="formState.isWork">
-        <a-radio value="已工作">已工作</a-radio>
-        <a-radio value="未工作">未工作</a-radio>
-      </a-radio-group>
-    </a-form-item>
-    <a-form-item label="自我描述" name="desc">
-      <a-textarea v-model:value="formState.desc" />
-    </a-form-item>
-    <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-      <a-button type="primary" @click="onSubmit">Create</a-button>
-      <a-button style="margin-left: 10px" @click="resetForm">Reset</a-button>
-    </a-form-item>
-  </a-form>
+      ref="formRef"
+      :model="formState"
+      :rules="rules"
+      :label-col="labelCol"
+      :wrapper-col="wrapperCol"
+      style="width: 70%;"
+    >
+      <a-form-item ref="name" label="姓名" name="name">
+        <a-input v-model:value="formState.name" />
+      </a-form-item>
+      <a-form-item label="性别" name="sex">
+        <a-select v-model:value="formState.sex" placeholder="please select your sex">
+          <a-select-option value="男">男</a-select-option>
+          <a-select-option value="女">女</a-select-option>
+        </a-select>
+      </a-form-item>
+      <a-form-item label="生日" required name="birthDay">
+        <a-date-picker
+          v-model:value="formState.birthDay"
+          show-time
+          type="date"
+          placeholder="Pick a date"
+          style="width: 100%"
+        />
+      </a-form-item>
+      <a-form-item label="已婚" name="isMarried">
+        <a-switch v-model:checked="formState.isMarried" />
+      </a-form-item>
+      <a-form-item label="爱好" name="hobbies">
+        <a-checkbox-group v-model:value="formState.hobbies">
+          <a-checkbox value="羽毛球" name="type">羽毛球</a-checkbox>
+          <a-checkbox value="乒乓球" name="type">乒乓球</a-checkbox>
+          <a-checkbox value="爬山" name="type">爬山</a-checkbox>
+          <a-checkbox value="越野" name="type">越野</a-checkbox>
+          <a-checkbox value="其他" name="type">其他</a-checkbox>
+        </a-checkbox-group>
+      </a-form-item>
+      <a-form-item label="工作" name="isWork">
+        <a-radio-group v-model:value="formState.isWork">
+          <a-radio value="已工作">已工作</a-radio>
+          <a-radio value="未工作">未工作</a-radio>
+        </a-radio-group>
+      </a-form-item>
+      <a-form-item label="自我描述" name="desc">
+        <a-textarea v-model:value="formState.desc" />
+      </a-form-item>
+      <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
+        <a-button type="primary" @click="onSubmit">Create</a-button>
+        <a-button style="margin-left: 10px" @click="resetForm">Reset</a-button>
+      </a-form-item>
+    </a-form>
   </div>
 </template>
 
@@ -130,6 +130,7 @@ export default defineComponent({
 
     // 提交表单
     const onSubmit = () => {
+      // 表单验证
       formRef.value.validate().then(() => {
         console.log('values', state.formState, toRaw(state.formState));
         message.success('已提交',3)

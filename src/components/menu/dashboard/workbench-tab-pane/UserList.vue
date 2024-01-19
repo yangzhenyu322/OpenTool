@@ -214,7 +214,7 @@ export default defineComponent({
 
     const updateUser = async (user) => {
       try {
-        const res = await axios.put(`/user/`, user)
+        const res = await axios.put(`/user/userInfo`, user)
         console.log(res.data.msg)
       } catch (error) {
         console.error(error)
